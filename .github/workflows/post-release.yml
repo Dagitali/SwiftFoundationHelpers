@@ -1,0 +1,63 @@
+# create-release.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2024 Dagitali LLC. All rights reserved.
+#
+# A GitHub Actions workflow file that automates part of the GitFlow workflow.
+# Specificially, it:
+#
+# 1. Autolabels the `release` and `hotfix` branches, according to the current
+#    branch name.
+# 2. Creates a `release` branch, merge it back to the `develop` branch, and
+#    trigger integrations if the PR is labeled `release` or `hotfix` and merged
+#    to the `main` branch.
+#
+# GitFlow itself is also an opinionated feature-based Git branching model with:
+#
+# * 2 long-running branches:
+#   1. `develop`: For continuous development
+#   2. `main`: For automatically deploying to production
+#
+# * Short-lived branches in between with enforced prefix conventions:
+#   1. `feature/`:
+#      * Created from the `develop` branch.
+#      * Used to add/enhance/refactor features.
+#      * Removed after merging to the `develop` branch.
+#   2. `release/`:
+#      * Created from the `develop` branch.
+#      * Used to perform release preparation tasks.
+#      * Removed after merging to both the `main` and `develop` branches.
+#   3. `hotfix/`:
+#      * Created from the `main` branch.
+#      * Used to create hot fixes (i.e., emergency software patches).
+#      * Removed after merging to both the `main` and `develop` branches.
+#
+# See:
+# 1. https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-
+#    workflow
+# 2. https://github.com/actions
+# 3. https://github.com/features/actions
+# 4. https://github.com/marketplace/actions/gitflow-workflow-action
+# 5. https://docs.github.com/en/actions
+# 6. https://nvie.com/posts/a-successful-git-branching-model/
+
+---
+
+on:
+  pull_request:
+    types:
+      - opened
+      - closed
+      - labeled
+
+name: Release workflows
+
+jobs:
+  release_workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: gitflow-workflow-action release workflows
+        uses: hoangvvo/gitflow-workflow-action@0.2.4
+        with:
+          develop_branch: develop
+          main_branch: main
