@@ -5,8 +5,15 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftFoundationHelpers",
+    platforms: [
+        .iOS(.v17),
+        .macOS(.v14),
+        .tvOS(.v17),
+        .watchOS(.v10)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
+        // Products define the executables and libraries a package produces, making them visible to
+        // other packages.
         .library(
             name: "SwiftFoundationHelpers",
             targets: ["SwiftFoundationHelpers"]),
@@ -17,7 +24,7 @@ let package = Package(
         .target(
             name: "SwiftFoundationHelpers"),
         .testTarget(
-            name: "SwiftFoundationHelpersTests",
+            name: "StringExtensionsTests",
             dependencies: ["SwiftFoundationHelpers"]
         ),
     ]
