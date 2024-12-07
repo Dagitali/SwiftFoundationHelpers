@@ -1,0 +1,129 @@
+# .pre-commit-config.yaml
+# SwiftFoundationHelpers
+#
+# Copyright © 2024 Dagitali LLC. All rights reserved.
+#
+# The pre-commit (multi-language package manager configuration file for Git
+# pre-commit hook scripts -- i.e., hooks) configuration file. Specifies which
+# pre-commit plugins (each by Git repository and hook set) are installed and
+# set for identifying simple issues (missing semicolons, trailing whitespace,
+# debug statements, etc.) before submission to code review. Allows code
+# reviewers to focus on the architecture of a change while not wasting time
+# with trivial style nitpicks.
+#
+# See:
+# 1. https://www.devwithimagination.com/2020/04/13/git-commit-hooks-for-branch-
+#    naming-pre-commit/
+# 2. https://pre-commit.com
+# 3. https://pre-commit.com/hooks.html
+# 4. https://pre-commit.com/index.html#plugins
+
+---
+
+# All commands by default will run on every commit
+default_install_hook_types:
+  - pre-commit
+
+default_language_version:
+  swift: system
+
+default_stages:
+  - pre-commit
+  - pre-push
+
+# Some configs are only available after v3.7
+minimum_pre_commit_version: "3.7"
+
+# Check for issues or automatically fix issues.
+repos:
+
+  ### Pre-commit ###
+
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
+
+  ### Git ###
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.30.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+      - id: commitizen-branch
+        stages:
+          - post-commit
+          - post-rewrite
+          - pre-push
+
+  ### Git, Polyglot ###
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      # - id: check-ast
+      # - id: check-builtin-literals
+      - id: check-byte-order-marker
+      # - id: check-docstring-first
+      # - id: check-executables-have-shebangs
+      #   exclude_types: [batch]
+      ## - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      # - id: check-symlinks
+      # - id: check-toml
+      - id: check-vcs-permalinks
+      # - id: check-xml
+      - id: check-yaml
+      # - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-aws-credentials
+      - id: detect-private-key
+      # - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      # - id: file-contents-sorter
+      - id: fix-byte-order-marker
+      # - id: fix-encoding-pragma
+      #   args: [--remove]
+      # - id: forbid-new-submodules
+      - id: mixed-line-ending
+      # - id: name-tests-test
+      #   args: [--pytest-test-first]
+      - id: no-commit-to-branch
+        args: [--pattern, '^(?!((bugfix|feature|hotfix)\/[a-zA-Z0-9\-\.]+)$).*']
+      ## - id: pretty-format-json
+      ##  args: [--autofix, --no-sort-keys]
+      # - id: requirements-txt-fixer
+      # - id: sort-simple-yaml
+      - id: trailing-whitespace
+
+  ### Markdown ###
+
+  - repo: https://github.com/frnmst/md-toc
+    rev: 9.0.0
+    hooks:
+      - id: md-toc
+
+  ### Swift ###
+
+  # - repo: https://github.com/realm/SwiftLint
+  #   rev: 0.57.0
+  #   hooks:
+  #     - id: swiftlint
+  #       name: swiftlint
+  #       entry: swiftlint --quiet
+  #       language: system
+  #       types: [swift]
+
+  ### YAML ###
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: yamllint
+        entry: yamllint
+        language: system
+        types: [yaml]
