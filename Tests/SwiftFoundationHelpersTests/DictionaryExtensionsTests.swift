@@ -12,7 +12,6 @@
  A test suite to validate the functionality of `Dictionary` extensions.
 */
 
-import Foundation
 import Testing
 @testable import SwiftFoundationHelpers
 
@@ -36,5 +35,6 @@ struct DictionaryExtensionsTests {
         let dict1 = ["a": 1, "b": 2]
         let dict2 = ["b": 3, "c": 4]
         #expect(dict1.merging(with: dict2) == ["a": 1, "b": 3, "c": 4])
+        #expect(dict2.merging(with: dict1) == ["b": 2, "c": 4, "a": 1])
     }
 }
