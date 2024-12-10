@@ -5,23 +5,41 @@ custom abstractions.
 
 ## Overview
 
-SwiftUIHelpers is a Swift package designed to complement Swift Foundation, Apple’s native framework
-for building Swift apps and packages.  It simplifies everyday coding tasks by extending key
-Foundation types such as String, Date, Array, and more.
+SwiftFoundationHelpers is a Swift package designed to complement Swift Foundation, Apple’s native
+framework for building Swift apps and packages.  It simplifies everyday coding tasks by extending
+key Foundation types such as String, Date, Array, and more.
+
+This package focuses on providing practical, reusable extensions and abstractions that:
+
+* Simplify common patterns in Swift Foundation.
+* Extend Swift Foundation’s capabilities without overriding or replacing its native functionality.
 
 By integrating SwiftFoundationHelpers into your project, you can reduce boilerplate code, improve
 readability, and adopt reusable patterns tailored for modern Swift apps and packages.
 
 ## Features
 
-* 🔧 Extensions
-  * Enhance your Foundation types with powerful, reusable methods.
+🔧 **Extensions**
+
+Enhance your Foundation types with powerful, reusable methods.
+
+* `Array`
+  * `.removingDuplicates()`: Removes duplicate elements from the array while preserving the
+     original order.
+* `Date`
+  * `.formatted(format)`: Formats the date into a string using the specified format.
+* `String`
+  * `.matches(regex)`: Determines whether the string matches a given regular expression pattern.
+  * `.trimmed()`: Trims leading and trailing whitespace and newline characters from the string.
+* `URL`
+  * `.addingQueryParameters()`: Adds or updates query parameters to the URL.
+  * `.queryParameter(for)`: Retrieves the value of a query parameter from the URL.
 
 ## Installation
 
 ### Using Swift Package Manager (SPM)
 
-To integrate SwiftUIHelpers into your project:
+To integrate SwiftFoundationHelpers into your project:
 
 1. Open your project in **Xcode**.
 2. Navigate to **File > Add Packages**.
@@ -59,7 +77,7 @@ documentation:
 
 ## License
 
-This package is available under under the [MIT License](LICENSE).
+SwiftFoundationHelpers is available under under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
