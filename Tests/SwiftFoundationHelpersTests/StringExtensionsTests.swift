@@ -20,20 +20,19 @@ import Testing
 /// A test suite to validate the functionality of  `String` extensions.
 @Suite("StringExtensions Tests")
 struct StringExtensionsTests {
-    /// Test for merging  dictionaries.
+    /// Test for determining whether the string matches a given regular expression pattern.
     @Test
-    func testMerging() {
-        let dict1 = ["a": 1, "b": 2]
-        let dict2 = ["b": 3, "c": 4]
-        #expect(dict1.merging(with: dict2) == ["a": 1, "b": 3, "c": 4])
+    func testMatches() {
+        #expect("abc123".matches("\\w+\\d+") == true)
+        #expect("123abc".matches("^\\d+$") == false)
+        #expect("".matches(".+") == false)
     }
 
-    /// Test for merging  dictionaries.
+    /// Test for trimming leading and trailing whitespace and newline characters from the string.
     @Test
-    func testMerge() {
-        var dict = ["a": 1, "b": 2]
-        let dictToMerge = ["b": 3, "c": 4]
-        dict.merge(with: dictToMerge)
-        #expect(dict == ["a": 1, "b": 3, "c": 4])
+    func testTrimmed() {
+        #expect("  hello  ".trimmed() == "hello")
+        #expect("\n\nworld\n\n".trimmed() == "world")
+        #expect("".trimmed() == "")
     }
 }
