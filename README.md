@@ -24,10 +24,19 @@ readability, and adopt reusable patterns tailored for modern Swift apps and pack
 Enhance your Foundation types with powerful, reusable extensions.
 
 * `Array`
-  * `.removingDuplicates()`: Removes duplicate elements from the array while preserving the
-     original order.
+  * `.removingDuplicates()`: Removes duplicate elements from the array while preserving the original
+    order.
 * `Date`
-  * `.formatted(format)`: Formats the date into a string using the specified format.
+  * Computed variables
+    * `.dayOfWeek`: Returns the day of the week for the date as an integer.
+  * Methods
+    * `.addingDays(_)`: Returns a new date by adding the specified number of days to the current date.
+    * `.addingMonths(_)`: Returns a new date by adding the specified number of months to the current
+      date.
+    * `.addingSeconds(_)`: Returns a new date by adding the specified number of seconds to the
+      current date.
+    * `.isSameDay(as)`: Checks if two dates fall on the same calendar day.
+    * `.formatted(_)`: Formats the date into a string using the specified format.
 * `String`
   * Constants
     * `.dash`: A constant for a dash character.
