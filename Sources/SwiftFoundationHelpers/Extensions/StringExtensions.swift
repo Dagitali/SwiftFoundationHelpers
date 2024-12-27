@@ -68,6 +68,13 @@ public extension String {
 
     // MARK: Transformation
 
+    /// Removes all whitespace and newlines from the string.
+    ///
+    /// - Returns: A string with all whitespace and newlines removed.
+    var removedWhitespace: String {
+        replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
+    }
+
     /// Reverses the order of words in the string.
     ///
     /// - Returns: A string with the words reversed.
