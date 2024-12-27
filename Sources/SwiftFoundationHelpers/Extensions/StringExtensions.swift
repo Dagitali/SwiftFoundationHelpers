@@ -10,6 +10,9 @@
 
  Abstract:
  Helper extensions for working with `String` types.
+
+ References:
+ 1. https://medium.com/stackademic/10-swift-extensions-i-use-all-the-time-a05bab1038bd
 */
 
 import Foundation
@@ -26,6 +29,20 @@ public extension String {
     func matches(_ regex: String) -> Bool {
         range(of: regex, options: .regularExpression) != nil
     }
+
+    // MARK: Constants
+
+    /// A constant for a dash character.
+    static let dash = "-"
+
+    /// A constant for an empty string.
+    static let empty = ""
+
+    /// A constant for a newline character.
+    static let newline = "\n"
+
+    /// A constant for a single space character.
+    static let space = " "
 
     // MARK: Trimming
 
