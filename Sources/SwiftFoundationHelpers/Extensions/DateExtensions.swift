@@ -65,6 +65,16 @@ public extension Date {
         Calendar.current.date(byAdding: .second, value: seconds, to: self) ?? self
     }
 
+    // MARK: Comparison
+
+    /// Checks if two dates fall on the same calendar day.
+    ///
+    /// - Parameter otherDate: The date to compare.
+    /// - Returns: A Boolean value indicating whether the two dates are on the same calendar day.
+    func isSameDay(as otherDate: Date) -> Bool {
+        Calendar.current.isDate(self, inSameDayAs: otherDate)
+    }
+
     // MARK: Integer Conversions
 
     /// Returns the day of the week for the date as an integer.
