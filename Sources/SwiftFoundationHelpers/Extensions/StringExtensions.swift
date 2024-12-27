@@ -29,6 +29,13 @@ public extension String {
         trimmed.isEmpty
     }
 
+    /// Checks if the string contains only numeric characters.
+    ///
+    /// - Returns: `true` if the string is numeric; `false` if not.
+    var isNumeric: Bool {
+        !isEmpty && rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
+    }
+
     /// Checks if the string contains the specified substring.
     ///
     /// - Parameter substring: The substring for which to search.
