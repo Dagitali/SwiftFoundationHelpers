@@ -34,15 +34,27 @@ struct StringExtensionsTests {
     @Test
     func testIsEmptyOrWhitespace() {
         #expect("".isEmptyOrWhitespace == true)              // Empty string
-        #expect(" ".isEmptyOrWhitespace == true)             // Empty string
-        #expect("\n\n".isEmptyOrWhitespace == true)          // Empty string
-        #expect(String.newline.isEmptyOrWhitespace == true)  // Empty string
-        #expect(String.space.isEmptyOrWhitespace == true)    // Empty string
+        #expect(" ".isEmptyOrWhitespace == true)             // Single space
+        #expect("\n\n".isEmptyOrWhitespace == true)          // Multiple newlines
+
+        #expect(String.empty.isEmptyOrWhitespace == true)    // Empty string
+        #expect(String.newline.isEmptyOrWhitespace == true)  // Single newline
+        #expect(String.space.isEmptyOrWhitespace == true)    // Single space
 
 
         #expect("  hello  ".isEmptyOrWhitespace == false)      // Leading and trailing whitespace
         #expect("\n\nworld\n\n".isEmptyOrWhitespace == false)  // Leading and trailing newlines
+
         #expect(String.dash.isEmptyOrWhitespace == false)      // Leading and trailing newlines
+    }
+
+    /// Test for checking if the string if a string is empty or contains only whitespace characters.
+    @Test
+    func testIsNumeric() {
+        #expect("".isEmptyOrWhitespace == true)              // Empty string
+
+        #expect("  hello  ".isEmptyOrWhitespace == false)      // Leading and trailing whitespace
+        #expect("\n\nworld\n\n".isEmptyOrWhitespace == false)  // Leading and trailing newlines
     }
 
     /// Test for checking if the string matches a given regular expression pattern.
