@@ -65,7 +65,21 @@ public extension Date {
         Calendar.current.date(byAdding: .second, value: seconds, to: self) ?? self
     }
 
-    // MARK: Comparison
+    // MARK: Checks
+
+    /// Checks if the date is in the future.
+    ///
+    /// Example:
+    /// ```swift
+    /// let date = Date()
+    /// let nextMonth = date.addingMonths(1)
+    /// print(nextMonth.isInFuture)  // 1 month from now
+    /// ```
+    ///
+    /// - Returns: A Boolean value indicating whether the date is in the future.
+    var isInFuture: Bool {
+        self > Date()
+    }
 
     /// Checks if two dates fall on the same calendar day.
     ///
