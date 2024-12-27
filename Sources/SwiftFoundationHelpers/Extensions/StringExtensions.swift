@@ -66,7 +66,14 @@ public extension String {
     /// A constant for a single space character.
     static let space = " "
 
-    // MARK: Reformatting
+    // MARK: Transformation
+
+    /// Reverses the order of words in the string.
+    ///
+    /// - Returns: A string with the words reversed.
+    var reversedWords: String {
+        split(separator: " ").reversed().joined(separator: " ")
+    }
 
     /// Trims leading and trailing whitespace and newline characters from the string.
     ///
