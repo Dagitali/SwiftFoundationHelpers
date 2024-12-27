@@ -68,6 +68,14 @@ struct StringExtensionsTests {
 
     // MARK: Transformation
 
+    /// Test for removing all whitespace and newlines from the string.
+    @Test
+    func testRemovedWhitespace() {
+        #expect("Hello World".reversedWords == "HelloWorld")
+        #expect("Swift Extensions are great".reversedWords == "SwiftExtensionsaregreat")
+        #expect("".reversedWords == "")
+    }
+
     /// Test for reversing the order of words in the string.
     @Test
     func testReversedWords() {
