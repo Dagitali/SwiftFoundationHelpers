@@ -20,9 +20,24 @@ import Foundation
 // MARK: - Public
 
 public extension String {
-    // MARK: Comparison
+    // MARK: Checks
 
-    /// Determines whether the string matches a given regular expression pattern.
+    /// Checks if a string is empty or contains only whitespace characters.
+    ///
+    /// - Returns: `true` if the string is empty or contains only whitespace; `false` if not.
+    var isEmptyOrWhitespace: Bool {
+        trimmed.isEmpty
+    }
+
+    /// Checks if the string contains the specified substring.
+    ///
+    /// - Parameter substring: The substring for which to search.
+    /// - Returns: A Boolean value indicating whether the substring is found.
+    func contains(_ substring: String) -> Bool {
+        range(of: substring) != nil
+    }
+
+    /// Checks if the string matches a given regular expression pattern.
     ///
     /// - Parameter regex: A string containing the regular expression pattern.
     /// - Returns: A Boolean value indicating whether the string matches the pattern.
@@ -44,7 +59,7 @@ public extension String {
     /// A constant for a single space character.
     static let space = " "
 
-    // MARK: Trimming
+    // MARK: Reformatting
 
     /// Trims leading and trailing whitespace and newline characters from the string.
     ///
@@ -96,12 +111,5 @@ public extension String {
         let regularExpression = "0[0-9]*"
         let predicate = NSPredicate(format: "SELF MATCHES %@", regularExpression)
         return predicate.evaluate(with: self)
-    }
-
-    /// Checks if a string is empty or contains only whitespace characters.
-    ///
-    /// - Returns: `true` if the string is empty or contains only whitespace; `false` if not.
-    func isEmptyOrWhitespace(_ regex: String) -> Bool {
-        trimmed.isEmpty
     }
 }
