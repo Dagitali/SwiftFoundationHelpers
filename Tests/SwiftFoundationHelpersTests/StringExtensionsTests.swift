@@ -20,9 +20,17 @@ import Testing
 /// A test suite to validate the functionality of  `String` extensions.
 @Suite("StringExtensions Tests")
 struct StringExtensionsTests {
-    // MARK: Comparison
+    // MARK: Checks
 
-    /// Test for determining whether the string matches a given regular expression pattern.
+    /// Test for checking if the string the string contains the specified substring.
+    @Test
+    func testContains() {
+        #expect("Hello, World!".contains("World") == true)   // Case-sensitive
+
+        #expect("Hello, World!".contains("world") == false)  // Case-insensitive
+    }
+
+    /// Test for checking if the string matches a given regular expression pattern.
     @Test
     func testMatches() {
         #expect("abc123".matches("\\w+\\d+") == true)  // Starts with letters, ends with digits
@@ -31,7 +39,7 @@ struct StringExtensionsTests {
         #expect("".matches(".+") == false)             // Empty string
     }
 
-    // MARK: Trimming
+    // MARK: Reformatting
 
     /// Test for trimming leading and trailing whitespace and newline characters from the string.
     @Test
