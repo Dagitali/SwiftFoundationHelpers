@@ -47,6 +47,21 @@ struct DateExtensionsTests {
         #expect(result.timeIntervalSince1970 == 60)
     }
 
+    // MARK: Comparison
+
+    /// Test for returning the day of the week for the date as an integer.
+    @Test
+    func testIsSameDay() {
+        let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        let date2 = Date(timeIntervalSince1970: 60 * 60 * 23) // Still Jan 1, 1970
+        let date3 = Date(timeIntervalSince1970: 60 * 60 * 24) // Jan 2, 1970
+
+        // FIXME: Research why this test fails with the expected Boolean.
+        #expect(date1.isSameDay(as: date2) == true)
+
+        #expect(date1.isSameDay(as: date3) == false)
+    }
+
     // MARK: Integer Conversions
 
     /// Test for returning the day of the week for the date as an integer.
