@@ -47,9 +47,22 @@ struct DateExtensionsTests {
         #expect(result.timeIntervalSince1970 == 60)
     }
 
-    // MARK: Comparison
+    // MARK: Checks
 
-    /// Test for returning the day of the week for the date as an integer.
+    /// Test for checking if the date is in the future.
+    @Test
+    func testIsInFuture() {
+        let futureDate = Date().addingTimeInterval(60 * 60)  // 1 hour from now
+        let pastDate = Date().addingTimeInterval(-60 * 60)  // 1 hour ago
+        let currentDate = Date()
+
+        #expect(futureDate.isInFuture == true)
+
+        #expect(pastDate.isInFuture == false)
+        #expect(currentDate.isInFuture == false)
+    }
+
+    /// Test for checking if two dates fall on the same calendar day.
     @Test
     func testIsSameDay() {
         let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
