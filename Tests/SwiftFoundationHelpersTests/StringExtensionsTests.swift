@@ -20,19 +20,60 @@ import Testing
 /// A test suite to validate the functionality of  `String` extensions.
 @Suite("StringExtensions Tests")
 struct StringExtensionsTests {
+    // MARK: Comparison
+
     /// Test for determining whether the string matches a given regular expression pattern.
     @Test
     func testMatches() {
-        #expect("abc123".matches("\\w+\\d+") == true)
-        #expect("123abc".matches("^\\d+$") == false)
-        #expect("".matches(".+") == false)
+        #expect("abc123".matches("\\w+\\d+") == true)  // Starts with letters, ends with digits
+
+        #expect("123abc".matches("^\\d+$") == false)   // Doesn't start with digits
+        #expect("".matches(".+") == false)             // Empty string
     }
+
+    // MARK: Trimming
 
     /// Test for trimming leading and trailing whitespace and newline characters from the string.
     @Test
     func testTrimmed() {
-        #expect("  hello  ".trimmed() == "hello")
-        #expect("\n\nworld\n\n".trimmed() == "world")
-        #expect("".trimmed() == "")
+        #expect("  hello  ".trimmed == "hello")      // Leading and trailing whitespace
+        #expect("\n\nworld\n\n".trimmed == "world")  // Leading and trailing newlines
+        #expect("".trimmed == "")                    // Empty string
+    }
+
+    // MARK: Validation
+
+    /// Test for validating whether the string is a properly formatted email address.
+    @Test
+    func testIsValidEmail() {
+        #expect("test@example.com".isValidEmail == true)                   // Simple email
+        #expect("user.name+tag+sorting@example.com".isValidEmail == true)  // Email with special characters
+
+        #expect("plainaddress".isValidEmail == false)          // Missing @ symbol.
+        #expect("missingdomain@.com".isValidEmail == false)    // Missing domain
+        #expect("@missingusername.com".isValidEmail == false)  // Missing username
+    }
+
+    /// Test for validating whether the string is a strong password.
+    @Test
+    func testIsValidPassword() {
+        #expect("P@ssw0rd!".isValidPassword == true)    // Strong password
+        #expect("Str0ng#Pass".isValidPassword == true)  // Strong password w/ multiple special characters
+
+        #expect("weakpassword".isValidPassword == false)    // No uppercase, no special character
+        #expect("SHORT1!".isValidPassword == false)         // Less than 8 characters
+        #expect("NoNumber!".isValidPassword == false)       // Missing number
+        #expect("NoSpecialChar1".isValidPassword == false)  // Missing special character
+    }
+
+    /// Test for validating whether the string is a valid phone number.
+    @Test
+    func testIsValidPhone() {
+        #expect("0123456789".isValidPhone == true)  // Starts with 0
+        #expect("0987654321".isValidPhone == true)  // Random number
+
+        #expect("123456789".isValidPhone == false)  // Does not start with 0
+        #expect("01234abc".isValidPhone == false)   // Contains letters
+        #expect("".isValidPhone == false)           // Empty string
     }
 }
