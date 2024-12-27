@@ -22,7 +22,7 @@ import Foundation
 public extension String {
     // MARK: Checks
 
-    /// Checks if a string is empty or contains only whitespace characters.
+    /// Checks if the string is empty or contains only whitespace characters.
     ///
     /// - Returns: `true` if the string is empty or contains only whitespace; `false` if not.
     var isEmptyOrWhitespace: Bool {
