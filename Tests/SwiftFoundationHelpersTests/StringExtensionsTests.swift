@@ -66,7 +66,15 @@ struct StringExtensionsTests {
         #expect("".matches(".+") == false)             // Empty string
     }
 
-    // MARK: Reformatting
+    // MARK: Transformation
+
+    /// Test for reversing the order of words in the string.
+    @Test
+    func testReversedWords() {
+        #expect("Hello World".reversedWords == "World Hello")
+        #expect("Swift Extensions are great".reversedWords == "great are Extensions Swift")
+        #expect("".reversedWords == "")
+    }
 
     /// Test for trimming leading and trailing whitespace and newline characters from the string.
     @Test
