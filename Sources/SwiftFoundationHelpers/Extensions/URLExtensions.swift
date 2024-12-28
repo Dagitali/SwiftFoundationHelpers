@@ -30,6 +30,7 @@ public extension URL {
         components?.queryItems = queryItems
         return components?.url
     }
+
     /// Retrieves the value of a query parameter from the URL.
     ///
     /// - Parameter key: The key of the query parameter.
