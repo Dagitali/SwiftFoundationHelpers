@@ -33,28 +33,28 @@ struct StringExtensionsTests {
     /// Test for checking if the string if a string is empty or contains only whitespace characters.
     @Test
     func testIsEmptyOrWhitespace() {
-        #expect("".isEmptyOrWhitespace == true)              // Empty string
-        #expect(" ".isEmptyOrWhitespace == true)             // Single space
-        #expect("\n\n".isEmptyOrWhitespace == true)          // Multiple newlines
+        #expect("".isBlank == true)              // Empty string
+        #expect(" ".isBlank == true)             // Single space
+        #expect("\n\n".isBlank == true)          // Multiple newlines
 
-        #expect(String.empty.isEmptyOrWhitespace == true)    // Empty string
-        #expect(String.newline.isEmptyOrWhitespace == true)  // Single newline
-        #expect(String.space.isEmptyOrWhitespace == true)    // Single space
+        #expect(String.empty.isBlank == true)    // Empty string
+        #expect(String.newline.isBlank == true)  // Single newline
+        #expect(String.space.isBlank == true)    // Single space
 
 
-        #expect("  hello  ".isEmptyOrWhitespace == false)      // Leading and trailing whitespace
-        #expect("\n\nworld\n\n".isEmptyOrWhitespace == false)  // Leading and trailing newlines
+        #expect("  hello  ".isBlank == false)      // Leading and trailing whitespace
+        #expect("\n\nworld\n\n".isBlank == false)  // Leading and trailing newlines
 
-        #expect(String.dash.isEmptyOrWhitespace == false)      // Leading and trailing newlines
+        #expect(String.dash.isBlank == false)      // Leading and trailing newlines
     }
 
     /// Test for checking if the string if a string is empty or contains only whitespace characters.
     @Test
     func testIsNumeric() {
-        #expect("".isEmptyOrWhitespace == true)              // Empty string
+        #expect("".isBlank == true)              // Empty string
 
-        #expect("  hello  ".isEmptyOrWhitespace == false)      // Leading and trailing whitespace
-        #expect("\n\nworld\n\n".isEmptyOrWhitespace == false)  // Leading and trailing newlines
+        #expect("  hello  ".isBlank == false)      // Leading and trailing whitespace
+        #expect("\n\nworld\n\n".isBlank == false)  // Leading and trailing newlines
     }
 
     /// Test for checking if the string matches a given regular expression pattern.
