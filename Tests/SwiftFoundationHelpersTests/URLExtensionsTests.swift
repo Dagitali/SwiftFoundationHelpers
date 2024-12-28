@@ -21,14 +21,8 @@ import Testing
 /// A test suite to validate the functionality of  `URL` extensions.
 @Suite("URLExtensions Tests")
 struct URLExtensionsTests {
-    @Test
-    func testQueryParameter() {
-        let url = URL(string: "https://example.com?key=value&foo=bar")!
-        #expect(url.queryParameter(for: "key") == "value")
-        #expect(url.queryParameter(for: "foo") == "bar")
-        #expect(url.queryParameter(for: "missing") == nil)
-    }
 
+    /// Test for adding or updating query parameters to the URL.
     @Test
     func testAddingQueryParameters() {
         let baseURL = URL(string: "https://example.com")!
@@ -38,5 +32,14 @@ struct URLExtensionsTests {
         let existingURL = URL(string: "https://example.com?existing=param")!
         let updatedURL = existingURL.addingQueryParameters(["new": "param"])
         #expect(updatedURL?.absoluteString == "https://example.com?existing=param&new=param")
+    }
+
+    /// Test for retrieving the value of a query parameter from the URL.
+    @Test
+    func testQueryParameter() {
+        let url = URL(string: "https://example.com?key=value&foo=bar")!
+        #expect(url.queryParameter(for: "key") == "value")
+        #expect(url.queryParameter(for: "foo") == "bar")
+        #expect(url.queryParameter(for: "missing") == nil)
     }
 }
