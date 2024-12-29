@@ -27,7 +27,10 @@ struct URLExtensionsTests {
     func testAddingQueryParameters() {
         let baseURL = URL(string: "https://example.com")!
         let newURL = baseURL.addingQueryParameters(["key": "value", "foo": "bar"])
-        #expect(newURL?.absoluteString == "https://example.com?key=value&foo=bar")
+        #expect(
+            newURL?.absoluteString == "https://example.com?key=value&foo=bar" ||
+            newURL?.absoluteString == "https://example.com?foo=bar&key=value"
+        )
 
         let existingURL = URL(string: "https://example.com?existing=param")!
         let updatedURL = existingURL.addingQueryParameters(["new": "param"])
