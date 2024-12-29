@@ -25,6 +25,7 @@ struct IntExtensionsTests {
     func testRange() {
         #expect(0.range() == 0..<0)
         #expect(5.range() == 0..<5)
+        #expect(Array(5.range()) == [0, 1, 2, 3, 4])
     }
 
     /// Test for repeating a block of code a number of times.
