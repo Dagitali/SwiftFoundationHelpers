@@ -26,7 +26,7 @@ struct DateExtensionsTests {
     /// Test for returning a new date by adding the specified number of days to the current date.
     @Test
     func testAddingDays() {
-        let date = Date(timeIntervalSince1970: 0)  // Jan 1, 1970
+        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
         let result = date.addingDays(7)
         #expect(Calendar.current.dateComponents([.year, .month, .day], from: result).day == 7)
     }
@@ -34,7 +34,7 @@ struct DateExtensionsTests {
     /// Test for returning a new date by adding the specified number of months to the current date.
     @Test
     func testAddingMonths() {
-        let date = Date(timeIntervalSince1970: 0)  // Jan 1, 1970
+        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
         let result = date.addingMonths(1)
         #expect(Calendar.current.dateComponents([.year, .month], from: result).month == 1)
     }
@@ -42,7 +42,7 @@ struct DateExtensionsTests {
     /// Test for returning a new date by adding the specified number of seconds to the current date.
     @Test
     func testAddingSeconds() {
-        let date = Date(timeIntervalSince1970: 0)  // Jan 1, 1970
+        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
         let result = date.addingSeconds(60)
         #expect(result.timeIntervalSince1970 == 60)
     }
@@ -52,8 +52,8 @@ struct DateExtensionsTests {
     /// Test for checking if the date is in the future.
     @Test
     func testIsInFuture() {
-        let futureDate = Date().addingTimeInterval(60 * 60)  // 1 hour from now
-        let pastDate = Date().addingTimeInterval(-60 * 60)  // 1 hour ago
+        let futureDate = Date().addingTimeInterval(60 * 60) // 1 hour from now
+        let pastDate = Date().addingTimeInterval(-60 * 60) // 1 hour ago
         let currentDate = Date()
 
         #expect(futureDate.isInFuture == true)
@@ -89,7 +89,7 @@ struct DateExtensionsTests {
     /// Test for formatting dates into a strings using specified formats.
     @Test
     func testFormatted() {
-        let date = Date(timeIntervalSince1970: 0)  // Jan 1, 1970
+        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
         // FIXME: Research why this test fails with the expected date.
         #expect(date.formatted("yyyy-MM-dd") == "1969-12-31")
         #expect(date.formatted("MMM dd, yyyy") == "Dec 31, 1969")
