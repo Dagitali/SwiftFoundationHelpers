@@ -21,10 +21,10 @@ public extension Int {
     ///
     /// Example:
     /// ```swift
-    /// let range = 0.range()
+    /// let range = 0.range
     /// print(range) // Output: 0..<0
     ///
-    /// let range = 5.range()
+    /// let range = 5.range
     /// print(range) // Output: 0..<5
     ///
     /// let array = Array(range)
@@ -32,7 +32,7 @@ public extension Int {
     /// ```
     ///
     /// - Returns: A `Range<Int>` from 0 to the integer.
-    func range() -> Range<Int> {
+    var range: Range<Int> {
         0..<self
     }
 
@@ -49,7 +49,7 @@ public extension Int {
     ///
     /// - Parameter action: The closure to execute.
     func times(_ action: () -> Void) {
-        for _ in range() {
+        for _ in range {
             action()
         }
     }
