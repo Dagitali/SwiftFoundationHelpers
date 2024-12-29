@@ -1,5 +1,5 @@
 //
-//  Date+Extensions.swift
+//  DateExtensions.swift
 //  SwiftFoundationHelpers
 //
 //  Copyright © 2024 Dagitali LLC. All rights reserved.
