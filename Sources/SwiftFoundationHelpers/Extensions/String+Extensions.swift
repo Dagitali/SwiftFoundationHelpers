@@ -1,5 +1,5 @@
 //
-//  StringExtensions.swift
+//  String+Extensions.swift
 //  SwiftFoundationHelpers
 //
 //  Copyright © 2024 Dagitali LLC. All rights reserved.
