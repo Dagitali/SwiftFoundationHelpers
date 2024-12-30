@@ -21,43 +21,12 @@ readability, and adopt reusable patterns tailored for modern Swift apps and pack
 
 🔧 **Extensions**
 
-Enhance your Foundation types with powerful, reusable extensions.
+Enhance your Foundation types with powerful, reusable extensions for these Swift Foundation types:
 
 * `Array`
-  * `.removingDuplicates()`: Removes duplicate elements from the array while preserving the original
-    order.
 * `Date`
-  * Computed variables
-    * `.dayOfWeek`: Returns the day of the week for the date as an integer.
-  * Methods
-    * `.addingDays(_)`: Returns a new date by adding the specified number of days to the current date.
-    * `.addingMonths(_)`: Returns a new date by adding the specified number of months to the current
-      date.
-    * `.addingSeconds(_)`: Returns a new date by adding the specified number of seconds to the
-      current date.
-    * `.isSameDay(as)`: Checks if two dates fall on the same calendar day.
-    * `.formatted(_)`: Formats the date into a string using the specified format.
 * `String`
-  * Constants
-    * `.dash`: A constant for a dash character.
-    * `.empty`: A constant for an empty string.
-    * `.newline`: A constant for a newline character.
-    * `.space`: A constant for a single space character.
-  * Computed variables
-    * `.isEmptyOrWhitespace`: Checks if the string is empty or contains only whitespace characters.
-    * `.isNumeric`: Checks if the string contains only numeric characters.
-    * `.isNumeric`: Checks if the string contains only numeric characters.
-    * `.isValidEmail`: Validates whether the string is a properly formatted email address.
-    * `.isValidPassword`: Validates whether the string is a strong password.
-    * `.isValidPhone`: Validates whether the string is a valid phone number.
-    * `.reversedWords`: Reverses the order of words in the string.
-    * `.trimmed`: Trims leading and trailing whitespace and newline characters from the string.
-  * Methods
-    * `.contains(_)`: Checks if the string contains the specified substring.
-    * `.matches(regex)`: Checks if the string matches a given regular expression pattern.
 * `URL`
-  * `.addingQueryParameters()`: Adds or updates query parameters to the URL.
-  * `.queryParameter(for)`: Retrieves the value of a query parameter from the URL.
 
 ## Installation
 
