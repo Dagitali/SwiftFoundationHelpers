@@ -21,30 +21,37 @@ import Testing
 /// A test suite to validate the functionality of  `Date` extensions.
 @Suite("DateExtensions Tests")
 struct DateExtensionsTests {
+    // MARK: Fixtures
+
+    private let dateComponents = DateComponents(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+
     // MARK: Arithmetic
 
     /// Test for returning a new date by adding the specified number of days to the current date.
     @Test
     func testAddingDays() {
-        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        let date = Calendar.current.date(from: dateComponents)!
         let result = date.addingDays(7)
-        #expect(Calendar.current.dateComponents([.year, .month, .day], from: result).day == 7)
+
+        #expect(Calendar.current.dateComponents([.year, .month, .day], from: result).day == 8)
     }
 
     /// Test for returning a new date by adding the specified number of months to the current date.
     @Test
     func testAddingMonths() {
-        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        let date = Calendar.current.date(from: dateComponents)!
         let result = date.addingMonths(1)
-        #expect(Calendar.current.dateComponents([.year, .month], from: result).month == 1)
+
+        #expect(Calendar.current.dateComponents([.year, .month], from: result).month == 2)
     }
 
     /// Test for returning a new date by adding the specified number of seconds to the current date.
     @Test
     func testAddingSeconds() {
-        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        let date = Calendar.current.date(from: dateComponents)!
         let result = date.addingSeconds(60)
-        #expect(result.timeIntervalSince1970 == 60)
+
+        #expect(Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: result).minute == 1)
     }
 
     // MARK: Checks
@@ -52,9 +59,9 @@ struct DateExtensionsTests {
     /// Test for checking if the date is in the future.
     @Test
     func testIsInFuture() {
-        let futureDate = Date().addingTimeInterval(3600) // 1 hour from now
-        let pastDate = Date().addingTimeInterval(-3600) // 1 hour ago
         let currentDate = Date()
+        let futureDate = currentDate.addingTimeInterval(3600) // 1 hour from now
+        let pastDate = currentDate.addingTimeInterval(-3600) // 1 hour ago
 
         #expect(futureDate.isInFuture == true)
 
@@ -65,11 +72,9 @@ struct DateExtensionsTests {
     /// Test for checking if two dates fall on the same calendar day.
     @Test
     func testIsSameDay() {
-        let offset = TimeZone.current.secondsFromGMT() / 3600
-
-        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
-        let sameDate = date.addingSeconds(3600 * ((23 - offset) % 24)) // Jan 1, 1970
-        let nextDate = date.addingSeconds(3600 * ((24 - offset) % 24)) // Jan 2, 1970
+        let date = Calendar.current.date(from: dateComponents)!
+        let sameDate = date.addingTimeInterval(3600 * 23) // Jan 1, 1970
+        let nextDate = date.addingTimeInterval(3600 * 24) // Jan 2, 1970
 
         #expect(date.isSameDay(as: sameDate) == true)
 
@@ -81,8 +86,9 @@ struct DateExtensionsTests {
     /// Test for returning the day of the week for the date as an integer.
     @Test
     func testDayOfWeek() {
-        let date = Calendar.current.date(from: DateComponents(year: 2024, month: 12, day: 8))!  // Sunday
-        #expect(date.dayOfWeek == 1)
+        let date = Calendar.current.date(from: dateComponents)! // Thursday
+
+        #expect(date.dayOfWeek == 5)
     }
 
     // MARK: Conversions (String)
@@ -96,7 +102,7 @@ struct DateExtensionsTests {
         #expect(date1.formatted("yyyy-MM-dd", timeZone: utc) == "1970-01-01")
         #expect(date1.formatted("MMM dd, yyyy", timeZone: utc) == "Jan 01, 1970")
 
-        let date2 = Date(timeIntervalSince1970: 60*60*24) // Jan 2, 1970
+        let date2 = Date(timeIntervalSince1970: 3600 * 24) // Jan 2, 1970
         #expect(date2.formatted("yyyy-MM-dd", timeZone: utc) == "1970-01-02")
         #expect(date2.formatted("MMM dd, yyyy", timeZone: utc) == "Jan 02, 1970")
     }
