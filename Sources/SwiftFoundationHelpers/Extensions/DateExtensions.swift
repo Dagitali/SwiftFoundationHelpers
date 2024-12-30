@@ -70,9 +70,12 @@ public extension Date {
     ///
     /// Example:
     /// ```swift
-    /// let date = Date()
-    /// let nextMonth = date.addingMonths(1)
-    /// print(nextMonth.isInFuture) // 1 month from now
+    /// let currentDate = Date()
+    /// let futureDate = currentDate.addingTimeInterval(3600)
+    /// let pastDate = currentDate.addingTimeInterval(-3600)
+    /// print(futureDate.isInFuture) // Output: true
+    /// print(pastDate.isInFuture) // Output: false
+    /// print(currentDate.isInFuture) // Output: false
     /// ```
     ///
     /// - Returns: A Boolean value indicating whether the date is in the future.
@@ -84,12 +87,12 @@ public extension Date {
     ///
     /// Example:
     /// ```swift
-    /// let offset = TimeZone.current.secondsFromGMT() / 3600
-    /// let date = Date(timeIntervalSince1970: 0)
-    /// let sameDate = Date(timeIntervalSince1970: 3600 * ((23 - offset) % 24))
-    /// let nextDate = Date(timeIntervalSince1970: 3600 * ((24 - offset) % 24))
-    /// print(date1.isSameDay(as: date2)) // Output: true
-    /// print(date1.isSameDay(as: date3)) // Output: false
+    /// let dateComponents = DateComponents(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+    /// let date = Calendar.current.date(from: dateComponents)!
+    /// let sameDate = date.addingTimeInterval(3600 * 23)
+    /// let nextDate = date.addingTimeInterval(3600 * 24)
+    /// print(date.isSameDay(as: sameDate)) // Output: true
+    /// print(date.isSameDay(as: nextDate)) // Output: false
     /// ```
     ///
     /// - Parameter otherDate: The date to compare.
