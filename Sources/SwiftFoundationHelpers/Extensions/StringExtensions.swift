@@ -164,10 +164,7 @@ public extension String {
     ///
     /// - Returns: `true` if the string matches the email format; `false` if not.
     var isValidEmail: Bool {
-        let regularExpression = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regularExpression)
-
-        return predicate.evaluate(with: self)
+        wholeMatch(of: /^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}$/) != nil
     }
 
     /// Validates whether the string is a strong password.
@@ -190,10 +187,7 @@ public extension String {
     ///
     /// - Returns: `true` if the string meets the password strength criteria; `false` if not.
     var isValidPassword: Bool {
-        let regularExpression = "(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}"
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regularExpression)
-
-        return predicate.evaluate(with: self)
+        wholeMatch(of: /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}/) != nil
     }
 
     /// Validates whether the string is a valid phone number.
@@ -213,9 +207,6 @@ public extension String {
     ///
     /// - Returns: `true` if the string matches the phone number format; `false` if not.
     var isValidPhone: Bool {
-        let regularExpression = "0[0-9]*"
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regularExpression)
-
-        return predicate.evaluate(with: self)
+        wholeMatch(of: /^0[0-9]+$/) != nil
     }
 }
