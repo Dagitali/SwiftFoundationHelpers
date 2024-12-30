@@ -52,8 +52,8 @@ struct DateExtensionsTests {
     /// Test for checking if the date is in the future.
     @Test
     func testIsInFuture() {
-        let futureDate = Date().addingTimeInterval(60 * 60) // 1 hour from now
-        let pastDate = Date().addingTimeInterval(-60 * 60) // 1 hour ago
+        let futureDate = Date().addingTimeInterval(3600) // 1 hour from now
+        let pastDate = Date().addingTimeInterval(-3600) // 1 hour ago
         let currentDate = Date()
 
         #expect(futureDate.isInFuture == true)
@@ -65,17 +65,18 @@ struct DateExtensionsTests {
     /// Test for checking if two dates fall on the same calendar day.
     @Test
     func testIsSameDay() {
-        let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
-        let date2 = Date(timeIntervalSince1970: 60 * 60 * 23) // Still Jan 1, 1970
-        let date3 = Date(timeIntervalSince1970: 60 * 60 * 24) // Jan 2, 1970
+        let offset = TimeZone.current.secondsFromGMT() / 3600
 
-        // FIXME: Research why this test fails with the expected Boolean.
-        #expect(date1.isSameDay(as: date2) == true)
+        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        let sameDate = date.addingSeconds(3600 * ((23 - offset) % 24)) // Jan 1, 1970
+        let nextDate = date.addingSeconds(3600 * ((24 - offset) % 24)) // Jan 2, 1970
 
-        #expect(date1.isSameDay(as: date3) == false)
+        #expect(date.isSameDay(as: sameDate) == true)
+
+        #expect(date.isSameDay(as: nextDate) == false)
     }
 
-    // MARK: Integer Conversions
+    // MARK: Conversions (Integer)
 
     /// Test for returning the day of the week for the date as an integer.
     @Test
@@ -84,14 +85,19 @@ struct DateExtensionsTests {
         #expect(date.dayOfWeek == 1)
     }
 
-    // MARK: String Conversions
+    // MARK: Conversions (String)
 
     /// Test for formatting dates into a strings using specified formats.
     @Test
     func testFormatted() {
-        let date = Date(timeIntervalSince1970: 0) // Jan 1, 1970
-        // FIXME: Research why this test fails with the expected date.
-        #expect(date.formatted("yyyy-MM-dd") == "1969-12-31")
-        #expect(date.formatted("MMM dd, yyyy") == "Dec 31, 1969")
+        let utc = TimeZone(identifier: "UTC")!
+
+        let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        #expect(date1.formatted("yyyy-MM-dd", timeZone: utc) == "1970-01-01")
+        #expect(date1.formatted("MMM dd, yyyy", timeZone: utc) == "Jan 01, 1970")
+
+        let date2 = Date(timeIntervalSince1970: 60*60*24) // Jan 2, 1970
+        #expect(date2.formatted("yyyy-MM-dd", timeZone: utc) == "1970-01-02")
+        #expect(date2.formatted("MMM dd, yyyy", timeZone: utc) == "Jan 02, 1970")
     }
 }

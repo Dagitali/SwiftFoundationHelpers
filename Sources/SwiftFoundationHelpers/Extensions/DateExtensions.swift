@@ -84,9 +84,10 @@ public extension Date {
     ///
     /// Example:
     /// ```swift
-    /// let date1 = Date(timeIntervalSince1970: 0)
-    /// let date2 = Date(timeIntervalSince1970: 60 * 60 * 23)
-    /// let date3 = Date(timeIntervalSince1970: 60 * 60 * 24)
+    /// let offset = TimeZone.current.secondsFromGMT() / 3600
+    /// let date = Date(timeIntervalSince1970: 0)
+    /// let sameDate = Date(timeIntervalSince1970: 3600 * ((23 - offset) % 24))
+    /// let nextDate = Date(timeIntervalSince1970: 3600 * ((24 - offset) % 24))
     /// print(date1.isSameDay(as: date2)) // Output: true
     /// print(date1.isSameDay(as: date3)) // Output: false
     /// ```
@@ -97,7 +98,7 @@ public extension Date {
         Calendar.current.isDate(self, inSameDayAs: otherDate)
     }
 
-    // MARK: Integer Conversions
+    // MARK: Conversions (Integer)
 
     /// Returns the day of the week for the date as an integer.
     ///
@@ -112,7 +113,7 @@ public extension Date {
         Calendar.current.component(.weekday, from: self)
     }
 
-    // MARK: String Conversions
+    // MARK: Conversions (String)
 
     /// Formats the date into a string using the specified format.
     ///
@@ -130,9 +131,11 @@ public extension Date {
     /// ```
     ///
     /// - Parameter format: A string representing the date format (default is "yyyy-MM-dd HH:mm:ss").
+    /// - Parameter timeZone: The timezone to use for the formatted date (default is the current timezone).
     /// - Returns: A formatted string representation of the date.
-    func formatted(_ format: String = "yyyy-MM-dd HH:mm:ss") -> String {
+    func formatted(_ format: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone = .current) -> String {
         let formatter = DateFormatter()
+        formatter.timeZone = timeZone
         formatter.dateFormat = format
 
         return formatter.string(from: self)
