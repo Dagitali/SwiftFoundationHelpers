@@ -1,0 +1,46 @@
+# test-release.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2024 Dagitali LLC. All rights reserved.
+#
+# A GitHub Actions workflow file that automates testing a Swift package.
+#
+# GitFlow itself is also an opinionated feature-based Git branching model with:
+#
+# See:
+# 1. https://github.com/actions
+# 2. https://github.com/features/actions
+# 3. https://docs.github.com/en/actions
+
+---
+
+on:
+  pull_request:
+    branches:
+      - bugfix/**
+      - feature/**
+    types:
+      - opened
+      - closed
+      - labeled
+  push:
+    branches:
+      - develop
+      - main
+      - versions
+
+name: Test
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: swift test
+  test-macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: swift test
