@@ -7,7 +7,7 @@
 # Specifically, it:
 #
 # 1. Creates a GitHub pull request (PR) for the `release` branch.
-# 2. "Freezes" (more or less) the `develop` branch for releases, althought
+# 2. "Freezes" (more or less) the `develop` branch for releases, although
 #    other PRs can be merged to develop during the release branch lifetime
 #    without affecting it.
 #
