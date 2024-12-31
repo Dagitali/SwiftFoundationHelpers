@@ -4,7 +4,7 @@
 # Copyright © 2024 Dagitali LLC. All rights reserved.
 #
 # A GitHub Actions workflow file that automates part of the GitFlow workflow.
-# Specificially, it:
+# Specifically, it:
 #
 # 1. Creates a GitHub pull request (PR) for the `release` branch.
 # 2. "Freezes" (more or less) the `develop` branch for releases, althought
