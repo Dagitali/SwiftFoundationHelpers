@@ -42,6 +42,14 @@ To integrate SwiftFoundationHelpers into your project:
 
 4. Select the latest version and add it to your target.
 
+## Testing
+
+The package includes a comprehensive test suite to ensure reliability. Run tests with:
+
+```bash
+swift test
+```
+
 ## Documentation
 
 For detailed API documentation and more usage examples, visit the SwiftFoundHelpers documentation
@@ -70,7 +78,7 @@ documentation:
 
 ## License
 
-SwiftFoundationHelpers is available under under the [MIT License](LICENSE).
+SwiftFoundationHelpers is available under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
