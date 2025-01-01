@@ -71,6 +71,9 @@ jobs:
       - name: Get Swift version
         run: swift --version
       - name: Build Swift package
-        run: swift build
-      - name: Run tests on Swift package
-        run: swift test
+        run: swift build -v
+      - name: Run tests on Swift package (Swift CLI)
+        run: swift test -v
+      # - name: Run tests on Swift package (Xcode)
+      #   run: xcodebuild test -workspace SwiftFoundationHelpers.xcworkspace -scheme SwiftFoundationHelpers clean build -sdk iphoneos -destination "platform=iOS Simulator,OS=16.1,name=iPhone 14 Pro Max" CODE_SIGNING_ALLOWED=No
+      # - name: Generate code coverage report
