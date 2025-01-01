@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get Swift version
         run: swift --version
-      # - name: Build Swift package
-      #   run: swift build
+      - name: Build Swift package
+        run: swift build
       - name: Run tests on Swift package
         run: swift test
