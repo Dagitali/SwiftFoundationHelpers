@@ -37,17 +37,20 @@ on:
 
 jobs:
   test:
-    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }} (${{ matrix.destination }})
     strategy:
       matrix:
+        destination:
+          - "platform=macOS"
+          - "platform=iOS Simulator,name=iPhone 14 Pro"
         os:
           - ubuntu-latest
           - macos-15
         swift:
-          # - '6.0.2'  # Not supported by setup-swift@2.1.0
+          - '6.0.2'  # Not supported by setup-swift@2.1.0
           # - '6.0.1'  # Not supported by setup-swift@2.1.0
           # - '6.0'    # Not supported by setup-swift@2.1.0
-          - '5.10.1'
+          # - '5.10.1'
           # - '5.10.0'
           # - '5.9.2'
           # - '5.9.2'
@@ -73,4 +76,4 @@ jobs:
       - name: Build Swift package
         run: swift build
       - name: Run tests on Swift package
-        run: swift test
+        run: swift test --destination ${{ matrix.destination }}
