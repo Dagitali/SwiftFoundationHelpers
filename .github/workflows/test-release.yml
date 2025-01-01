@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         os:
-          # - ubuntu-latest
+          - ubuntu-latest
           - macos-latest
         swift:
           # - '6.0.2'  # Not supported by setup-swift@2.1.0
@@ -64,9 +64,9 @@ jobs:
           # - '5.3'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v2.1.0
-        with:
-          swift-version: ${{ matrix.swift }}
+      # - uses: swift-actions/setup-swift@v2.1.0
+      #   with:
+      #     swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v4
       - name: Get Swift version
         run: swift --version
