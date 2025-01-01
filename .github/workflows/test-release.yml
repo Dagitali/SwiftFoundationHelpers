@@ -33,6 +33,7 @@ on:
       - develop
       - main
       - versions
+  workflow_dispatch:  # Allow manual triggering.
 
 jobs:
   test:
@@ -47,5 +48,9 @@ jobs:
         with:
           swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v4
-      - name: Run tests
+      - name: Get Swift version
+        run: swift --version
+      - name: Build Swift package
+        run: swift build
+      - name: Run tests on Swift package
         run: swift test
