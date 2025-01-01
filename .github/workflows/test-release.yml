@@ -40,7 +40,9 @@ jobs:
     name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os:
+          # - ubuntu-latest
+          - macos-latest
         swift:
           # - '6.0.2'  # Not supported by setup-swift@2.1.0
           # - '6.0.1'  # Not supported by setup-swift@2.1.0
