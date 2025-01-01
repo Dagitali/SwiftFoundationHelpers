@@ -1,11 +1,10 @@
-# test-swift-package.yml
+# qa-swift-package.yml
 # SwiftFoundationHelpers
 #
 # Copyright © 2024 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates testing a Swift package.
-#
-# GitFlow itself is also an opinionated feature-based Git branching model with:
+# A GitHub Actions workflow file that automates quality assuring a Swift
+# package.
 #
 # See:
 # 1. https://github.com/actions
@@ -17,7 +16,7 @@
 
 ---
 
-name: Test swift package
+name: QA swift package
 
 on:
   pull_request:       # Allow automatic triggering for PRs.
@@ -36,6 +35,25 @@ on:
   workflow_dispatch:  # Allow manual triggering.
 
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Swift environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y swift
+      - name: Set up Python environment
+        run: |
+          python3 -m venv ~/.venv
+          source ~/.venv/bin/activate
+      - name: Install Pre-Commit
+        run: |
+          pip install pre-commit
+      - name: Run Pre-Commit hooks
+        run: |
+          pre-commit run --all-files
   test:
     name: Swift ${{ matrix.swift }} on ${{ matrix.os }} (${{ matrix.destination }})
     strategy:
@@ -69,11 +87,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Get Swift version
-        run: swift --version
+        run: |
+          swift --version
       - name: Build Swift package
-        run: swift build -v
+        run: |
+          swift build -v
       - name: Run tests on Swift package (Swift CLI)
-        run: swift test -v
+        run: |
+          swift test -v
       # - name: Run tests on Swift package (Xcode)
       #   run: xcodebuild test -workspace SwiftFoundationHelpers.xcworkspace -scheme SwiftFoundationHelpers clean build -sdk iphoneos -destination "platform=iOS Simulator,OS=16.1,name=iPhone 14 Pro Max" CODE_SIGNING_ALLOWED=No
       # - name: Generate code coverage report
