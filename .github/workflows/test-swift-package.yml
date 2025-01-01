@@ -1,4 +1,4 @@
-# test-release.yml
+# test-swift-package.yml
 # SwiftFoundationHelpers
 #
 # Copyright © 2024 Dagitali LLC. All rights reserved.
@@ -17,7 +17,7 @@
 
 ---
 
-name: Test release
+name: Test swift package
 
 on:
   pull_request:       # Allow automatic triggering for PRs.
