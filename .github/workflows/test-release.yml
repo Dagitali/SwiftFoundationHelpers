@@ -76,4 +76,4 @@ jobs:
       - name: Build Swift package
         run: swift build
       - name: Run tests on Swift package
-        run: swift test --destination ${{ matrix.destination }}
+        run: swift test --destination "${{ matrix.destination }}"
