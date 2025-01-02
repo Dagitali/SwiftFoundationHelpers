@@ -1,0 +1,51 @@
+# generate-swift-package-api-docs.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2024 Dagitali LLC. All rights reserved.
+#
+# A GitHub Actions workflow file that automates generating API documentation for
+# the Swift package.
+#
+# See:
+# 1. https://github.com/actions
+# 2. https://github.com/features/actions
+# 3. https://docs.github.com/en/actions
+
+---
+
+name: Generate Swift package API docs
+
+on:
+  push:               # Allow automatic triggering for pushes.
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggering.
+
+jobs:
+  generate-docs:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    - name: Set up Swift
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest
+    - name: Build and Generate DocC
+      run: |
+        swift package resolve
+        swift package generate-documentation \
+          --target YourTargetName \
+          --output-path Docs \
+          --hosting-base-path YourRepositoryName
+    - name: Upload docs as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: DocC_Docs
+        path: Docs
+    - name: Deploy to GitHub Pages
+      if: github.event_name == 'push'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: Docs
