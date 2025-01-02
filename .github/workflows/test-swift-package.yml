@@ -5,19 +5,16 @@
 #
 # A GitHub Actions workflow file that automates testing a Swift package.
 #
-# GitFlow itself is also an opinionated feature-based Git branching model with:
-#
 # See:
 # 1. https://github.com/actions
 # 2. https://github.com/features/actions
-# 3. https://github.com/marketplace/actions/setup-swift
-# 4. https://docs.github.com/en/actions
-# 5. https://docs.github.com/en/actions/use-cases-and-examples/
+# 3. https://docs.github.com/en/actions
+# 4. https://docs.github.com/en/actions/use-cases-and-examples/
 #    building-and-testing/building-and-testing-swift
 
 ---
 
-name: Test swift package
+name: QA swift package
 
 on:
   pull_request:       # Allow automatic triggering for PRs.
@@ -69,11 +66,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Get Swift version
-        run: swift --version
+        run: |
+          swift --version
       - name: Build Swift package
-        run: swift build -v
+        run: |
+          swift build -v
       - name: Run tests on Swift package (Swift CLI)
-        run: swift test -v
+        run: |
+          swift test -v
       # - name: Run tests on Swift package (Xcode)
       #   run: xcodebuild test -workspace SwiftFoundationHelpers.xcworkspace -scheme SwiftFoundationHelpers clean build -sdk iphoneos -destination "platform=iOS Simulator,OS=16.1,name=iPhone 14 Pro Max" CODE_SIGNING_ALLOWED=No
       # - name: Generate code coverage report
