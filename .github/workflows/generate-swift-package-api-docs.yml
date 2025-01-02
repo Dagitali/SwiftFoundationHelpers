@@ -35,9 +35,9 @@ jobs:
       run: |
         swift package resolve
         swift package generate-documentation \
-          --target YourTargetName \
+          --target SwiftFoundationHelpers \
           --output-path Docs \
-          --hosting-base-path YourRepositoryName
+          --hosting-base-path SwiftFoundationHelpers
     - name: Upload docs as artifact
       uses: actions/upload-artifact@v3
       with:
