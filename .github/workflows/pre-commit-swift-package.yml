@@ -13,7 +13,7 @@
 
 ---
 
-name: Pre-commit swift package
+name: Pre-commit Swift package
 
 on:
   pull_request:       # Allow automatic triggering for PRs.

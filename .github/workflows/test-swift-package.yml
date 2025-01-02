@@ -14,7 +14,7 @@
 
 ---
 
-name: Test swift package
+name: Test Swift package
 
 on:
   pull_request:       # Allow automatic triggering for PRs.
