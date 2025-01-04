@@ -54,14 +54,14 @@ jobs:
       run: |
         swift package resolve
         xcodebuild docbuild \
-          -scheme ApiKit \
+          -scheme SwiftFoundationHelpers \
           -derivedDataPath /tmp/docbuild \
           -destination 'generic/platform=iOS'
         $(xcrun --find docc) process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/ApiKit.doccarchive \
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
             --output-path docs \
-            --hosting-base-path 'ApiKit'
-        echo "<script>window.location.href += \"/documentation/apikit\"</script>" > docs/index.html
+            --hosting-base-path 'SwiftFoundationHelpers'
+        echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html
     - name: Upload docs as artifact
       uses: actions/upload-artifact@v3
       with:
