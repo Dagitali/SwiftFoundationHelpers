@@ -61,7 +61,8 @@ jobs:
             /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
             --output-path docs \
             --hosting-base-path 'SwiftFoundationHelpers'
-            --transform-for-static-hosting
+            --transform-for-static-hosting \
+            --allow-arbitrary-catalog-directories
         echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html
     - name: Upload docs as artifact
       uses: actions/upload-artifact@v3
