@@ -7,9 +7,11 @@
 # the Swift package.
 #
 # See:
-# 1. https://github.com/actions
-# 2. https://github.com/features/actions
-# 3. https://docs.github.com/en/actions
+# 1. https://danielsaidi.com/blog/2024/03/10/automatically-publish-docc-to-
+#    github-pages-with-github-actions
+# 2. https://github.com/actions
+# 3. https://github.com/features/actions
+# 4. https://docs.github.com/en/actions
 
 ---
 
@@ -51,18 +53,25 @@ jobs:
     - name: Build and generate DocC
       run: |
         swift package resolve
-        swift package generate-documentation \
-          --target SwiftFoundationHelpers \
-          --output-path Docs \
-          --hosting-base-path SwiftFoundationHelpers
+        xcodebuild docbuild \
+          -scheme ApiKit \
+          -derivedDataPath /tmp/docbuild \
+          -destination 'generic/platform=iOS'
+        $(xcrun --find docc) process-archive \
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/ApiKit.doccarchive \
+            --output-path docs \
+            --hosting-base-path 'ApiKit'
+        echo "<script>window.location.href += \"/documentation/apikit\"</script>" > docs/index.html
     - name: Upload docs as artifact
       uses: actions/upload-artifact@v3
       with:
-        name: DocC_Docs
-        path: Docs
-    - name: Deploy to GitHub Pages
+        # name: DocC_Docs
+        path: docs
+    - id: deployment
+      name: Deploy to GitHub Pages
       if: github.event_name == 'push'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: Docs
+      uses: actions/deploy-pages@v4
+      # uses: peaceiris/actions-gh-pages@v3
+      # with:
+      #   github_token: ${{ secrets.GITHUB_TOKEN }}
+      #   publish_dir: Docs
