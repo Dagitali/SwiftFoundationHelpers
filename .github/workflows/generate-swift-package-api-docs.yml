@@ -62,7 +62,7 @@ jobs:
         $(xcrun --find docc) convert \
             /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
             --output-path docs \
-            --hosting-base-path 'SwiftFoundationHelpers'
+            --hosting-base-path 'SwiftFoundationHelpers' \
             --transform-for-static-hosting \
             --allow-arbitrary-catalog-directories
         echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html
