@@ -39,7 +39,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployments.outputs.pages_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: macos-latest
     steps:
     - name: Checkout repo
