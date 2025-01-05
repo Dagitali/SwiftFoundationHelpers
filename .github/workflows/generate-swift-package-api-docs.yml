@@ -65,7 +65,6 @@ jobs:
             --hosting-base-path 'SwiftFoundationHelpers' \
             --transform-for-static-hosting \
             --allow-arbitrary-catalog-directories
-        echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
