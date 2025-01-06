@@ -10,8 +10,14 @@
 # 1. https://danielsaidi.com/blog/2024/03/10/automatically-publish-docc-to-
 #    github-pages-with-github-actions
 # 2. https://github.com/actions
-# 3. https://github.com/features/actions
-# 4. https://docs.github.com/en/actions
+# 3. https://github.com/actions/configure-pages
+# 4. https://github.com/actions/deploy-pages
+# 5. https://github.com/actions/upload-pages-artifact
+# 6. https://github.com/features/actions
+# 7. https://github.com/maxim-lobanov/setup-xcode
+# 8. https://docs.github.com/en/actions
+# 9. https://stackoverflow.com/questions/69787722/how-to-build-docc-
+#    documentation-from-cli
 
 ---
 
@@ -21,6 +27,10 @@ on:
   push:               # Allow automatic triggering for pushes.
     branches:
       - main
+    paths:
+      - 'Sources/**'
+      - 'Package.swift'
+      - '.github/workflows/**'
   workflow_dispatch:  # Allow manual triggering.
 
 # Grant GITHUB_TOKEN permission to deploy to GitHub Pages.
@@ -33,6 +43,12 @@ permissions:
 concurrency:
   group: "pages"
   cancel-in-progress: true
+
+env:
+  SWIFT_TARGET: "SwiftFoundationHelpers"
+  DOC_OUTPUT_PATH: "./docs"
+  HOSTING_BASE_PATH: "SwiftFoundationHelpers"
+  DESTINATION: "generic/platform=iOS"
 
 # Build and deploy the DocC documentation.
 jobs:
@@ -50,24 +66,32 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest
+      - name: Cache Swift packages
+        uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-swift-
       - name: Build DocC archive
         run: |
+          set -e
           swift package resolve
           xcodebuild docbuild \
-            -scheme SwiftFoundationHelpers \
+            -scheme ${SWIFT_TARGET} \
             -derivedDataPath /tmp/docbuild \
-            -destination 'generic/platform=iOS'
+            -destination ${DESTINATION}
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
-            --output-path docs \
-            --hosting-base-path 'SwiftFoundationHelpers'
-          echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html;
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/${SWIFT_TARGET}.doccarchive \
+            --output-path ${DOC_OUTPUT_PATH} \
+            --hosting-base-path ${HOSTING_BASE_PATH}
+          echo "<script>window.location.replace('./documentation');</script>" > ${DOC_OUTPUT_PATH}/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'
+          path: ${DOC_OUTPUT_PATH}
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
