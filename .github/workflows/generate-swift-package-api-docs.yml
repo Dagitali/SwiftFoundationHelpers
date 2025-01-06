@@ -66,13 +66,13 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest
-      - name: Cache Swift packages
-        uses: actions/cache@v3
-        with:
-          path: .build
-          key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-swift-
+      # - name: Cache Swift packages
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: .build
+      #     key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-swift-
       - name: Build DocC archive
         run: |
           set -e
