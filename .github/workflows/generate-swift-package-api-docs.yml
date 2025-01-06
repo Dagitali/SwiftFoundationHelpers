@@ -80,17 +80,17 @@ jobs:
           xcodebuild docbuild \
             -scheme ${{ env.SWIFT_TARGET }} \
             -derivedDataPath /tmp/docbuild \
-            -destination ${{ env.DESTINATION }}
+            -destination '${{ env.DESTINATION }}'
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/${{ env.SWIFT_TARGET }}.doccarchive \
             --output-path ${{ env.DOC_OUTPUT_PATH }} \
-            --hosting-base-path ${{ env.HOSTING_BASE_PATH }}
+            --hosting-base-path '${{ env.HOSTING_BASE_PATH }}'
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.DOC_OUTPUT_PATH }}
+          path: '${{ env.DOC_OUTPUT_PATH }}'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
