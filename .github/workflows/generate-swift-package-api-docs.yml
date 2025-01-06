@@ -87,7 +87,7 @@ jobs:
             transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/${SWIFT_TARGET}.doccarchive \
             --output-path ${DOC_OUTPUT_PATH} \
             --hosting-base-path ${HOSTING_BASE_PATH}
-          echo "window.location.href += '/documentation/${SWIFT_TARGET,,}" > ${DOC_OUTPUT_PATH}/index.html
+          echo "window.location.href += '/documentation/${SWIFT_TARGET,,}'</script>" > ${DOC_OUTPUT_PATH}/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
