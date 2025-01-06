@@ -46,7 +46,7 @@ concurrency:
 
 env:
   SWIFT_TARGET: "SwiftFoundationHelpers"
-  DOC_OUTPUT_PATH: "./docs"
+  DOC_OUTPUT_PATH: "docs"
   HOSTING_BASE_PATH: "SwiftFoundationHelpers"
   DESTINATION: "generic/platform=iOS"
 
