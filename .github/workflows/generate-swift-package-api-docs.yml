@@ -44,12 +44,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
-env:
-  SWIFT_TARGET: "SwiftFoundationHelpers"
-  DOC_OUTPUT_PATH: "docs"
-  HOSTING_BASE_PATH: "SwiftFoundationHelpers"
-  DESTINATION: "generic/platform=iOS"
-
 # Build and deploy the DocC documentation.
 jobs:
   deploy:
@@ -66,13 +60,13 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest
-      # - name: Cache Swift packages
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: .build
-      #     key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-swift-
+      - name: Cache Swift packages
+        uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-swift-
       - name: Build DocC archive
         run: |
           set -e
@@ -87,6 +81,7 @@ jobs:
             transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
             --output-path docs \
             --hosting-base-path 'SwiftFoundationHelpers'
+          echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html;
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
