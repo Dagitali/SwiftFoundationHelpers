@@ -91,7 +91,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${DOC_OUTPUT_PATH}
+          path: ${{ env.DOC_OUTPUT_PATH }}
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
