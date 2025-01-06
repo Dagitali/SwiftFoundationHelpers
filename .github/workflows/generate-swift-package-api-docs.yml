@@ -78,19 +78,19 @@ jobs:
           set -e
           swift package resolve
           xcodebuild docbuild \
-            -scheme ${{ env.SWIFT_TARGET }} \
+            -scheme SwiftFoundationHelpers \
             -derivedDataPath /tmp/docbuild \
-            -destination '${{ env.DESTINATION }}'
+            -destination 'generic/platform=iOS'
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/${{ env.SWIFT_TARGET }}.doccarchive \
-            --output-path ${{ env.DOC_OUTPUT_PATH }} \
-            --hosting-base-path '${{ env.HOSTING_BASE_PATH }}'
+            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
+            --output-path docs \
+            --hosting-base-path 'SwiftFoundationHelpers'
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '${{ env.DOC_OUTPUT_PATH }}'
+          path: 'docs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
