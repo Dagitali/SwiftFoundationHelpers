@@ -1,7 +1,7 @@
 # generate-swift-package-api-docs.yml
 # SwiftFoundationHelpers
 #
-# Copyright © 2024 Dagitali LLC. All rights reserved.
+# Copyright © 2025 Dagitali LLC. All rights reserved.
 #
 # A GitHub Actions workflow file that automates generating API documentation for
 # the Swift package.
@@ -26,7 +26,9 @@ name: Generate Swift package API docs
 on:
   push:               # Allow automatic triggering for pushes.
     branches:
-      - main
+      - main          # Ensure this matches your environment rules
+    tags:
+      - v*.*.*        # Ensure this matches your environment rules
     paths:
       - 'Sources/**'
       - 'Package.swift'
@@ -36,8 +38,8 @@ on:
 # Grant GITHUB_TOKEN permission to deploy to GitHub Pages.
 permissions:
   contents: read
-  pages: write     # To deploy to GitHub Pages.
-  id-token: write  # To verify an appropriate deployment source.
+  pages: write        # To deploy to GitHub Pages.
+  id-token: write     # To verify an appropriate deployment source.
 
 # Allow one concurrent deployment.
 concurrency:
