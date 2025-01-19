@@ -15,9 +15,10 @@
 # 5. https://github.com/actions/upload-pages-artifact
 # 6. https://github.com/features/actions
 # 7. https://github.com/maxim-lobanov/setup-xcode
-# 8. https://docs.github.com/en/actions
-# 9. https://stackoverflow.com/questions/69787722/how-to-build-docc-
-#    documentation-from-cli
+# 8. https://github.com/maxim-lobanov/setup-xcode/issues/90
+# 9. https://docs.github.com/en/actions
+# 10. https://stackoverflow.com/questions/69787722/how-to-build-docc-
+#     documentation-from-cli
 
 ---
 
@@ -52,7 +53,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-latest
+    # runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
