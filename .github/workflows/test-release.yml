@@ -1,0 +1,64 @@
+# test-release.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2025 Dagitali LLC. All rights reserved.
+#
+# A GitHub Actions workflow file that automates testing a Swift package.
+#
+# See:
+# 1. https://github.com/FlineDev/HandySwift/blob/main/.github/workflows/
+#    main.yml
+# 2. https://github.com/FlineDev/HandySwiftUI/blob/main/.github/workflows/
+#    main.yml
+# 3. https://github.com/actions
+# 4. https://github.com/features/actions
+# 5. https://github.com/mattmassicotte/nsui/blob/main/.github/workflows/ci.yml
+# 6. https://github.com/maxim-lobanov/setup-xcode
+# 7. https://github.com/maxim-lobanov/setup-xcode/issues/90
+# 8. https://docs.github.com/en/actions
+
+---
+
+name: Test Swift package to be released
+
+on:
+  pull_request:
+    branches:
+      - bugfix/**
+      - feature/**
+    types:
+      - opened
+      - closed
+      - labeled
+  push:               # Allow automatic triggering.
+    branches:
+      - develop
+      - main
+      - versions
+  workflow_dispatch:  # Allow manual triggering.
+
+jobs:
+  test-macos:
+    runs-on: macos-15
+    strategy:
+      matrix:
+        destination:
+          - "platform=macOS"
+          - "platform=macOS,variant=Mac Catalyst"
+          - "platform=iOS Simulator,name=iPhone 14 Pro,OS=18.2"
+          - "platform=tvOS Simulator,name=Apple TV 4K (3rd generation),OS=18.2"
+          - "platform=visionOS Simulator,name=Vision Pro,OS=2.0"
+          - "platform=watchOS Simulator,name=Apple Watch Ultra 2,OS=11.2"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up Swift
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Run tests
+        run: |
+          xcodebuild test \
+            -scheme "SwiftUIHelpers" \
+            -destination "${{ matrix.destination }}" \
+            -enableCodeCoverage YES | xcpretty
