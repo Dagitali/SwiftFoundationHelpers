@@ -70,13 +70,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-swift-
       - name: Build DocC archive
+        # run: |
+        #   set -e
+        #   swift package resolve
+        #   xcodebuild docbuild \
+        #     -scheme SwiftFoundationHelpers \
+        #     -derivedDataPath /tmp/docbuild \
+        #     -destination 'generic/platform=iOS'
         run: |
           set -e
           swift package resolve
           xcodebuild docbuild \
             -scheme SwiftFoundationHelpers \
             -derivedDataPath /tmp/docbuild \
-            -destination 'generic/platform=iOS'
+            -destination 'generic/platform=macOS'
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
