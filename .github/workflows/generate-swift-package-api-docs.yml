@@ -28,8 +28,6 @@ on:
   push:               # Allow automatic triggering for pushes.
     branches:
       - main          # Ensure this matches your environment rules
-    tags:
-      - v*.*.*        # Ensure this matches your environment rules
     paths:
       - 'Sources/**'
       - 'Package.swift'
