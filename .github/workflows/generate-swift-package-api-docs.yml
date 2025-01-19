@@ -77,13 +77,20 @@ jobs:
         #     -scheme SwiftFoundationHelpers \
         #     -derivedDataPath /tmp/docbuild \
         #     -destination 'generic/platform=iOS'
+        # run: |
+        #   set -e
+        #   swift package resolve
+        #   xcodebuild docbuild \
+        #     -scheme SwiftFoundationHelpers \
+        #     -derivedDataPath /tmp/docbuild \
+        #     -destination 'generic/platform=macOS'
         run: |
           set -e
           swift package resolve
           xcodebuild docbuild \
             -scheme SwiftFoundationHelpers \
             -derivedDataPath /tmp/docbuild \
-            -destination 'generic/platform=macOS'
+            -destination 'generic/platform=iOS Simulator'
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
