@@ -6,11 +6,11 @@ import PackageDescription
 let package = Package(
     name: "SwiftFoundationHelpers",
     platforms: [
-        .iOS(.v18),
-        .macOS(.v15),
-        .tvOS(.v18),
-        .visionOS(.v2),
-        .watchOS(.v11)
+        .iOS(.v17),
+        .macOS(.v14),
+        .tvOS(.v17),
+        .visionOS(.v1),
+        .watchOS(.v10)
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to
