@@ -45,6 +45,13 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+# Define environment variables.
+env:
+  SCHEME: SwifFoundationIHelpers
+  SCHEME_LOWER: swiftfoundationhelpers
+  BUILD_PATH: /tmp/docbuild
+  OUTPUT_PATH: docs
+
 # Build and deploy the DocC documentation.
 jobs:
   deploy:
@@ -74,20 +81,23 @@ jobs:
           set -e
           swift package resolve
           xcodebuild docbuild \
-            -scheme SwiftFoundationHelpers \
-            -derivedDataPath /tmp/docbuild \
+            -scheme $SCHEME \
+            -derivedDataPath $BUILD_PATH \
             -destination 'generic/platform=iOS'
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
-            transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/SwiftFoundationHelpers.doccarchive \
-            --output-path docs \
-            --hosting-base-path 'SwiftFoundationHelpers'
-          echo "<script>window.location.href += \"/documentation/swiftfoundationhelpers\"</script>" > docs/index.html;
+            transform-for-static-hosting \
+            $BUILD_PATH/Build/Products/Debug-iphoneos/$SCHEME.doccarchive \
+            --output-path $OUTPUT_PATH \
+            --hosting-base-path $SCHEME
+          echo "<script>window.location.href += \
+            \"/documentation/$SCHEME_LOWER\"</script>" \
+            > $OUTPUT_PATH/index.html;
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'
+          path: ${{ env.OUTPUT_PATH }}
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
