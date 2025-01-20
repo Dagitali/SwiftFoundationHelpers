@@ -47,7 +47,7 @@ concurrency:
 
 # Define environment variables.
 env:
-  SCHEME: SwifFoundationIHelpers
+  SCHEME: SwiftFoundationHelpers
   SCHEME_LOWER: swiftfoundationhelpers
   BUILD_PATH: /tmp/docbuild
   OUTPUT_PATH: docs
