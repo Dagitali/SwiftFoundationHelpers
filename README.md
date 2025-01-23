@@ -38,13 +38,13 @@ To integrate SwiftFoundationHelpers into your project:
 2. Navigate to **File > Add Packages**.
 3. Enter the URL for this repository:
 
-   <https://github.com/yourusername/SwiftFoundationHelpers>
+   <https://github.com/Dagitali/SwiftFoundationHelpers>
 
 4. Select the latest version and add it to your target.
 
 ## Testing
 
-The package includes a comprehensive test suite to ensure reliability. Run tests with:
+The package includes a comprehensive test suite to ensure reliability.  Run tests with:
 
 ```bash
 swift test
@@ -52,8 +52,8 @@ swift test
 
 ## Documentation
 
-For detailed API documentation and more usage examples, visit the SwiftFoundHelpers documentation
-section (pending).  For project documentation, refer to the files listed in the subsections that
+For detailed API documentation and more usage examples, visit the [SwiftFoundationHelpers][docs]
+documentation site.  For project documentation, refer to the files listed in the subsections that
 follow.
 
 ### Community Health
@@ -86,3 +86,5 @@ SwiftFoundationHelpers is inspired by common patterns in Swift development, aimi
 boilerplate code and increase productivity.  Feedback and contributions are always appreciated!
 
 Special thanks to the Swift Foundation community for fostering creativity and collaboration.
+
+[docs]: https://dagitali.github.io/SwiftDataHelpers/documentation/swiftfoundationhelpers/
