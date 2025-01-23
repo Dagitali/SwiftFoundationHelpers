@@ -87,4 +87,4 @@ boilerplate code and increase productivity.  Feedback and contributions are alwa
 
 Special thanks to the Swift Foundation community for fostering creativity and collaboration.
 
-[docs]: https://dagitali.github.io/SwiftDataHelpers/documentation/swiftfoundationhelpers/
+[docs]: https://dagitali.github.io/SwiftFoundationHelpers/documentation/swiftfoundationhelpers/
