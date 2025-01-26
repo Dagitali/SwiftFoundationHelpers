@@ -21,7 +21,7 @@ public extension Date {
 
     /// Returns a new date by adding the specified number of days to the current date.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let date = Date()
     /// let tomorrow = date.addingDays(1)
@@ -36,7 +36,7 @@ public extension Date {
 
     /// Returns a new date by adding the specified number of months to the current date.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let date = Date()
     /// let nextMonth = date.addingMonths(1)
@@ -51,7 +51,7 @@ public extension Date {
 
     /// Returns a new date by adding the specified number of seconds to the current date.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let date = Date()
     /// let tenSecondsLater = date.addingSeconds(10)
@@ -68,7 +68,7 @@ public extension Date {
 
     /// Checks if the date is in the future.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let currentDate = Date()
     /// let futureDate = currentDate.addingTimeInterval(3600)
@@ -85,7 +85,7 @@ public extension Date {
 
     /// Checks if two dates fall on the same calendar day.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let dateComponents = DateComponents(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0)
     /// let date = Calendar.current.date(from: dateComponents)!
@@ -105,7 +105,7 @@ public extension Date {
 
     /// Returns the day of the week for the date as an integer.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let date = Date() // Assume today is Tuesday
     /// print(date.dayOfWeek()) // Output: 3
@@ -120,7 +120,7 @@ public extension Date {
 
     /// Formats the date into a string using the specified format.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let date = Date()
     /// let defaultFormattedDate = date.formatted()

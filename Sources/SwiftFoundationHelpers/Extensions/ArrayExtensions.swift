@@ -19,7 +19,7 @@ import Foundation
 public extension Array where Element: Equatable {
     /// Removes duplicate elements from the array while preserving the original order.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let numbers = [1, 2, 2, 3]
     /// let uniqueNumbers = numbers.removingDuplicates()
