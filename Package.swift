@@ -30,7 +30,10 @@ let package = Package(
         ),
         .testTarget(
             name: "StringExtensionsTests",
-            dependencies: ["SwiftFoundationHelpers"]
+            dependencies: ["SwiftFoundationHelpers"],
+            resources: [
+                .process("Resources")  // Includes `Resources` folder for use in tests.
+            ]
         ),
     ]
 )
