@@ -24,6 +24,7 @@ readability, and adopt reusable patterns tailored for modern Swift apps and pack
 Enhance your Foundation types with powerful, reusable extensions for these Swift Foundation types:
 
 * `Array`
+* `Bundle`
 * `Date`
 * `String`
 * `URL`
