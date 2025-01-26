@@ -24,7 +24,7 @@ public extension String {
 
     /// Checks if the string is empty or contains only whitespace characters.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let blankString = "\n\n"
     /// print(blankString.isBlank) // Output: true
@@ -40,7 +40,7 @@ public extension String {
 
     /// Checks if the string contains only numeric characters.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let numericString = "12345"
     /// print(numericString.isNumeric) // Output: true
@@ -56,7 +56,7 @@ public extension String {
 
     /// Checks if the string contains the specified substring.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let text = "Hello, world!"
     /// print(text.contains("world")) // Output: true
@@ -71,7 +71,7 @@ public extension String {
 
     /// Checks if the string matches a given regular expression pattern.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let regex = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
     ///
@@ -106,7 +106,7 @@ public extension String {
 
     /// Removes all whitespace and newlines from the string.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let text = " Hello \n World "
     /// print(text.removedWhitespace) // Output: "HelloWorld"
@@ -119,7 +119,7 @@ public extension String {
 
     /// Reverses the order of words in the string.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let text = "Swift Extensions are great"
     /// print(text.reversedWords) // Output: "great are Extensions Swift"
@@ -132,7 +132,7 @@ public extension String {
 
     /// Trims leading and trailing whitespace and newline characters from the string.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let text = "   Hello, world!   "
     /// print(text.trimmed)
@@ -153,7 +153,7 @@ public extension String {
     /// - Followed by an `@` symbol.
     /// - Ends with a valid domain name and top-level domain.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let email = "test@example.com"
     /// print(email.isValidEmail) // Output: true
@@ -176,7 +176,7 @@ public extension String {
     /// - Contains at least one special character (`#?!@$%^&*-`).
     /// - Has a minimum length of 8 characters.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let password = "Str0ng#Pass"
     /// print(password.isValidPassword) // Output: true
@@ -196,7 +196,7 @@ public extension String {
     /// - Starts with a `0`.
     /// - Followed by numeric characters only.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let phoneNumber = "0123456789"
     /// print(phoneNumber.isValidPhone) // Output: true

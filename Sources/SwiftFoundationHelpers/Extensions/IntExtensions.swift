@@ -19,7 +19,7 @@ import Foundation
 public extension Int {
     /// Generates a range from 0 to the current integer (exclusive).
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let range = 0.range
     /// print(range) // Output: 0..<0
@@ -38,7 +38,7 @@ public extension Int {
 
     /// Repeats a closure a specified number of times.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// var sum = 0
     /// 3.times {
