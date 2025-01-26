@@ -2,7 +2,7 @@
 //  ArrayExtensionsTests.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2024 Dagitali LLC. All rights reserved.
+//  Copyright © 2025 Dagitali LLC. All rights reserved.
 //
 
 /*

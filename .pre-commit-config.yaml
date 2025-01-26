@@ -1,7 +1,7 @@
 # .pre-commit-config.yaml
 # SwiftFoundationHelpers
 #
-# Copyright © 2024 Dagitali LLC. All rights reserved.
+# Copyright © 2025 Dagitali LLC. All rights reserved.
 #
 # The pre-commit (multi-language package manager configuration file for Git
 # pre-commit hook scripts -- i.e., hooks) configuration file. Specifies which
