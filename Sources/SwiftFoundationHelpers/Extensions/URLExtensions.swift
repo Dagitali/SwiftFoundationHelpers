@@ -25,7 +25,7 @@ public extension URL {
 
     /// Initializes a URL using a `StaticString`, ensuring compile-time safety.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let staticURL = URL("https://example.com/resource.json")
     /// print(staticURL) // Prints: https://example.com/resource.json
@@ -43,7 +43,7 @@ public extension URL {
     /// Loads and decodes a JSON file at the URL into a specified `Decodable`
     /// type.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// struct ExampleModel: Decodable {
     ///     let id: Int
@@ -76,7 +76,7 @@ public extension URL {
     /// Encodes an `Encodable` object into JSON and writes it to the file at
     /// this URL.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// struct ExampleModel: Encodable {
     ///     let id: Int
@@ -107,7 +107,7 @@ public extension URL {
 
     /// Appends a relative path component to the URL, ensuring it is valid.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// let baseURL = URL("https://example.com")
     /// if let newURL = baseURL.appendingSafePathComponent("path/to/resource") {
@@ -125,7 +125,7 @@ public extension URL {
 
    /// Adds or updates query parameters to the URL.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// if let url = URL(string: "https://example.com") {
     ///     let updatedURL = url.addingQueryParameters(["key": "value", "foo": "bar"])
@@ -153,7 +153,7 @@ public extension URL {
 
    /// Retrieves the value of a query parameter from the URL.
     ///
-    /// Example:
+    /// ## Example
     /// ```swift
     /// if let url = URL(string: "https://example.com?key=value&foo=bar") {
     ///     print(url.queryParameter(for: "key")) // Output: "value"
