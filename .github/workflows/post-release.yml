@@ -1,7 +1,7 @@
-# create-release.yml
+# post-release.yml
 # SwiftFoundationHelpers
 #
-# Copyright © 2024 Dagitali LLC. All rights reserved.
+# Copyright © 2025 Dagitali LLC. All rights reserved.
 #
 # A GitHub Actions workflow file that automates part of the GitFlow workflow.
 # Specifically, it:
