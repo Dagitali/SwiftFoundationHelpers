@@ -1,4 +1,11 @@
+# config.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2025 Dagitali LLC. All rights reserved.
+
 ---
+
+
 blank_issues_enabled: false
 contact_links:
   - name: 💬 General Question
