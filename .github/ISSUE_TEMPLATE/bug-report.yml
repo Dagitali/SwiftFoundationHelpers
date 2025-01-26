@@ -1,4 +1,10 @@
+# bug-report.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2025 Dagitali LLC. All rights reserved.
+
 ---
+
 name: "🐛 Bug Report"
 description: Report a bug
 title: "(short issue description)"
