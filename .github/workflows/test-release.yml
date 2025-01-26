@@ -59,6 +59,6 @@ jobs:
       - name: Run tests
         run: |
           xcodebuild test \
-            -scheme "SwiftUIHelpers" \
+            -scheme "SwiftFoundationHelpers" \
             -destination "${{ matrix.destination }}" \
             -enableCodeCoverage YES | xcpretty
