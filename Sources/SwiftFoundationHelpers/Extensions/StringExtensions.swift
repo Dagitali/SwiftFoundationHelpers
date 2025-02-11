@@ -13,7 +13,7 @@
 
  References:
  1. https://medium.com/stackademic/10-swift-extensions-i-use-all-the-time-a05bab1038bd
-*/
+ */
 
 import Foundation
 
@@ -24,6 +24,8 @@ public extension String {
 
     /// Checks if the string is empty or contains only whitespace characters.
     ///
+    /// - Returns: `true` if the string is empty or contains only whitespace; `false` if not.
+    ///
     /// ## Example
     /// ```swift
     /// let blankString = "\n\n"
@@ -32,13 +34,13 @@ public extension String {
     /// let nonBlankString = "  Hello  "
     /// print(nonBlankString.isBlank) // Output: false
     /// ```
-    ///
-    /// - Returns: `true` if the string is empty or contains only whitespace; `false` if not.
     var isBlank: Bool {
         trimmed.isEmpty
     }
 
     /// Checks if the string contains only numeric characters.
+    ///
+    /// - Returns: `true` if the string is numeric; `false` if not.
     ///
     /// ## Example
     /// ```swift
@@ -48,13 +50,14 @@ public extension String {
     /// let nonNumericString = "123a45"
     /// print(nonNumericString.isNumeric) // Output: false
     /// ```
-    ///
-    /// - Returns: `true` if the string is numeric; `false` if not.
     var isNumeric: Bool {
         !isEmpty && rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
     }
 
     /// Checks if the string contains the specified substring.
+    ///
+    /// - Parameter substring: The substring for which to search.
+    /// - Returns: A Boolean value indicating whether the substring is found.
     ///
     /// ## Example
     /// ```swift
@@ -62,9 +65,6 @@ public extension String {
     /// print(text.contains("world")) // Output: true
     /// print(text.contains("World")) // Output: false
     /// ```
-    ///
-    /// - Parameter substring: The substring for which to search.
-    /// - Returns: A Boolean value indicating whether the substring is found.
     func contains(_ substring: String) -> Bool {
         range(of: substring) != nil
     }
@@ -106,31 +106,33 @@ public extension String {
 
     /// Removes all whitespace and newlines from the string.
     ///
+    /// - Returns: A string with all whitespace and newlines removed.
+    ///
     /// ## Example
     /// ```swift
     /// let text = " Hello \n World "
     /// print(text.removedWhitespace) // Output: "HelloWorld"
     /// ```
-    ///
-    /// - Returns: A string with all whitespace and newlines removed.
     var removedWhitespace: String {
         replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
     }
 
     /// Reverses the order of words in the string.
     ///
+    /// - Returns: A string with the words reversed.
+    ///
     /// ## Example
     /// ```swift
     /// let text = "Swift Extensions are great"
     /// print(text.reversedWords) // Output: "great are Extensions Swift"
     /// ```
-    ///
-    /// - Returns: A string with the words reversed.
     var reversedWords: String {
         split(separator: " ").reversed().joined(separator: " ")
     }
 
     /// Trims leading and trailing whitespace and newline characters from the string.
+    ///
+    /// - Returns: A new string with whitespace and newline characters removed from both ends.
     ///
     /// ## Example
     /// ```swift
@@ -138,8 +140,6 @@ public extension String {
     /// print(text.trimmed)
     /// // Output: "Hello, world!"
     /// ```
-    ///
-    /// - Returns: A new string with whitespace and newline characters removed from both ends.
     var trimmed: String {
         trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -153,6 +153,8 @@ public extension String {
     /// - Followed by an `@` symbol.
     /// - Ends with a valid domain name and top-level domain.
     ///
+    /// - Returns: `true` if the string matches the email format; `false` if not.
+    ///
     /// ## Example
     /// ```swift
     /// let email = "test@example.com"
@@ -161,8 +163,6 @@ public extension String {
     /// let invalidEmail = "example@.com"
     /// print(invalidEmail.isValidEmail) // Output: false
     /// ```
-    ///
-    /// - Returns: `true` if the string matches the email format; `false` if not.
     var isValidEmail: Bool {
         wholeMatch(of: /^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}$/) != nil
     }
@@ -176,6 +176,8 @@ public extension String {
     /// - Contains at least one special character (`#?!@$%^&*-`).
     /// - Has a minimum length of 8 characters.
     ///
+    /// - Returns: `true` if the string meets the password strength criteria; `false` if not.
+    ///
     /// ## Example
     /// ```swift
     /// let password = "Str0ng#Pass"
@@ -184,8 +186,6 @@ public extension String {
     /// let weakPassword = "password"
     /// print(weakPassword.isValidPassword) // Output: false
     /// ```
-    ///
-    /// - Returns: `true` if the string meets the password strength criteria; `false` if not.
     var isValidPassword: Bool {
         wholeMatch(of: /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}/) != nil
     }
@@ -196,6 +196,8 @@ public extension String {
     /// - Starts with a `0`.
     /// - Followed by numeric characters only.
     ///
+    /// - Returns: `true` if the string matches the phone number format; `false` if not.
+    ///
     /// ## Example
     /// ```swift
     /// let phoneNumber = "0123456789"
@@ -204,8 +206,6 @@ public extension String {
     /// let invalidPhoneNumber = "01234abc"
     /// print(invalidPhoneNumber.isValidPhone) // Output: false
     /// ```
-    ///
-    /// - Returns: `true` if the string matches the phone number format; `false` if not.
     var isValidPhone: Bool {
         wholeMatch(of: /^0[0-9]+$/) != nil
     }
