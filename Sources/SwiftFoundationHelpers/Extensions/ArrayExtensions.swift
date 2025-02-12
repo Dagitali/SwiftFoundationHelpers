@@ -19,22 +19,25 @@ import Foundation
 public extension Array where Element: Equatable {
     /// Removes duplicate elements from the array while preserving the original order.
     ///
+    /// - Returns: A new array containing unique elements in the order they first appear.
+    ///
     /// ## Example
     /// ```swift
     /// let numbers = [1, 2, 2, 3]
     /// let uniqueNumbers = numbers.removingDuplicates()
-    /// print(uniqueNumbers) // Output: [1, 2, 3]
+    /// print(uniqueNumbers)
+    /// // Output: [1, 2, 3]
     ///
     /// let words = ["a", "b", "b", "a"]
     /// let uniqueWords = words.removingDuplicates()
-    /// print(uniqueWords) // Output: ["a", "b"]
+    /// print(uniqueWords)
+    /// // Output: ["a", "b"]
     ///
     /// let empty = [String]()
     /// let uniqueEmpty = empty.removingDuplicates()
-    /// print(uniqueEmpty) // Output: []
+    /// print(uniqueEmpty)
+    /// // Output: []
     /// ```
-    ///
-    /// - Returns: A new array containing unique elements in the order they first appear.
     func removingDuplicates() -> [Element] {
         reduce(into: []) { result, element in
             if !result.contains(element) {

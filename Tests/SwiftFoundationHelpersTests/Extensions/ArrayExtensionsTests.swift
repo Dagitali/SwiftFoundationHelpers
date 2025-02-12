@@ -21,7 +21,9 @@ import Testing
 /// A test suite to validate the functionality of  `Array` extensions.
 @Suite("ArrayExtensions Tests")
 struct ArrayExtensionsTests {
-    /// Test for removing duplicate elements from arrays.
+    /// Tests the `removingDuplicates()` method.
+    ///
+    /// This ensures it correctly cremoves duplicate elements from arrays.
     @Test
     func testRemovingDuplicates() {
         #expect([1, 2, 2, 3].removingDuplicates() == [1, 2, 3])
