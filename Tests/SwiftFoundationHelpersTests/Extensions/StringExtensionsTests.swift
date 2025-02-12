@@ -15,14 +15,23 @@
 import Testing
 @testable import SwiftFoundationHelpers
 
+// MARK: - Mocks
+
+enum Fruit: String, CaseIterable {
+    case apple, banana, cherry
+}
+
 // MARK: - Test Suites
 
-/// A test suite to validate the functionality of  `String` extensions.
+/// A test suite to validate the functionality of `String` extensions.
 @Suite("StringExtensions Tests")
 struct StringExtensionsTests {
     // MARK: Checks
 
-    /// Test for checking if the string the string contains the specified substring.
+    /// Tests the `contains()` method.
+    ///
+    /// This ensures it correctly checks if the string contains the specified
+    /// substring.
     @Test
     func testContains() {
         #expect("Hello, world!".contains("world") == true) // Case-sensitive
@@ -30,7 +39,10 @@ struct StringExtensionsTests {
         #expect("Hello, world!".contains("World") == false) // Case-insensitive
     }
 
-    /// Test for checking if the string if a string is empty or contains only whitespace characters.
+    /// Tests the `isBlank()` method.
+    ///
+    /// This ensures it correctly checks if the string is empty or contains
+    /// only whitespace characters.
     @Test
     func testIsBlank() {
         #expect("".isBlank == true) // Empty string
@@ -48,7 +60,9 @@ struct StringExtensionsTests {
         #expect(String.dash.isBlank == false) // Leading and trailing newlines
     }
 
-    /// Test for checking if the string if a string is empty or contains only whitespace characters.
+    /// Tests the `isNumeric()` method.
+    ///
+    /// This ensures it correctly checks if the string is numeric.
     @Test
     func testIsNumeric() {
         #expect("12345".isNumeric == true) // Empty string
@@ -57,7 +71,10 @@ struct StringExtensionsTests {
         #expect("".isNumeric == false) // Leading and trailing newlines
     }
 
-    /// Test for checking if the string matches a given regular expression pattern.
+    /// Tests the `isMatches()` method.
+    ///
+    /// This ensures it correctly checks if the string matches a given regular
+    /// expression pattern.
     @Test
     func testMatches() {
         #expect("abc123".matches("\\w+\\d+") == true) // Starts with letters, ends with digits
@@ -66,23 +83,130 @@ struct StringExtensionsTests {
         #expect("".matches(".+") == false) // Empty string
     }
 
+    // MARK: Matching
+
+    /// Tests the `matchClosest()` method (array version).
+    ///
+    /// This ensures it correctly matches an array element.
+    @Test(
+        arguments: zip(
+            ["appl", "banana", "xyz"],
+            [true, true, false]
+        )
+    )
+    func testMatchClosestInArray(string: String, expected: Bool) {
+        // Given...
+        let words = ["apple", "banana", "cherry"]
+
+        // When...
+        let actual = string.matchClosest(in: words)
+
+        // Then...
+        #expect(
+            (actual != nil) == expected,
+            "The closest match should be \(expected), not \(actual)."
+        )
+    }
+
+    /// Tests the `matchClosest()` method (dictionary version).
+    ///
+    /// This ensures it correctly matches a dictionary key.
+    @Test(
+        arguments: zip(
+            ["appl", "tabel", "xyz"],
+            [true, true, false]
+        )
+    )
+    func testMatchClosestInDictionary(string: String, expected: Bool) {
+        // Given...
+        let dictionary = ["apple": "fruit", "table": "furniture", "car": "vehicle"]
+
+        // When...
+        let actual = string.matchClosest(in: dictionary)
+
+        // Then...
+        #expect(
+            (actual != nil) == expected,
+            "The closest match should be \(expected), not \(actual)."
+        )
+    }
+
+    /// Tests the `matchClosest()` method (`CaseIterable` enum version).
+    ///
+    /// This ensures it correctly matches an enum case.
+    @Test(
+        arguments: zip(
+            ["appl", "bannana", "xyz"],
+            [Fruit.apple, Fruit.banana, nil]
+        )
+    )
+    func testMatchClosestInCaseIterable(string: String, expected: Fruit?) {
+        // When...
+        let actual = string.matchClosest(in: Fruit.self)
+
+        // Then...
+        #expect(
+            actual == expected,
+            "The closest match should be \(expected), not \(actual)."
+        )
+    }
+
+    /// Tests the `levenshteinDistance()` method.
+    ///
+    /// This ensures it calculates the correct Levenshtein distance between 2
+    /// strings.
+    @Test(
+        arguments: zip(
+            [
+                ("", "test"),
+                ("apple", "apple"),
+                ("flaw", "lawn"),
+                ("kitten", "sitting"),
+                ("test", "")
+            ],
+            [4, 0, 2, 3, 4]
+        )
+    )
+    func testLevenshteinDistance(strings: (String, String), expected: Int) {
+        // Given...
+        let lhs = strings.0
+        let rhs = strings.1
+
+        // When...
+        let actual = lhs.levenshteinDistance(to: rhs)
+
+        // Then...
+        #expect(
+            actual == expected,
+            "The Levenshtein distance should be \(expected), not \(actual)."
+        )
+    }
+
     // MARK: Transformation
 
-    /// Test for removing all whitespace and newlines from the string.
+    /// Tests the `removedWhitespace()` method.
+    ///
+    /// This ensures it correctly removed all whitespace and newlines from the
+    /// string.
     @Test
     func testRemovedWhitespace() {
         #expect(" Hello \n World ".removedWhitespace == "HelloWorld")
         #expect("".removedWhitespace == "")
     }
 
-    /// Test for reversing the order of words in the string.
+    /// Tests the `reversedWords()` method.
+    ///
+    /// This ensures it correctly reversed the order of words in the string.
     @Test
     func testReversedWords() {
         #expect("Swift Extensions are great".reversedWords == "great are Extensions Swift")
         #expect("".reversedWords == "")
     }
 
-    /// Test for trimming leading and trailing whitespace and newline characters from the string.
+    /// Tests the `trimmed()` method.
+    ///
+    /// This ensures it correctly trimmed leading and trailing whitespace and
+    /// newline characters from the string.
     @Test
     func testTrimmed() {
         #expect("  Hello  ".trimmed == "Hello") // Leading and trailing whitespace
@@ -92,7 +216,10 @@ struct StringExtensionsTests {
 
     // MARK: Validation
 
-    /// Test for validating whether the string is a properly formatted email address.
+    /// Tests the `validEmail()` method.
+    ///
+    /// This ensures it correctly validates whether the string is a properly
+    /// formatted email address.
     @Test
     func testIsValidEmail() {
         #expect("test@example.com".isValidEmail == true) // Simple email
@@ -103,7 +230,10 @@ struct StringExtensionsTests {
         #expect("@missingusername.com".isValidEmail == false) // Missing username
     }
 
-    /// Test for validating whether the string is a strong password.
+    /// Tests the `validPassword()` method.
+    ///
+    /// This ensures it correctly validates whether the string is a strong
+    /// password.
     @Test
     func testIsValidPassword() {
         #expect("P@ssw0rd!".isValidPassword == true) // Strong password
@@ -115,7 +245,10 @@ struct StringExtensionsTests {
         #expect("NoSpecialChar1".isValidPassword == false) // Missing special character
     }
 
-    /// Test for validating whether the string is a valid phone number.
+    /// Tests the `validPassword()` method.
+    ///
+    /// This ensures it correctly validates whether the string is a valid phone
+    /// number.
     @Test
     func testIsValidPhone() {
         #expect("0123456789".isValidPhone == true) // Starts with 0
