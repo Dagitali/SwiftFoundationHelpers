@@ -30,10 +30,12 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let blankString = "\n\n"
-    /// print(blankString.isBlank) // Output: true
+    /// print(blankString.isBlank)
+    /// // Output: true
     ///
     /// let nonBlankString = "  Hello  "
-    /// print(nonBlankString.isBlank) // Output: false
+    /// print(nonBlankString.isBlank)
+    /// // Output: false
     /// ```
     var isBlank: Bool {
         trimmed.isEmpty
@@ -46,10 +48,12 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let numericString = "12345"
-    /// print(numericString.isNumeric) // Output: true
+    /// print(numericString.isNumeric)
+    /// // Output: true
     ///
     /// let nonNumericString = "123a45"
-    /// print(nonNumericString.isNumeric) // Output: false
+    /// print(nonNumericString.isNumeric)
+    /// // Output: false
     /// ```
     var isNumeric: Bool {
         !isEmpty && rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
@@ -63,8 +67,10 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let text = "Hello, world!"
-    /// print(text.contains("world")) // Output: true
-    /// print(text.contains("World")) // Output: false
+    /// print(text.contains("world"))
+    /// // Output: true
+    /// print(text.contains("World"))
+    /// // Output: false
     /// ```
     func contains(_ substring: String) -> Bool {
         range(of: substring) != nil
@@ -72,20 +78,22 @@ public extension String {
 
     /// Checks if the string matches a given regular expression pattern.
     ///
+    /// - Parameter regex: A string containing the regular expression pattern.
+    /// - Returns: A Boolean value indicating whether the string matches the
+    ///   pattern.
+    ///
     /// ## Example
     /// ```swift
     /// let regex = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
     ///
     /// let email = "example@test.com"
-    /// print(email.matches(regex)) // Output: true
+    /// print(email.matches(regex))
+    /// // Output: true
     ///
     /// let invalidEmail = "example@.com"
-    /// print(invalidEmail.matches(regex)) // Output: false
+    /// print(invalidEmail.matches(regex))
+    /// // Output: false
     /// ```
-    ///
-    /// - Parameter regex: A string containing the regular expression pattern.
-    /// - Returns: A Boolean value indicating whether the string matches the
-    ///   pattern.
     func matches(_ regex: String) -> Bool {
         range(of: regex, options: .regularExpression) != nil
     }
@@ -113,7 +121,8 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let text = " Hello \n World "
-    /// print(text.removedWhitespace) // Output: "HelloWorld"
+    /// print(text.removedWhitespace)
+    /// // Output: "HelloWorld"
     /// ```
     var removedWhitespace: String {
         replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
@@ -126,7 +135,8 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let text = "Swift Extensions are great"
-    /// print(text.reversedWords) // Output: "great are Extensions Swift"
+    /// print(text.reversedWords)
+    /// // Output: "great are Extensions Swift"
     /// ```
     var reversedWords: String {
         split(separator: " ").reversed().joined(separator: " ")
@@ -237,7 +247,8 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let distance = "kitten".levenshteinDistance(to: "sitting")
-    /// print(distance) // Outputs: 3
+    /// print(distance)
+    /// // Outputs: 3
     /// ```
     func levenshteinDistance(to other: String) -> Int {
         let lhsCount = self.count
@@ -268,7 +279,7 @@ public extension String {
     ///
     /// The email validation is based on the following pattern:
     /// - Starts with alphanumeric characters, including optional special
-    //    characters.
+    ///   characters.
     /// - Followed by an `@` symbol.
     /// - Ends with a valid domain name and top-level domain.
     ///
@@ -278,10 +289,12 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let email = "test@example.com"
-    /// print(email.isValidEmail) // Output: true
+    /// print(email.isValidEmail)
+    /// // Output: true
     ///
     /// let invalidEmail = "example@.com"
-    /// print(invalidEmail.isValidEmail) // Output: false
+    /// print(invalidEmail.isValidEmail)
+    /// // Output: false
     /// ```
     var isValidEmail: Bool {
         wholeMatch(of: /^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,64}$/) != nil
@@ -302,10 +315,12 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let password = "Str0ng#Pass"
-    /// print(password.isValidPassword) // Output: true
+    /// print(password.isValidPassword)
+    /// // Output: true
     ///
     /// let weakPassword = "password"
-    /// print(weakPassword.isValidPassword) // Output: false
+    /// print(weakPassword.isValidPassword)
+    /// // Output: false
     /// ```
     var isValidPassword: Bool {
         wholeMatch(of: /(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}/) != nil
@@ -318,15 +333,17 @@ public extension String {
     /// - Followed by numeric characters only.
     ///
     /// - Returns: `true` if the string matches the phone number format;
-    /// `false` if not.
+    /// ` false` if not.
     ///
     /// ## Example
     /// ```swift
     /// let phoneNumber = "0123456789"
-    /// print(phoneNumber.isValidPhone) // Output: true
+    /// print(phoneNumber.isValidPhone)
+    /// // Output: true
     ///
     /// let invalidPhoneNumber = "01234abc"
-    /// print(invalidPhoneNumber.isValidPhone) // Output: false
+    /// print(invalidPhoneNumber.isValidPhone)
+    /// // Output: false
     /// ```
     var isValidPhone: Bool {
         wholeMatch(of: /^0[0-9]+$/) != nil
