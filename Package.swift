@@ -23,17 +23,29 @@ let package = Package(
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a
-        // module or a test suite.  Targets can depend on other targets in
-        // this package and products from dependencies.
+        // module or a test suite.  Targets can depend on other targets in this
+        // package and products from dependencies.
+
+        // Main module
         .target(
             name: "SwiftFoundationHelpers"
         ),
+
+        // Unit tests
         .testTarget(
-            name: "StringExtensionsTests",
+            name: "SwiftFoundationHelpersTests",
             dependencies: ["SwiftFoundationHelpers"],
             resources: [
                 .process("Resources")  // Includes `Resources` folder for use in tests.
             ]
         ),
+
+        // Integration tests
+        /*
+        .testTarget(
+            name: "SwiftFoundationHelpersIntegrationTests",
+            dependencies: ["SwiftFoundationHelpers"]
+        )
+        */
     ]
 )
