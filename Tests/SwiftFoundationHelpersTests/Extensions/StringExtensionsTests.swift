@@ -28,7 +28,8 @@ enum Fruit: String, CaseIterable {
 struct StringExtensionsTests {
     // MARK: Checks
 
-    /// Test for checking if the string the string contains the specified substring.
+    /// Test for checking if the string the string contains the specified
+    /// substring.
     @Test
     func testContains() {
         #expect("Hello, world!".contains("world") == true) // Case-sensitive
@@ -36,7 +37,8 @@ struct StringExtensionsTests {
         #expect("Hello, world!".contains("World") == false) // Case-insensitive
     }
 
-    /// Test for checking if the string if a string is empty or contains only whitespace characters.
+    /// Test for checking if the string if a string is empty or contains only
+    /// whitespace characters.
     @Test
     func testIsBlank() {
         #expect("".isBlank == true) // Empty string
@@ -54,7 +56,8 @@ struct StringExtensionsTests {
         #expect(String.dash.isBlank == false) // Leading and trailing newlines
     }
 
-    /// Test for checking if the string if a string is empty or contains only whitespace characters.
+    /// Test for checking if the string if a string is empty or contains only
+    /// whitespace characters.
     @Test
     func testIsNumeric() {
         #expect("12345".isNumeric == true) // Empty string
@@ -63,7 +66,8 @@ struct StringExtensionsTests {
         #expect("".isNumeric == false) // Leading and trailing newlines
     }
 
-    /// Test for checking if the string matches a given regular expression pattern.
+    /// Test for checking if the string matches a given regular expression
+    /// pattern.
     @Test
     func testMatches() {
         #expect("abc123".matches("\\w+\\d+") == true) // Starts with letters, ends with digits
@@ -142,7 +146,8 @@ struct StringExtensionsTests {
 
     /// Tests the `levenshteinDistance()` method.
     ///
-    /// This ensures it calculates the correct Levenshtein distance between 2 strings.
+    /// This ensures it calculates the correct Levenshtein distance between 2
+    /// strings.
     @Test(
         arguments: zip(
             [
@@ -186,7 +191,8 @@ struct StringExtensionsTests {
         #expect("".reversedWords == "")
     }
 
-    /// Test for trimming leading and trailing whitespace and newline characters from the string.
+    /// Test for trimming leading and trailing whitespace and newline
+    /// characters from the string.
     @Test
     func testTrimmed() {
         #expect("  Hello  ".trimmed == "Hello") // Leading and trailing whitespace
@@ -196,7 +202,8 @@ struct StringExtensionsTests {
 
     // MARK: Validation
 
-    /// Test for validating whether the string is a properly formatted email address.
+    /// Test for validating whether the string is a properly formatted email
+    /// address.
     @Test
     func testIsValidEmail() {
         #expect("test@example.com".isValidEmail == true) // Simple email
