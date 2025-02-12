@@ -15,6 +15,12 @@
 import Testing
 @testable import SwiftFoundationHelpers
 
+// MARK: - Mocks
+
+enum Fruit: String, CaseIterable {
+    case apple, banana, cherry
+}
+
 // MARK: - Test Suites
 
 /// A test suite to validate the functionality of  `String` extensions.
@@ -64,6 +70,104 @@ struct StringExtensionsTests {
 
         #expect("123abc".matches("^\\d+$") == false) // Doesn't start with digits
         #expect("".matches(".+") == false) // Empty string
+    }
+
+    // MARK: Matching
+
+    /// Tests the `matchClosest()` method (array version).
+    ///
+    /// This ensures it correctly matches an array element.
+    @Test(
+        arguments: zip(
+            ["appl", "banana", "xyz"],
+            [true, true, false]
+        )
+    )
+    func testMatchClosestInArray(string: String, expected: Bool) {
+        // Given...
+        let words = ["apple", "banana", "cherry"]
+
+        // When...
+        let actual = string.matchClosest(in: words)
+
+        // Then...
+        #expect(
+            (actual != nil) == expected,
+            "The closest match should be \(expected), not \(actual)."
+        )
+    }
+
+    /// Tests the `matchClosest()` method (dictionary version).
+    ///
+    /// This ensures it correctly matches a dictionary key.
+    @Test(
+        arguments: zip(
+            ["appl", "tabel", "xyz"],
+            [true, true, false]
+        )
+    )
+    func testMatchClosestInDictionary(string: String, expected: Bool) {
+        // Given...
+        let dictionary = ["apple": "fruit", "table": "furniture", "car": "vehicle"]
+
+        // When...
+        let actual = string.matchClosest(in: dictionary)
+
+        // Then...
+        #expect(
+            (actual != nil) == expected,
+            "The closest match should be \(expected), not \(actual)."
+        )
+    }
+
+    /// Tests the `matchClosest()` method (`CaseIterable` enum version).
+    ///
+    /// This ensures it correctly matches an enum case.
+    @Test(
+        arguments: zip(
+            ["appl", "bannana", "xyz"],
+            [Fruit.apple, Fruit.banana, nil]
+        )
+    )
+    func testMatchClosestInCaseIterable(string: String, expected: Fruit?) {
+        // When...
+        let actual = string.matchClosest(in: Fruit.self)
+
+        // Then...
+        #expect(
+            actual == expected,
+            "The closest match should be \(expected), not \(actual)."
+        )
+    }
+
+    /// Tests the `levenshteinDistance()` method.
+    ///
+    /// This ensures it calculates the correct Levenshtein distance between 2 strings.
+    @Test(
+        arguments: zip(
+            [
+                ("", "test"),
+                ("apple", "apple"),
+                ("flaw", "lawn"),
+                ("kitten", "sitting"),
+                ("test", "")
+            ],
+            [4, 0, 2, 3, 4]
+        )
+    )
+    func testLevenshteinDistance(strings: (String, String), expected: Int) {
+        // Given...
+        let lhs = strings.0
+        let rhs = strings.1
+
+        // When...
+        let actual = lhs.levenshteinDistance(to: rhs)
+
+        // Then...
+        #expect(
+            actual == expected,
+            "The Levenshtein distance should be \(expected), not \(actual)."
+        )
     }
 
     // MARK: Transformation
