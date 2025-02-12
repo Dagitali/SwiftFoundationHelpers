@@ -23,12 +23,14 @@ enum Fruit: String, CaseIterable {
 
 // MARK: - Test Suites
 
-/// A test suite to validate the functionality of  `String` extensions.
+/// A test suite to validate the functionality of `String` extensions.
 @Suite("StringExtensions Tests")
 struct StringExtensionsTests {
     // MARK: Checks
 
-    /// Test for checking if the string the string contains the specified
+    /// Tests the `contains()` method.
+    ///
+    /// This ensures it correctly checks if the string contains the specified
     /// substring.
     @Test
     func testContains() {
@@ -37,8 +39,10 @@ struct StringExtensionsTests {
         #expect("Hello, world!".contains("World") == false) // Case-insensitive
     }
 
-    /// Test for checking if the string if a string is empty or contains only
-    /// whitespace characters.
+    /// Tests the `isBlank()` method.
+    ///
+    /// This ensures it correctly checks if the string is empty or contains
+    /// only whitespace characters.
     @Test
     func testIsBlank() {
         #expect("".isBlank == true) // Empty string
@@ -56,8 +60,9 @@ struct StringExtensionsTests {
         #expect(String.dash.isBlank == false) // Leading and trailing newlines
     }
 
-    /// Test for checking if the string if a string is empty or contains only
-    /// whitespace characters.
+    /// Tests the `isNumeric()` method.
+    ///
+    /// This ensures it correctly checks if the string is numeric.
     @Test
     func testIsNumeric() {
         #expect("12345".isNumeric == true) // Empty string
@@ -66,8 +71,10 @@ struct StringExtensionsTests {
         #expect("".isNumeric == false) // Leading and trailing newlines
     }
 
-    /// Test for checking if the string matches a given regular expression
-    /// pattern.
+    /// Tests the `isMatches()` method.
+    ///
+    /// This ensures it correctly checks if the string matches a given regular
+    /// expression pattern.
     @Test
     func testMatches() {
         #expect("abc123".matches("\\w+\\d+") == true) // Starts with letters, ends with digits
@@ -177,22 +184,29 @@ struct StringExtensionsTests {
 
     // MARK: Transformation
 
-    /// Test for removing all whitespace and newlines from the string.
+    /// Tests the `removedWhitespace()` method.
+    ///
+    /// This ensures it correctly removed all whitespace and newlines from the
+    /// string.
     @Test
     func testRemovedWhitespace() {
         #expect(" Hello \n World ".removedWhitespace == "HelloWorld")
         #expect("".removedWhitespace == "")
     }
 
-    /// Test for reversing the order of words in the string.
+    /// Tests the `reversedWords()` method.
+    ///
+    /// This ensures it correctly reversed the order of words in the string.
     @Test
     func testReversedWords() {
         #expect("Swift Extensions are great".reversedWords == "great are Extensions Swift")
         #expect("".reversedWords == "")
     }
 
-    /// Test for trimming leading and trailing whitespace and newline
-    /// characters from the string.
+    /// Tests the `trimmed()` method.
+    ///
+    /// This ensures it correctly trimmed leading and trailing whitespace and
+    /// newline characters from the string.
     @Test
     func testTrimmed() {
         #expect("  Hello  ".trimmed == "Hello") // Leading and trailing whitespace
@@ -202,8 +216,10 @@ struct StringExtensionsTests {
 
     // MARK: Validation
 
-    /// Test for validating whether the string is a properly formatted email
-    /// address.
+    /// Tests the `validEmail()` method.
+    ///
+    /// This ensures it correctly validates whether the string is a properly
+    /// formatted email address.
     @Test
     func testIsValidEmail() {
         #expect("test@example.com".isValidEmail == true) // Simple email
@@ -214,7 +230,10 @@ struct StringExtensionsTests {
         #expect("@missingusername.com".isValidEmail == false) // Missing username
     }
 
-    /// Test for validating whether the string is a strong password.
+    /// Tests the `validPassword()` method.
+    ///
+    /// This ensures it correctly validates whether the string is a strong
+    /// password.
     @Test
     func testIsValidPassword() {
         #expect("P@ssw0rd!".isValidPassword == true) // Strong password
@@ -226,7 +245,10 @@ struct StringExtensionsTests {
         #expect("NoSpecialChar1".isValidPassword == false) // Missing special character
     }
 
-    /// Test for validating whether the string is a valid phone number.
+    /// Tests the `validPassword()` method.
+    ///
+    /// This ensures it correctly validates whether the string is a valid phone
+    /// number.
     @Test
     func testIsValidPhone() {
         #expect("0123456789".isValidPhone == true) // Starts with 0
