@@ -33,7 +33,7 @@ private struct MockModel: Codable, Equatable {
 struct BundleExtensionsTests {
     // MARK: JSON
     
-    /// Tests the `decode` method.
+    /// Tests the `decode()` method.
     ///
     /// This ensures the method correctly decodes the JSON file into the
     /// expected model.
