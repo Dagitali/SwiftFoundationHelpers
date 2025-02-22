@@ -38,7 +38,7 @@ public extension String {
     /// // Output: false
     /// ```
     var isBlank: Bool {
-        trimmed.isEmpty
+        trimmed().isEmpty
     }
 
     /// Checks if the string contains only numeric characters.
@@ -107,10 +107,10 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let text = " Hello \n World "
-    /// print(text.removedWhitespace)
+    /// print(text.removedWhitespace())
     /// // Output: "HelloWorld"
     /// ```
-    var removedWhitespace: String {
+    func removedWhitespace() -> String {
         replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
     }
 
@@ -121,10 +121,10 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let text = "Swift Extensions are great"
-    /// print(text.reversedWords)
+    /// print(text.reversedWords())
     /// // Output: "great are Extensions Swift"
     /// ```
-    var reversedWords: String {
+    func reversedWords() -> String {
         split(separator: " ").reversed().joined(separator: " ")
     }
 
@@ -137,10 +137,10 @@ public extension String {
     /// ## Example
     /// ```swift
     /// let text = "   Hello, world!   "
-    /// print(text.trimmed)
+    /// print(text.trimmed())
     /// // Output: "Hello, world!"
     /// ```
-    var trimmed: String {
+    func trimmed() -> String {
         trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
