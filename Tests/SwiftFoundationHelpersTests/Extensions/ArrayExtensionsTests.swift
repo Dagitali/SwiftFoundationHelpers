@@ -25,7 +25,7 @@ struct ArrayExtensionsTests {
     ///
     /// This ensures it correctly cremoves duplicate elements from arrays.
     @Test
-    func testRemovingDuplicates() {
+    func removingDuplicates() {
         #expect([1, 2, 2, 3].removingDuplicates() == [1, 2, 3])
         #expect(["a", "b", "b", "a"].removingDuplicates() == ["a", "b"])
         #expect([].removingDuplicates() == [String]())

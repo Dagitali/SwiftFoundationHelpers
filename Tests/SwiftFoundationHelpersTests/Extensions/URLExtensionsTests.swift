@@ -38,7 +38,7 @@ struct URLExtensionsTests {
     /// This ensures the method correctly decodes the JSON file into the
     /// expected model.
     @Test
-    func testDecode() {
+    func decode() {
         // Given...
         guard let testFileURL = Bundle.module.url(forResource: "example", withExtension: "json") else {
             Issue.record("Failed to locate test JSON file.")
@@ -63,7 +63,7 @@ struct URLExtensionsTests {
     ///
     /// This ensures the method correctly encodes the model into a JSON file.
     @Test
-    func testEncode() {
+    func encode() {
         // Given...
         let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent("output.json")
         let modelToEncode = MockModel(id: 42, name: "Encoded Object")
@@ -94,7 +94,7 @@ struct URLExtensionsTests {
     /// This ensures the method correctly adds or updates query parameters to
     /// the URL.
     @Test
-    func testAddingQueryParameters() {
+    func addingQueryParameters() {
         // Given...
         let baseURL = URL(string: "https://example.com")!
         
@@ -127,7 +127,7 @@ struct URLExtensionsTests {
             ["value", "new-value"]
         )
     )
-    func testQueryParameter(key: String, expected: String) {
+    func queryParameter(key: String, expected: String) {
         // Given...
         let url = URL(string: "https://example.com?key=value&new-key=new-value")!
         
@@ -148,7 +148,7 @@ struct URLExtensionsTests {
     /// This ensures the method correctly retrieves the value of a query
     /// parameter from the URL.
     @Test()
-    func testQueryParameter_nil() {
+    func queryParameter_nil() {
         // Given...
         let url = URL(string: "https://example.com?key=value&new-key=new-param")!
         let expected: String? = nil

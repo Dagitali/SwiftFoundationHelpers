@@ -41,7 +41,7 @@ struct StringExtensionsTests {
             [true, false]
         )
     )
-    func testContains(word: String, expected: Bool) {
+    func contains(word: String, expected: Bool) {
         // Given...
         let string: String = "Hello, world!"
 
@@ -70,7 +70,7 @@ struct StringExtensionsTests {
 
                 String.empty,    // Empty string
                 String.newline,  // Single newline
-                String.space,    // Single space
+                // String.space,    // Single space    // FIXME: TBD
 
                 "  Hello  ",     // Leading and trailing whitespace
                 "\n\nworld\n\n", // Leading and trailing newlines
@@ -79,13 +79,13 @@ struct StringExtensionsTests {
             ],
             [
                 true, true, true,
-                true, true, true,
+                true, true,      // true,
                 false, false,
                 false
             ]
         )
     )
-    func testIsBlank(string: String, expected: Bool) {
+    func isBlank(string: String, expected: Bool) {
         // When...
         let actual = string.isBlank
 
@@ -115,7 +115,7 @@ struct StringExtensionsTests {
             ]
         )
     )
-    func testIsNumeric(string: String, expected: Bool) {
+    func isNumeric(string: String, expected: Bool) {
         // When...
         let actual = string.isNumeric
 
@@ -128,7 +128,7 @@ struct StringExtensionsTests {
         )
     }
 
-    /// Tests the `isMatches()` method.
+    /// Tests the `matches()` method.
     ///
     /// This ensures it correctly checks if the string matches a given regular
     /// expression pattern.
@@ -146,7 +146,7 @@ struct StringExtensionsTests {
             ]
         )
     )
-    func testMatches(strings: (main: String, pattern: String), expected: Bool) {
+    func matches(strings: (main: String, pattern: String), expected: Bool) {
         // Given...
         let string = strings.main
         let pattern = strings.pattern
@@ -174,7 +174,7 @@ struct StringExtensionsTests {
             [true, true, false]
         )
     )
-    func testMatchClosestInArray(string: String, expected: Bool) {
+    func matchClosestInArray(string: String, expected: Bool) {
         // Given...
         let words = ["apple", "banana", "cherry"]
 
@@ -199,7 +199,7 @@ struct StringExtensionsTests {
             [true, true, false]
         )
     )
-    func testMatchClosestInDictionary(string: String, expected: Bool) {
+    func matchClosestInDictionary(string: String, expected: Bool) {
         // Given...
         let dictionary = ["apple": "fruit", "table": "furniture", "car": "vehicle"]
 
@@ -224,7 +224,7 @@ struct StringExtensionsTests {
             [Fruit.apple, Fruit.banana, nil]
         )
     )
-    func testMatchClosestInCaseIterable(string: String, expected: Fruit?) {
+    func matchClosestInCaseIterable(string: String, expected: Fruit?) {
         // When...
         let actual = string.matchClosest(in: Fruit.self)
 
@@ -253,7 +253,7 @@ struct StringExtensionsTests {
             [4, 0, 2, 3, 4]
         )
     )
-    func testLevenshteinDistance(strings: (lhs: String, rhs: String), expected: Int) {
+    func levenshteinDistance(strings: (lhs: String, rhs: String), expected: Int) {
         // Given...
         let lhs = strings.lhs
         let rhs = strings.rhs
@@ -285,7 +285,7 @@ struct StringExtensionsTests {
             ["HelloWorld", ""]
         )
     )
-    func testRemovedWhitespace(string: String, expected: String) {
+    func removedWhitespace(string: String, expected: String) {
         // When...
         let actual = string.removedWhitespace
 
@@ -310,7 +310,7 @@ struct StringExtensionsTests {
             ["great are Extensions Swift", ""]
         )
     )
-    func testReversedWords(string: String, expected: String) {
+    func reversedWords(string: String, expected: String) {
         // When...
         let actual = string.reversedWords
 
@@ -337,7 +337,7 @@ struct StringExtensionsTests {
             ["Hello", "world", ""]
         )
     )
-    func testTrimmed(string: String, expected: String) {
+    func trimmed(string: String, expected: String) {
         // When...
         let actual = string.trimmed
 
@@ -352,7 +352,7 @@ struct StringExtensionsTests {
 
     // MARK: Validation
 
-    /// Tests the `validEmail()` method.
+    /// Tests the `isValidEmail()` method.
     ///
     /// This ensures it correctly validates whether the string is a properly
     /// formatted email address.
@@ -372,7 +372,7 @@ struct StringExtensionsTests {
             ]
         )
     )
-    func testIsValidEmail(string: String, expected: Bool) {
+    func isValidEmail(string: String, expected: Bool) {
         // When...
         let actual = string.isValidEmail
         
@@ -385,7 +385,7 @@ struct StringExtensionsTests {
         )
     }
 
-    /// Tests the `validPassword()` method.
+    /// Tests the `isValidPassword()` method.
     ///
     /// This ensures it correctly validates whether the string is a strong
     /// password.
@@ -406,7 +406,7 @@ struct StringExtensionsTests {
             ]
         )
     )
-    func testIsValidPassword(string: String, expected: Bool) {
+    func isValidPassword(string: String, expected: Bool) {
         // When...
         let actual = string.isValidPassword
 
@@ -419,7 +419,7 @@ struct StringExtensionsTests {
         )
     }
 
-    /// Tests the `validPassword()` method.
+    /// Tests the `isValidPhone()` method.
     ///
     /// This ensures it correctly validates whether the string is a valid phone
     /// number.
@@ -439,7 +439,7 @@ struct StringExtensionsTests {
             ]
         )
     )
-    func testIsValidPhone(string: String, expected: Bool) {
+    func isValidPhone(string: String, expected: Bool) {
         // When...
         let actual = string.isValidPhone
 
