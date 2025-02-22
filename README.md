@@ -3,6 +3,21 @@
 A Swift package that includes an integrated collection of Swift Foundation extensions and related
 custom abstractions.
 
+## Table of Contents
+
+- [SwiftFoundationHelpers](#swiftfoundationhelpers)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Features](#features)
+  - [Installation](#installation)
+    - [Using Swift Package Manager (SPM)](#using-swift-package-manager-spm)
+  - [Documentation](#documentation)
+    - [Community Health](#community-health)
+    - [Project](#project)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
+
 ## Overview
 
 SwiftFoundationHelpers is a Swift package designed to complement Swift Foundation, Apple’s native
