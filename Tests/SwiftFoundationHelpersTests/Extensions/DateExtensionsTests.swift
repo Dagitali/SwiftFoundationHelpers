@@ -32,7 +32,7 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns a new date by adding the
     /// specified number of days to the current date.
     @Test
-    func testAddingDays() {
+    func addingDays() {
         let date = Calendar.current.date(from: dateComponents)!
         let result = date.addingDays(7)
 
@@ -44,7 +44,7 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns a new date by adding the
     /// specified number of months to the current date.
     @Test
-    func testAddingMonths() {
+    func addingMonths() {
         let date = Calendar.current.date(from: dateComponents)!
         let result = date.addingMonths(1)
 
@@ -56,7 +56,7 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns a new date by adding the
     /// specified number of seconds to the current date.
     @Test
-    func testAddingSeconds() {
+    func addingSeconds() {
         let date = Calendar.current.date(from: dateComponents)!
         let result = date.addingSeconds(60)
 
@@ -69,7 +69,7 @@ struct DateExtensionsTests {
     ///
     /// This ensures the method correctly checks if the date is in the future.
     @Test
-    func testIsInFuture() {
+    func isInFuture() {
         let currentDate = Date()
         let futureDate = currentDate.addingTimeInterval(3600) // 1 hour from now
         let pastDate = currentDate.addingTimeInterval(-3600) // 1 hour ago
@@ -85,7 +85,7 @@ struct DateExtensionsTests {
     /// This ensures the method correctly checks if two dates fall on the same
     /// calendar day.
     @Test
-    func testIsSameDay() {
+    func isSameDay() {
         let date = Calendar.current.date(from: dateComponents)!
         let sameDate = date.addingTimeInterval(3600 * 23) // Jan 1, 1970
         let nextDate = date.addingTimeInterval(3600 * 24) // Jan 2, 1970
@@ -102,7 +102,7 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns the day of the week for the
     /// date as an integer.
     @Test
-    func testDayOfWeek() {
+    func dayOfWeek() {
         let date = Calendar.current.date(from: dateComponents)! // Thursday
 
         #expect(date.dayOfWeek == 5)
@@ -115,7 +115,7 @@ struct DateExtensionsTests {
     /// This ensures the method correctly formatted dates into a strings using
     /// specified formats.
     @Test
-    func testFormatted() {
+    func formatted() {
         let utc = TimeZone(identifier: "UTC")!
 
         let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
