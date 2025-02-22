@@ -38,7 +38,7 @@ struct BundleExtensionsTests {
     /// This ensures the method correctly decodes the JSON file into the
     /// expected model.
     @Test
-    func testDecode() {
+    func decode() {
         // Given...
         let decodedModel = Bundle.module.decode("example.json", as: MockModel.self)
         

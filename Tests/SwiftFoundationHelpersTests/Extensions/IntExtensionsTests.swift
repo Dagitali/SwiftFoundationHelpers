@@ -24,7 +24,7 @@ struct IntExtensionsTests {
     ///
     /// This ensures the method correctly converts an integer to a range.
     @Test
-    func testRange() {
+    func range() {
         #expect(0.range == 0..<0)
         #expect(5.range == 0..<5)
         #expect(Array(5.range) == [0, 1, 2, 3, 4])
@@ -35,7 +35,7 @@ struct IntExtensionsTests {
     /// This ensures the method correctly repeats a block of code a number of
     /// times.
     @Test
-    func testTimes() {
+    func times() {
         var count = 0
         3.times {
             count += 1
