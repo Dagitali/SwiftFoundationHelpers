@@ -279,7 +279,7 @@ struct StringExtensionsTests {
     )
     func removedWhitespace(string: String, expected: String) {
         // When...
-        let actual = string.removedWhitespace
+        let actual = string.removedWhitespace()
 
         // Then...
         #expect(
@@ -304,7 +304,7 @@ struct StringExtensionsTests {
     )
     func reversedWords(string: String, expected: String) {
         // When...
-        let actual = string.reversedWords
+        let actual = string.reversedWords()
 
         // Then...
         #expect(
@@ -337,7 +337,7 @@ struct StringExtensionsTests {
     )
     func trimmed(string: String, expected: String) {
         // When...
-        let actual = string.trimmed
+        let actual = string.trimmed()
 
         // Then...
         #expect(

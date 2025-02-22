@@ -38,7 +38,7 @@ public extension String {
     /// // Output: false
     /// ```
     var isBlank: Bool {
-        trimmed.isEmpty
+        trimmed().isEmpty
     }
 
     /// Checks if the string contains only numeric characters.
@@ -96,52 +96,6 @@ public extension String {
     /// ```
     func matches(_ regex: String) -> Bool {
         range(of: regex, options: .regularExpression) != nil
-    }
-
-    // MARK: Transformation
-
-    /// Removes all whitespace and newlines from the string.
-    ///
-    /// - Returns: A string with all whitespace and newlines removed.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let text = " Hello \n World "
-    /// print(text.removedWhitespace)
-    /// // Output: "HelloWorld"
-    /// ```
-    var removedWhitespace: String {
-        replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
-    }
-
-    /// Reverses the order of words in the string.
-    ///
-    /// - Returns: A string with the words reversed.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let text = "Swift Extensions are great"
-    /// print(text.reversedWords)
-    /// // Output: "great are Extensions Swift"
-    /// ```
-    var reversedWords: String {
-        split(separator: " ").reversed().joined(separator: " ")
-    }
-
-    /// Trims leading and trailing whitespace and newline characters from the
-    /// string.
-    ///
-    /// - Returns: A new string with whitespace and newline characters removed
-    ///   from both ends.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let text = "   Hello, world!   "
-    /// print(text.trimmed)
-    /// // Output: "Hello, world!"
-    /// ```
-    var trimmed: String {
-        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: Matching
@@ -262,6 +216,52 @@ public extension String {
         }
 
         return matrix[lhsCount][rhsCount]
+    }
+
+    // MARK: Transformation
+
+    /// Removes all whitespace and newlines from the string.
+    ///
+    /// - Returns: A string with all whitespace and newlines removed.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let text = " Hello \n World "
+    /// print(text.removedWhitespace())
+    /// // Output: "HelloWorld"
+    /// ```
+    func removedWhitespace() -> String {
+        replacingOccurrences(of: "\\s+", with: "", options: .regularExpression)
+    }
+
+    /// Reverses the order of words in the string.
+    ///
+    /// - Returns: A string with the words reversed.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let text = "Swift Extensions are great"
+    /// print(text.reversedWords())
+    /// // Output: "great are Extensions Swift"
+    /// ```
+    func reversedWords() -> String {
+        split(separator: " ").reversed().joined(separator: " ")
+    }
+
+    /// Trims leading and trailing whitespace and newline characters from the
+    /// string.
+    ///
+    /// - Returns: A new string with whitespace and newline characters removed
+    ///   from both ends.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let text = "   Hello, world!   "
+    /// print(text.trimmed())
+    /// // Output: "Hello, world!"
+    /// ```
+    func trimmed() -> String {
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: Validation
