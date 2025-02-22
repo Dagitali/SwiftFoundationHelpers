@@ -4,6 +4,19 @@ The following is a list of sources that were helpful or inspirational when learn
 troubleshooting bugs, authoring documentation, etc.  while developing or maintaining
 [this project](README.md).
 
+## Table of Contents
+
+- [References](#references)
+  - [Table of Contents](#table-of-contents)
+  - [Markup Languages: Markdown](#markup-languages-markdown)
+  - [Markup Languages: YAML](#markup-languages-yaml)
+  - [Platforms: EditorConfig](#platforms-editorconfig)
+  - [Platforms: `git`](#platforms-git)
+  - [Platforms: `git flow`](#platforms-git-flow)
+  - [Platforms: GitHub](#platforms-github)
+  - [Platforms: `pre-commit`](#platforms-pre-commit)
+  - [Software Engineering](#software-engineering)
+
 ## Markup Languages: Markdown
 
 1. <https://daringfireball.net/projects/markdown/syntax>
