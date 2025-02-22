@@ -32,55 +32,135 @@ struct StringExtensionsTests {
     ///
     /// This ensures it correctly checks if the string contains the specified
     /// substring.
-    @Test
-    func testContains() {
-        #expect("Hello, world!".contains("world") == true) // Case-sensitive
+    @Test(
+        arguments: zip(
+            [
+                "world", // Case-sensitive
+                "World"  // Case-insensitive
+            ],
+            [true, false]
+        )
+    )
+    func testContains(word: String, expected: Bool) {
+        // Given...
+        let string: String = "Hello, world!"
 
-        #expect("Hello, world!".contains("World") == false) // Case-insensitive
+        // When...
+        let actual = string.contains(word)
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string "\(string)" should contain the word "\(word)".
+            """
+        )
     }
 
     /// Tests the `isBlank()` method.
     ///
     /// This ensures it correctly checks if the string is empty or contains
     /// only whitespace characters.
-    @Test
-    func testIsBlank() {
-        #expect("".isBlank == true) // Empty string
-        #expect(" ".isBlank == true) // Single space
-        #expect("\n\n".isBlank == true) // Multiple newlines
+    @Test(
+        arguments: zip(
+            [
+                "",              // Empty string
+                " ",             // Case-insensitive
+                "\n\n",          // Multiple newlines
 
-        #expect(String.empty.isBlank == true) // Empty string
-        #expect(String.newline.isBlank == true) // Single newline
-        #expect(String.space.isBlank == true) // Single space
+                String.empty,    // Empty string
+                String.newline,  // Single newline
+                String.space,    // Single space
 
+                "  Hello  ",     // Leading and trailing whitespace
+                "\n\nworld\n\n", // Leading and trailing newlines
 
-        #expect("  Hello  ".isBlank == false) // Leading and trailing whitespace
-        #expect("\n\nworld\n\n".isBlank == false) // Leading and trailing newlines
+                String.dash      // Leading and trailing newlines
+            ],
+            [
+                true, true, true,
+                true, true, true,
+                false, false,
+                false
+            ]
+        )
+    )
+    func testIsBlank(string: String, expected: Bool) {
+        // When...
+        let actual = string.isBlank
 
-        #expect(String.dash.isBlank == false) // Leading and trailing newlines
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string "\(string)" should be blank.
+            """
+        )
     }
 
     /// Tests the `isNumeric()` method.
     ///
     /// This ensures it correctly checks if the string is numeric.
-    @Test
-    func testIsNumeric() {
-        #expect("12345".isNumeric == true) // Empty string
+    @Test(
+        arguments: zip(
+            [
+                "12345",    // Numeric
 
-        #expect("12345abc".isNumeric == false) // Leading and trailing whitespace
-        #expect("".isNumeric == false) // Leading and trailing newlines
+                "12345abc", // Alphanumeric
+                ""          // Empty string
+            ],
+            [
+                true,
+                false, false
+            ]
+        )
+    )
+    func testIsNumeric(string: String, expected: Bool) {
+        // When...
+        let actual = string.isNumeric
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string "\(string)" should be numeric.
+            """
+        )
     }
 
     /// Tests the `isMatches()` method.
     ///
     /// This ensures it correctly checks if the string matches a given regular
     /// expression pattern.
-    @Test
-    func testMatches() {
-        #expect("abc123".matches("\\w+\\d+") == true) // Starts with letters, ends with digits
+    @Test(
+        arguments: zip(
+            [
+                ("abc123", "\\w+\\d+"), // Starts with letters, ends with digits
 
-        #expect("123abc".matches("^\\d+$") == false) // Doesn't start with digits
-        #expect("".matches(".+") == false) // Empty string
+                ("abc123", "^\\d+$"),   // Doesn't start with digits
+                ("", ".+")              // Empty string
+            ],
+            [
+                true,
+                false, false
+            ]
+        )
+    )
+    func testMatches(strings: (main: String, pattern: String), expected: Bool) {
+        // Given...
+        let string = strings.main
+        let pattern = strings.pattern
+
+        // When...
+        let actual = string.matches(pattern)
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The pattern "\(pattern)" should match the string "\(string)".
+            """
+        )
     }
 
     // MARK: Matching
@@ -104,7 +184,9 @@ struct StringExtensionsTests {
         // Then...
         #expect(
             (actual != nil) == expected,
-            "The closest match should be \(expected), not \(actual)."
+            """
+            The closest match should be \(expected), not \(actual).
+            """
         )
     }
 
@@ -127,7 +209,9 @@ struct StringExtensionsTests {
         // Then...
         #expect(
             (actual != nil) == expected,
-            "The closest match should be \(expected), not \(actual)."
+            """
+            The closest match should be \(expected), not \(actual).
+            """
         )
     }
 
@@ -147,7 +231,9 @@ struct StringExtensionsTests {
         // Then...
         #expect(
             actual == expected,
-            "The closest match should be \(expected), not \(actual)."
+            """
+            The closest match should be "\(expected)", not "\(actual)".
+            """
         )
     }
 
@@ -167,10 +253,10 @@ struct StringExtensionsTests {
             [4, 0, 2, 3, 4]
         )
     )
-    func testLevenshteinDistance(strings: (String, String), expected: Int) {
+    func testLevenshteinDistance(strings: (lhs: String, rhs: String), expected: Int) {
         // Given...
-        let lhs = strings.0
-        let rhs = strings.1
+        let lhs = strings.lhs
+        let rhs = strings.rhs
 
         // When...
         let actual = lhs.levenshteinDistance(to: rhs)
@@ -178,7 +264,9 @@ struct StringExtensionsTests {
         // Then...
         #expect(
             actual == expected,
-            "The Levenshtein distance should be \(expected), not \(actual)."
+            """
+            The Levenshtein distance should be \(expected), not \(actual).
+            """
         )
     }
 
@@ -188,30 +276,78 @@ struct StringExtensionsTests {
     ///
     /// This ensures it correctly removed all whitespace and newlines from the
     /// string.
-    @Test
-    func testRemovedWhitespace() {
-        #expect(" Hello \n World ".removedWhitespace == "HelloWorld")
-        #expect("".removedWhitespace == "")
+    @Test(
+        arguments: zip(
+            [
+                " Hello \n World ", // Leading and trailing whitespace
+                ""                  // Empty string
+            ],
+            ["HelloWorld", ""]
+        )
+    )
+    func testRemovedWhitespace(string: String, expected: String) {
+        // When...
+        let actual = string.removedWhitespace
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string with removed whitespace should be "\(expected)", not "\(actual)".
+            """
+        )
     }
 
     /// Tests the `reversedWords()` method.
     ///
     /// This ensures it correctly reversed the order of words in the string.
-    @Test
-    func testReversedWords() {
-        #expect("Swift Extensions are great".reversedWords == "great are Extensions Swift")
-        #expect("".reversedWords == "")
+    @Test(
+        arguments: zip(
+            [
+                "Swift Extensions are great", // Sentence
+                ""                            // Empty string
+            ],
+            ["great are Extensions Swift", ""]
+        )
+    )
+    func testReversedWords(string: String, expected: String) {
+        // When...
+        let actual = string.reversedWords
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string with reversed words should be "\(expected)", not "\(actual)".
+            """
+        )
     }
 
     /// Tests the `trimmed()` method.
     ///
     /// This ensures it correctly trimmed leading and trailing whitespace and
     /// newline characters from the string.
-    @Test
-    func testTrimmed() {
-        #expect("  Hello  ".trimmed == "Hello") // Leading and trailing whitespace
-        #expect("\n\nworld\n\n".trimmed == "world") // Leading and trailing newlines
-        #expect("".trimmed == "") // Empty string
+    @Test(
+        arguments: zip(
+            [
+                "  Hello  ",     // Leading and trailing whitespace
+                "\n\nworld\n\n", // Leading and trailing newlines
+                ""               // Empty string
+            ],
+            ["Hello", "world", ""]
+        )
+    )
+    func testTrimmed(string: String, expected: String) {
+        // When...
+        let actual = string.trimmed
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The trimmed string should be "\(expected)", not "\(actual)".
+            """
+        )
     }
 
     // MARK: Validation
@@ -220,42 +356,99 @@ struct StringExtensionsTests {
     ///
     /// This ensures it correctly validates whether the string is a properly
     /// formatted email address.
-    @Test
-    func testIsValidEmail() {
-        #expect("test@example.com".isValidEmail == true) // Simple email
-        #expect("user.name+tag+sorting@example.com".isValidEmail == true) // Email with special characters
+    @Test(
+        arguments: zip(
+            [
+                "test@example.com",                  // Simple email
+                "user.name+tag+sorting@example.com", // Email with special characters
 
-        #expect("plainaddress".isValidEmail == false) // Missing @ symbol.
-        #expect("missingdomain@.com".isValidEmail == false) // Missing domain
-        #expect("@missingusername.com".isValidEmail == false) // Missing username
+                "plainaddress",                      // Missing @ symbol
+                "missingdomain@.com",                // Missing domain
+                "@missingusername.com"               // Missing username
+            ],
+            [
+                true, true,
+                false , false, false
+            ]
+        )
+    )
+    func testIsValidEmail(string: String, expected: Bool) {
+        // When...
+        let actual = string.isValidEmail
+        
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string "\(string)" should be a valid email.
+            """
+        )
     }
 
     /// Tests the `validPassword()` method.
     ///
     /// This ensures it correctly validates whether the string is a strong
     /// password.
-    @Test
-    func testIsValidPassword() {
-        #expect("P@ssw0rd!".isValidPassword == true) // Strong password
-        #expect("Str0ng#Pass".isValidPassword == true) // Strong password w/ multiple special characters
+    @Test(
+        arguments: zip(
+            [
+                "P@ssw0rd!",     // Strong password
+                "Str0ng#Pass",   // Strong password w/ multiple special
 
-        #expect("weakpassword".isValidPassword == false) // No uppercase, no special character
-        #expect("SHORT1!".isValidPassword == false) // Less than 8 characters
-        #expect("NoNumber!".isValidPassword == false) // Missing number
-        #expect("NoSpecialChar1".isValidPassword == false) // Missing special character
+                "weakpassword",  // No uppercase, no special character
+                "SHORT1!",       // Less than 8 characters
+                "NoNumber!",     // Missing number
+                "NoSpecialChar1" // Missing special character
+            ],
+            [
+                true, true,
+                false , false, false, false
+            ]
+        )
+    )
+    func testIsValidPassword(string: String, expected: Bool) {
+        // When...
+        let actual = string.isValidPassword
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string "\(string)" should be a valid password.
+            """
+        )
     }
 
     /// Tests the `validPassword()` method.
     ///
     /// This ensures it correctly validates whether the string is a valid phone
     /// number.
-    @Test
-    func testIsValidPhone() {
-        #expect("0123456789".isValidPhone == true) // Starts with 0
-        #expect("0987654321".isValidPhone == true) // Random number
+    @Test(
+        arguments: zip(
+            [
+                "0123456789", // Starts with 0
+                "0987654321", // Random number
 
-        #expect("123456789".isValidPhone == false) // Does not start with 0
-        #expect("01234abc".isValidPhone == false) // Contains letters
-        #expect("".isValidPhone == false) // Empty string
+                "123456789",  // Does not start with 0
+                "01234abc",   // Contains letters
+                ""            // Empty string
+            ],
+            [
+                true, true,
+                false , false, false
+            ]
+        )
+    )
+    func testIsValidPhone(string: String, expected: Bool) {
+        // When...
+        let actual = string.isValidPhone
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The string "\(string)" should be a valid phone number.
+            """
+        )
     }
 }
