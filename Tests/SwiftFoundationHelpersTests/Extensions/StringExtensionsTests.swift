@@ -64,24 +64,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
-
-                String.empty,    // Empty string
-                String.newline,  // Single newline
-                // String.space,    // Single space    // FIXME: TBD
-
                 "  Hello  ",     // Leading and trailing whitespace
                 "\n\nworld\n\n", // Leading and trailing newlines
 
-                String.dash      // Leading and trailing newlines
+                "",              // Empty string
+                " ",             // Case-insensitive
+                "\n\n",          // Multiple newlines
             ],
             [
-                true, true, true,
-                true, true,      // true,
                 false, false,
-                false
+                true, true, true,
             ]
         )
     )
@@ -332,9 +324,15 @@ struct StringExtensionsTests {
             [
                 "  Hello  ",     // Leading and trailing whitespace
                 "\n\nworld\n\n", // Leading and trailing newlines
-                ""               // Empty string
+
+                "",              // Empty string
+                " ",             // Case-insensitive
+                "\n\n",          // Multiple newlines
             ],
-            ["Hello", "world", ""]
+            [
+                "Hello", "world",
+                "", "", "",
+            ]
         )
     )
     func trimmed(string: String, expected: String) {

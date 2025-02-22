@@ -98,20 +98,6 @@ public extension String {
         range(of: regex, options: .regularExpression) != nil
     }
 
-    // MARK: Constants
-
-    /// A constant for a dash character.
-    static let dash = "-"
-
-    /// A constant for an empty string.
-    static let empty = ""
-
-    /// A constant for a newline character.
-    static let newline = "\n"
-
-    /// A constant for a single space character.
-    static let space = " "
-
     // MARK: Transformation
 
     /// Removes all whitespace and newlines from the string.
