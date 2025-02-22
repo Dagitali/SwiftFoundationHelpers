@@ -32,7 +32,7 @@ private struct MockModel: Codable, Equatable {
 @Suite("URLExtensions Tests")
 struct URLExtensionsTests {
     // MARK: JSON
-
+    
     /// Tests the `decode()` method.
     ///
     /// This ensures the method correctly decodes the JSON file into the
@@ -44,10 +44,10 @@ struct URLExtensionsTests {
             Issue.record("Failed to locate test JSON file.")
             return
         }
-
+        
         // When...
         let decodedModel: MockModel? = testFileURL.decode(as: MockModel.self)
-
+        
         // Then...
         #expect(
             decodedModel != nil,
@@ -58,7 +58,7 @@ struct URLExtensionsTests {
             "Decoded model does not match expected value."
         )
     }
-
+    
     /// Tests the `encode()` method.
     ///
     /// This ensures the method correctly encodes the model into a JSON file.
@@ -67,28 +67,28 @@ struct URLExtensionsTests {
         // Given...
         let outputURL = FileManager.default.temporaryDirectory.appendingPathComponent("output.json")
         let modelToEncode = MockModel(id: 42, name: "Encoded Object")
-
+        
         // When...
         outputURL.encode(modelToEncode)
-
+        
         // Then...
         #expect(
             FileManager.default.fileExists(atPath: outputURL.path) == true,
             "Encoded file should exist."
         )
-
+        
         // When...
         let decodedModel: MockModel? = outputURL.decode(as: MockModel.self)
-
+        
         // THen...
         #expect(
             decodedModel == modelToEncode,
             "Decoded model should match the encoded model."
         )
     }
-
+    
     // MARK: Queries
-
+    
     /// Tests the `addingQueryParameters()` method.
     ///
     /// This ensures the method correctly adds or updates query parameters to
@@ -97,38 +97,71 @@ struct URLExtensionsTests {
     func testAddingQueryParameters() {
         // Given...
         let baseURL = URL(string: "https://example.com")!
-
+        
         // When...
-        let newURL = baseURL.addingQueryParameters(["key": "value", "foo": "bar"])
-
+        let newURL = baseURL.addingQueryParameters(["key": "value"])
+        
+        // Then...
+        #expect(newURL?.absoluteString == "https://example.com?key=value")
+        
+        // Given...
+        let existingURL = newURL!
+        
+        // When...
+        let updatedURL = existingURL.addingQueryParameters(["new-key": "new-param"])
+        
         // Then...
         #expect(
-            newURL?.absoluteString == "https://example.com?key=value&foo=bar" ||
-            newURL?.absoluteString == "https://example.com?foo=bar&key=value"
+            updatedURL?.absoluteString == "https://example.com?key=value&new-key=new-param" ||
+            updatedURL?.absoluteString == "https://example.com?foo=bar&new-key=new-param"
         )
-
+    }
+    
+    /// Tests the `queryParameter()` method.
+    ///
+    /// This ensures the method correctly retrieves the value of a query
+    /// parameter from the URL.
+    @Test(
+        arguments: zip(
+            ["key", "new-key"],
+            ["value", "new-value"]
+        )
+    )
+    func testQueryParameter(key: String, expected: String) {
         // Given...
-        let existingURL = URL(string: "https://example.com?existing=param")!
-
+        let url = URL(string: "https://example.com?key=value&new-key=new-value")!
+        
         // When...
-        let updatedURL = existingURL.addingQueryParameters(["new": "param"])
-
+        let actual = url.queryParameter(for: key)
+        
         // Then...
-        #expect(updatedURL?.absoluteString == "https://example.com?existing=param&new=param")
+        #expect(
+            actual == expected,
+            """
+            The query parameter value should be "\(expected)", not "\(actual)".
+            """
+        )
     }
 
     /// Tests the `queryParameter()` method.
     ///
     /// This ensures the method correctly retrieves the value of a query
     /// parameter from the URL.
-    @Test
-    func testQueryParameter() {
+    @Test()
+    func testQueryParameter_nil() {
         // Given...
-        let url = URL(string: "https://example.com?key=value&foo=bar")!
+        let url = URL(string: "https://example.com?key=value&new-key=new-param")!
+        let expected: String? = nil
+
+        // When...
+        let actual = url.queryParameter(for: "missing")
 
         // Then...
-        #expect(url.queryParameter(for: "key") == "value")
-        #expect(url.queryParameter(for: "foo") == "bar")
-        #expect(url.queryParameter(for: "missing") == nil)
+        #expect(
+            actual == expected,
+            """
+            The query parameter value should be "\(expected)", not "\(actual)".
+            """
+        )
     }
 }
