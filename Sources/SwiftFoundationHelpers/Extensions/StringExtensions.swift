@@ -38,7 +38,7 @@ public extension String {
     /// // Output: false
     /// ```
     var isBlank: Bool {
-        trimmed().isEmpty
+        isEmpty || trimmed().isEmpty
     }
 
     /// Checks if the string contains only numeric characters.
