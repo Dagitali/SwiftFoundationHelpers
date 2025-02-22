@@ -198,7 +198,11 @@ public extension String {
     ///
     /// ## Example
     /// ```swift
-    /// let dataDictionary = ["apple": "fruit", "table": "furniture", "car": "vehicle"]
+    /// let dataDictionary = [
+    ///     "apple": "fruit",
+    ///     "table": "furniture",
+    ///     "car": "vehicle"
+    /// ]
     /// let userInput = "appl"
     /// if let closestMatch = userInput.matchClosest(in: dataDictionary) {
     ///     print("Did you mean: \(closestMatch)?")
@@ -239,7 +243,8 @@ public extension String {
         return nil
     }
 
-    /// Calculates the Levenshtein distance between the current string and another string.
+    /// Calculates the Levenshtein distance between the current string and
+    /// another string.
     ///
     /// - Parameter other: The string to compare against.
     /// - Returns: The Levenshtein distance between the two strings.

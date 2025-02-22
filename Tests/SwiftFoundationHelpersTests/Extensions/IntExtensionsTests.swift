@@ -20,7 +20,9 @@ import Testing
 /// A test suite to validate the functionality of  `Int` extensions.
 @Suite("IntExtensions Tests")
 struct IntExtensionsTests {
-    /// Test for converting an integer to a range.
+    /// Tests the `range()` method.
+    ///
+    /// This ensures the method correctly converts an integer to a range.
     @Test
     func testRange() {
         #expect(0.range == 0..<0)
@@ -28,7 +30,10 @@ struct IntExtensionsTests {
         #expect(Array(5.range) == [0, 1, 2, 3, 4])
     }
 
-    /// Test for repeating a block of code a number of times.
+    /// Tests the `times()` method.
+    ///
+    /// This ensures the method correctly repeats a block of code a number of
+    /// times.
     @Test
     func testTimes() {
         var count = 0

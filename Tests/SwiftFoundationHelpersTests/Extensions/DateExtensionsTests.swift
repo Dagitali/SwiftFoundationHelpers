@@ -27,7 +27,10 @@ struct DateExtensionsTests {
 
     // MARK: Arithmetic
 
-    /// Test for returning a new date by adding the specified number of days to the current date.
+    /// Tests the `addingDays()` method.
+    ///
+    /// This ensures the method correctly returns a new date by adding the
+    /// specified number of days to the current date.
     @Test
     func testAddingDays() {
         let date = Calendar.current.date(from: dateComponents)!
@@ -36,7 +39,10 @@ struct DateExtensionsTests {
         #expect(Calendar.current.dateComponents([.year, .month, .day], from: result).day == 8)
     }
 
-    /// Test for returning a new date by adding the specified number of months to the current date.
+    /// Tests the `addingMonths()` method.
+    ///
+    /// This ensures the method correctly returns a new date by adding the
+    /// specified number of months to the current date.
     @Test
     func testAddingMonths() {
         let date = Calendar.current.date(from: dateComponents)!
@@ -45,7 +51,10 @@ struct DateExtensionsTests {
         #expect(Calendar.current.dateComponents([.year, .month], from: result).month == 2)
     }
 
-    /// Test for returning a new date by adding the specified number of seconds to the current date.
+    /// Tests the `addingSeconds()` method.
+    ///
+    /// This ensures the method correctly returns a new date by adding the
+    /// specified number of seconds to the current date.
     @Test
     func testAddingSeconds() {
         let date = Calendar.current.date(from: dateComponents)!
@@ -56,7 +65,9 @@ struct DateExtensionsTests {
 
     // MARK: Checks
 
-    /// Test for checking if the date is in the future.
+    /// Tests the `isInFuture()` method.
+    ///
+    /// This ensures the method correctly checks if the date is in the future.
     @Test
     func testIsInFuture() {
         let currentDate = Date()
@@ -69,7 +80,10 @@ struct DateExtensionsTests {
         #expect(currentDate.isInFuture == false)
     }
 
-    /// Test for checking if two dates fall on the same calendar day.
+    /// Tests the `isSameDay()` method.
+    ///
+    /// This ensures the method correctly checks if two dates fall on the same
+    /// calendar day.
     @Test
     func testIsSameDay() {
         let date = Calendar.current.date(from: dateComponents)!
@@ -83,7 +97,10 @@ struct DateExtensionsTests {
 
     // MARK: Conversions (Integer)
 
-    /// Test for returning the day of the week for the date as an integer.
+    /// Tests the `dayOfWeek()` method.
+    ///
+    /// This ensures the method correctly returns the day of the week for the
+    /// date as an integer.
     @Test
     func testDayOfWeek() {
         let date = Calendar.current.date(from: dateComponents)! // Thursday
@@ -93,7 +110,10 @@ struct DateExtensionsTests {
 
     // MARK: Conversions (String)
 
-    /// Test for formatting dates into a strings using specified formats.
+    /// Tests the `formatted()` method.
+    ///
+    /// This ensures the method correctly formatted dates into a strings using
+    /// specified formats.
     @Test
     func testFormatted() {
         let utc = TimeZone(identifier: "UTC")!

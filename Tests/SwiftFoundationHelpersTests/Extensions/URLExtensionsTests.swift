@@ -33,7 +33,7 @@ private struct MockModel: Codable, Equatable {
 struct URLExtensionsTests {
     // MARK: JSON
 
-    /// Tests the `decode` method.
+    /// Tests the `decode()` method.
     ///
     /// This ensures the method correctly decodes the JSON file into the
     /// expected model.
@@ -59,7 +59,7 @@ struct URLExtensionsTests {
         )
     }
 
-    /// Tests the `encode` method.
+    /// Tests the `encode()` method.
     ///
     /// This ensures the method correctly encodes the model into a JSON file.
     @Test
@@ -89,7 +89,7 @@ struct URLExtensionsTests {
 
     // MARK: Queries
 
-    /// Tests the `addingQueryParameters` method.
+    /// Tests the `addingQueryParameters()` method.
     ///
     /// This ensures the method correctly adds or updates query parameters to
     /// the URL.
@@ -117,7 +117,7 @@ struct URLExtensionsTests {
         #expect(updatedURL?.absoluteString == "https://example.com?existing=param&new=param")
     }
 
-    /// Tests the `queryParameter` method.
+    /// Tests the `queryParameter()` method.
     ///
     /// This ensures the method correctly retrieves the value of a query
     /// parameter from the URL.
