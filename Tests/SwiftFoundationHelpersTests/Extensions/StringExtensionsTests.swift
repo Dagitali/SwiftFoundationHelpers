@@ -264,6 +264,39 @@ struct StringExtensionsTests {
 
     // MARK: Transformation
 
+    /// Tests the `normalized()` method.
+    ///
+    /// This ensures it correctly trimmed leading and trailing whitespace and
+    /// newline characters from the string and converted all letters to lowercase.
+    @Test(
+        arguments: zip(
+            [
+                "  Hello  ",     // Leading and trailing whitespace
+                "\n\nworld\n\n", // Leading and trailing newlines
+
+                "",              // Empty string
+                " ",             // Case-insensitive
+                "\n\n",          // Multiple newlines
+            ],
+            [
+                "hello", "world",
+                "", "", "",
+            ]
+        )
+    )
+    func normalized(string: String, expected: String) {
+        // When...
+        let actual = string.normalized()
+
+        // Then...
+        #expect(
+            actual == expected,
+            """
+            The trimmed string should be "\(expected)", not "\(actual)".
+            """
+        )
+    }
+
     /// Tests the `removedWhitespace()` method.
     ///
     /// This ensures it correctly removed all whitespace and newlines from the

@@ -220,6 +220,22 @@ public extension String {
 
     // MARK: Transformation
 
+    /// Normalizes the string by trimming all leading and trailing whitespace
+    /// and newlines and converting all letters to lowercase.
+    ///
+    /// - Returns: A string with trimmed whitespace and newlines, converted to
+    ///   lowercase.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let text = " Hello World "
+    /// print(text.normalized())
+    /// // Output: "hello world"
+    /// ```
+    func normalized() -> String {
+        trimmed().lowercased()
+    }
+
     /// Removes all whitespace and newlines from the string.
     ///
     /// - Returns: A string with all whitespace and newlines removed.
