@@ -3,10 +3,7 @@
 Below is the Code of Conduct to which all of our contributors and participants are expected to
 adhere.
 
-## Table of Contents
-
 - [Code of Conduct](#code-of-conduct)
-  - [Table of Contents](#table-of-contents)
   - [Our Pledge](#our-pledge)
   - [Our Standards](#our-standards)
   - [Enforcement Responsibilities](#enforcement-responsibilities)
