@@ -3,10 +3,7 @@
 A Swift package that includes an integrated collection of Swift Foundation extensions and related
 custom abstractions.
 
-## Table of Contents
-
 - [SwiftFoundationHelpers](#swiftfoundationhelpers)
-  - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Features](#features)
   - [Installation](#installation)
