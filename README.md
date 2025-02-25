@@ -8,6 +8,8 @@
 ![GitHub issues](https://img.shields.io/github/issues/Dagitali/SwiftFoundationHelpers)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Dagitali/SwiftFoundationHelpers)
 ![GitHub top language](https://img.shields.io/github/languages/top/Dagitali/SwiftFoundationHelpers)
+![GitHub repo size](https://img.shields.io/github/repo-size/Dagitali/SwiftFoundationHelpers)
+![GitHub contributors](https://img.shields.io/github/contributors/Dagitali/SwiftFoundationHelpers)
 
 A Swift package that includes an integrated collection of Swift Foundation extensions and related
 custom abstractions.
