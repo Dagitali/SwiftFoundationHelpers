@@ -1,0 +1,37 @@
+# release.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2025 Dagitali LLC. All rights reserved.
+#
+# A GitHub configuration file automatically generating release notes.
+#
+# See:
+# 1. https://github.com/actions
+# 2. https://github.com/features/actions
+# 3. https://github.com/marketplace/actions/gitflow-workflow-action
+# 4. https://docs.github.com/en/actions
+# 5. https://docs.github.com/en/repositories/releasing-projects-on-github/
+#    automatically-generated-release-notes
+
+---
+
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - octocat
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - Semver-Major
+        - breaking-change
+    - title: Exciting New Features 🎉
+      labels:
+        - Semver-Minor
+        - enhancement
+    - title: Other Changes
+      labels:
+        - "*"
