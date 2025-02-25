@@ -1,5 +1,13 @@
 # SwiftFoundationHelpers
 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Dagitali/SwiftFoundationHelpers?sort=semver)
+![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/ci.yml/badge.svg)
+![Codecov](https://codecov.io/gh/Dagitali/SwiftFoundationHelpers/branch/main/graph/badge.svg)
+![GitHub](https://img.shields.io/github/license/Dagitali/SwiftFoundationHelpers)
+![GitHub issues](https://img.shields.io/github/issues/Dagitali/SwiftFoundationHelpers)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Dagitali/SwiftFoundationHelpers)
+![GitHub top language](https://img.shields.io/github/languages/top/Dagitali/SwiftFoundationHelpers)
+
 A Swift package that includes an integrated collection of Swift Foundation extensions and related
 custom abstractions.
 
