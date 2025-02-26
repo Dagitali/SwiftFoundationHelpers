@@ -11,8 +11,6 @@
 
 ---
 
-# .github/release.yml
-
 changelog:
   exclude:
     labels:
