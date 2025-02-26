@@ -8,9 +8,9 @@
 #
 # 1. Autolabels the `release` and `hotfix` branches, according to the current
 #    branch name.
-# 2. Creates a `release` branch, merge it back to the `develop` branch, and
-#    trigger integrations if the PR is labeled `release` or `hotfix` and merged
-#    to the `main` branch.
+# 2. Creates a `release` branch, merges it back to the `develop` branch, and
+#    triggers integrations if the PR is labeled `release` or `hotfix` and
+#    merged to the `main` branch.
 #
 # GitFlow itself is also an opinionated feature-based Git branching model with:
 #

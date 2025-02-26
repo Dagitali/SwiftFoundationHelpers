@@ -42,6 +42,8 @@
 
 ---
 
+name: Create release
+
 on:
   workflow_dispatch:
     inputs:
@@ -49,8 +51,6 @@ on:
         type: string
         required: true
         description: "Version to release"
-
-name: Create release
 
 jobs:
   pre_release:
