@@ -1,10 +1,9 @@
-# generate-swift-package-api-docs.yml
+# publish.yml
 # SwiftFoundationHelpers
 #
 # Copyright © 2025 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates generating API documentation for
-# the Swift package.
+# A GitHub Actions workflow file that automates software project publishing.
 #
 # See:
 # 1. https://danielsaidi.com/blog/2024/03/10/automatically-publish-docc-to-
@@ -22,7 +21,7 @@
 
 ---
 
-name: Generate Swift package API docs
+name: Publish
 
 on:
   push:               # Allow automatic triggering for pushes.
