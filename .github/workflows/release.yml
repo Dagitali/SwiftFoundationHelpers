@@ -1,0 +1,69 @@
+# release.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2025 Dagitali LLC. All rights reserved.
+#
+# A GitHub Actions workflow file that automates the GitFlow workflow, where one
+# has a `develop` branch for continuous development and a `main` (production)
+# branch that would automatically deploy to production.  In between that, a
+# `release` branch is created from `develop` to perform release preparation
+# tasks before being merged to `main`. Occasionally, a `hotfix` branch is
+# created from `main` for hot fixes.
+#
+# GitFlow itself is also an opinionated feature-based Git branching model with:
+#
+# * 2 long-running branches:
+#   1. `develop`: For continuous development
+#   2. `main`: For automatically deploying to production
+#
+# * Short-lived branches in between with enforced prefix conventions:
+#   1. `feature/`:
+#      * Created from the `develop` branch.
+#      * Used to add/enhance/refactor features.
+#      * Removed after merging to the `develop` branch.
+#   2. `release/`:
+#      * Created from the `develop` branch.
+#      * Used to perform release preparation tasks.
+#      * Removed after merging to both the `main` and `develop` branches.
+#   3. `hotfix/`:
+#      * Created from the `main` branch.
+#      * Used to create hot fixes (i.e., emergency software patches).
+#      * Removed after merging to both the `main` and `develop` branches.
+#
+# See:
+# 1. https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-
+#    workflow
+# 2. https://github.com/actions
+# 3. https://github.com/features/actions
+# 4. https://github.com/marketplace/actions/gitflow-workflow-action
+# 5. https://docs.github.com/en/actions
+# 6. https://nvie.com/posts/a-successful-git-branching-model/
+
+---
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: "SemVer Version to release"
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        uses: hoangvvo/gitflow-workflow-action@0.3.7
+        with:
+          develop_branch: develop
+          main_branch: main
+          merge_back_from_main: false
+          version: ${{ inputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
