@@ -1,16 +1,14 @@
-# post-release.yml
+# release.yml
 # SwiftFoundationHelpers
 #
 # Copyright © 2025 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates part of the GitFlow workflow.
-# Specifically, it:
-#
-# 1. Autolabels the `release` and `hotfix` branches, according to the current
-#    branch name.
-# 2. Creates a `release` branch, merges it back to the `develop` branch, and
-#    triggers integrations if the PR is labeled `release` or `hotfix` and
-#    merged to the `main` branch.
+# A GitHub Actions workflow file that automates the GitFlow workflow, where one
+# has a `develop` branch for continuous development and a `main` (production)
+# branch that would automatically deploy to production.  In between that, a
+# `release` branch is created from `develop` to perform release preparation
+# tasks before being merged to `main`. Occasionally, a `hotfix` branch is
+# created from `main` for hot fixes.
 #
 # GitFlow itself is also an opinionated feature-based Git branching model with:
 #
@@ -43,21 +41,29 @@
 
 ---
 
-name: Post release
+name: Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: "SemVer Version to release"
   pull_request:
     types:
-      - opened
       - closed
-      - labeled
 
 jobs:
-  release_workflow:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - name: gitflow-workflow-action release workflows
-        uses: hoangvvo/gitflow-workflow-action@0.2.4
+      - name: Release
+        uses: hoangvvo/gitflow-workflow-action@0.3.7
         with:
           develop_branch: develop
           main_branch: main
+          merge_back_from_main: false
+          version: ${{ inputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

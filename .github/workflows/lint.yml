@@ -1,10 +1,9 @@
-# pre-commit-swift-package.yml
+# lint.yml
 # SwiftFoundationHelpers
 #
 # Copyright © 2025 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates quality assuring a Swift
-# package using the Pre-Commit CLI.
+# A GitHub Actions workflow file that automates software project linting.
 #
 # See:
 # 1. https://github.com/actions
@@ -13,7 +12,7 @@
 
 ---
 
-name: Pre-commit Swift package
+name: Lint
 
 on:
   pull_request:       # Allow automatic triggering for PRs.
@@ -27,7 +26,7 @@ on:
   workflow_dispatch:  # Allow manual triggering.
 
 jobs:
-  pre-commit:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
