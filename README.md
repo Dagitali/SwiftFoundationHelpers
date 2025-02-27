@@ -1,8 +1,11 @@
 # SwiftFoundationHelpers
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Dagitali/SwiftFoundationHelpers?sort=semver)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/generate-swift-package-api-docs.yml/badge.svg)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/test-release.yml/badge.svg)
+![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/lint.yml/badge.svg)
+![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/test.yml/badge.svg)
+![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/release.yml/badge.svg)
+![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/publish.yml/badge.svg)
+![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/create=github-release.yml/badge.svg)
 ![Codecov](https://codecov.io/gh/Dagitali/SwiftFoundationHelpers/branch/main/graph/badge.svg)
 ![GitHub](https://img.shields.io/github/license/Dagitali/SwiftFoundationHelpers)
 ![GitHub issues](https://img.shields.io/github/issues/Dagitali/SwiftFoundationHelpers)
