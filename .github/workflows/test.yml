@@ -1,9 +1,9 @@
-# test-release.yml
+# test.yml
 # SwiftFoundationHelpers
 #
 # Copyright © 2025 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates testing a Swift package.
+# A GitHub Actions workflow file that automates software project testing.
 #
 # See:
 # 1. https://github.com/FlineDev/HandySwift/blob/main/.github/workflows/
