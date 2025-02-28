@@ -13,7 +13,7 @@
 
 ---
 
-name: Post-release
+name: Publish
 
 on:
   push:
@@ -21,7 +21,7 @@ on:
       - v*.*.*
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
