@@ -3,12 +3,12 @@
 #
 # Copyright © 2025 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates the GitFlow workflow, where one
-# has a `develop` branch for continuous development and a `main` (production)
-# branch that would automatically deploy to production.  In between that, a
-# `release` branch is created from `develop` to perform release preparation
-# tasks before being merged to `main`. Occasionally, a `hotfix` branch is
-# created from `main` for hot fixes.
+# A GitHub Actions workflow file that automates releasing software projects
+# using GitFlow, where one has a `develop` branch for continuous development
+# and a `main` (production) branch that would automatically deploy to
+# production.  In between that, a `release` branch is created from `develop` to
+# perform release preparation tasks before being merged to `main`.
+# Occasionally, a `hotfix` branch is created from `main` for hot fixes.
 #
 # GitFlow itself is also an opinionated feature-based Git branching model with:
 #
@@ -17,17 +17,21 @@
 #   2. `main`: For automatically deploying to production
 #
 # * Short-lived branches in between with enforced prefix conventions:
-#   1. `feature/`:
+#   1. `bugfix/`:
 #      * Created from the `develop` branch.
 #      * Used to add/enhance/refactor features.
 #      * Removed after merging to the `develop` branch.
-#   2. `release/`:
+#   2. `feature/`:
 #      * Created from the `develop` branch.
-#      * Used to perform release preparation tasks.
-#      * Removed after merging to both the `main` and `develop` branches.
+#      * Used to add/enhance/refactor features.
+#      * Removed after merging to the `develop` branch.
 #   3. `hotfix/`:
 #      * Created from the `main` branch.
 #      * Used to create hot fixes (i.e., emergency software patches).
+#      * Removed after merging to both the `main` and `develop` branches.
+#   4. `release/`:
+#      * Created from the `develop` branch.
+#      * Used to perform release preparation tasks.
 #      * Removed after merging to both the `main` and `develop` branches.
 #
 # See:

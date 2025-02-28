@@ -1,0 +1,102 @@
+# document.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2025 Dagitali LLC. All rights reserved.
+#
+# A GitHub Actions workflow file that automates documenting software projects.
+#
+# See:
+# 1. https://danielsaidi.com/blog/2024/03/10/automatically-publish-docc-to-
+#    github-pages-with-github-actions
+# 2. https://github.com/actions
+# 3. https://github.com/actions/configure-pages
+# 4. https://github.com/actions/deploy-pages
+# 5. https://github.com/actions/upload-pages-artifact
+# 6. https://github.com/features/actions
+# 7. https://github.com/maxim-lobanov/setup-xcode
+# 8. https://github.com/maxim-lobanov/setup-xcode/issues/90
+# 9. https://docs.github.com/en/actions
+# 10. https://stackoverflow.com/questions/69787722/how-to-build-docc-
+#     documentation-from-cli
+
+---
+
+name: Document
+
+on:
+  push:               # Allow automatic triggering for pushes.
+    branches:
+      - main          # Ensure this matches your environment rules
+    paths:
+      - 'Sources/**'
+      - 'Package.swift'
+      - '.github/workflows/**'
+  workflow_dispatch:  # Allow manual triggering.
+
+# Grant GITHUB_TOKEN permission to deploy to GitHub Pages.
+permissions:
+  contents: read
+  pages: write        # To deploy to GitHub Pages.
+  id-token: write     # To verify an appropriate deployment source.
+
+# Allow one concurrent deployment.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Define environment variables.
+env:
+  SCHEME: SwiftFoundationHelpers
+  SCHEME_LOWER: swiftfoundationhelpers
+  BUILD_PATH: /tmp/docbuild
+  OUTPUT_PATH: docs
+
+# Build and deploy the DocC documentation.
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # runs-on: macos-latest
+    runs-on: macos-15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Set up GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Set up Swift
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Cache Swift packages
+        uses: actions/cache@v3
+        with:
+          path: .build
+          key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-swift-
+      - name: Build DocC archive
+        run: |
+          set -e
+          swift package resolve
+          xcodebuild docbuild \
+            -scheme $SCHEME \
+            -derivedDataPath $BUILD_PATH \
+            -destination 'generic/platform=iOS'
+      - name: Convert DocC archive to static website
+        run: |
+          $(xcrun --find docc) process-archive \
+            transform-for-static-hosting \
+            $BUILD_PATH/Build/Products/Debug-iphoneos/$SCHEME.doccarchive \
+            --output-path $OUTPUT_PATH \
+            --hosting-base-path $SCHEME
+          echo "<script>window.location.href += \
+            \"/documentation/$SCHEME_LOWER\"</script>" \
+            > $OUTPUT_PATH/index.html;
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.OUTPUT_PATH }}
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
