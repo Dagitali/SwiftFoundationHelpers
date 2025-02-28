@@ -3,7 +3,7 @@
 #
 # Copyright © 2025 Dagitali LLC. All rights reserved.
 #
-# A GitHub Actions workflow file that automates software project testing.
+# A GitHub Actions workflow file that automates testing software projects.
 #
 # See:
 # 1. https://github.com/FlineDev/HandySwift/blob/main/.github/workflows/
@@ -26,8 +26,8 @@ name: Test
 on:
   pull_request:       # Allow automatic triggering for PRs.
     branches:
-      - bugfix/**
-      - feature/**
+      - 'bugfix/**'
+      - 'feature/**'
     types:
       - opened
       - closed
@@ -36,7 +36,6 @@ on:
     branches:
       - develop
       - main
-      - versions
   workflow_dispatch:  # Allow manual triggering.
 
 jobs:
