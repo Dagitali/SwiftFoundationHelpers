@@ -53,7 +53,7 @@ env:
 
 # Build and deploy the DocC documentation.
 jobs:
-  deploy:
+  document:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
