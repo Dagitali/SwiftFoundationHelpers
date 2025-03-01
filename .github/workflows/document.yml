@@ -81,8 +81,7 @@ jobs:
           swift package resolve
           xcodebuild docbuild \
             -scheme $SCHEME \
-            -derivedDataPath $BUILD_PATH \
-            -destination 'generic/platform=iOS'
+            -derivedDataPath $BUILD_PATH # -destination 'generic/platform=iOS'
       - name: Convert DocC archive to static website
         run: |
           $(xcrun --find docc) process-archive \
