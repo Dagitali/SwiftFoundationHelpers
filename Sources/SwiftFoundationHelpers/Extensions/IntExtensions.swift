@@ -16,6 +16,7 @@ import Foundation
 
 // MARK: - Public
 
+@available(iOS 18.0, macOS 15.0, tvOS 18.0, visionOS 2.0, watchOS 11.0, *)
 public extension Int {
     /// Generates a range from 0 to the current integer (exclusive).
     ///
