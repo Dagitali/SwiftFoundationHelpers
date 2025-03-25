@@ -33,10 +33,44 @@ public extension URL {
     /// ## Example
     /// ```swift
     /// let staticURL = URL("https://example.com/resource.json")
-    /// print(staticURL) // Prints: https://example.com/resource.json
+    /// print(staticURL)
+    /// // Output: https://example.com/resource.json
     /// ```
     init(_ string: StaticString) {
         self.init(string: "\(string)")!
+    }
+
+    // MARK: Favicons
+
+    /// Constructs the favicon URL for the given URL, assuming that a website’s favicon is located at the standard path `/favicon.ico`.
+    ///
+    /// - Returns: An optional URL representing the favicon location, or `nil` if the URL is not valid.
+    /// - Note: Returns `nil` if the original URL does not contain a valid scheme or host.
+    ///
+    /// ## Example
+    /// ```
+    /// if
+    ///     let url = URL(string: "https://www.example.com"),
+    ///     let favicon = url.favicon {
+    ///     print("Favicon URL: \(favicon)")
+    ///     // Output: "https://example.com/favicon.ico"
+    /// } else {
+    ///     print("Invalid URL or missing favicon.")
+    /// }
+    ///
+    /// ```
+    var favicon: URL? {
+        guard let scheme = self.scheme,
+              let host = self.host else {
+            return nil
+        }
+
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = host
+        components.path = "/favicon.ico"
+
+        return components.url
     }
 
     // MARK: JSON
@@ -106,25 +140,31 @@ public extension URL {
         }
     }
 
-    // MARK: Paths
+    // MARK: Queries
 
-    /// Appends a relative path component to the URL, ensuring it is valid.
+    /// A dictionary representation of the URL's query parameters.
     ///
-    /// - Parameter component: The relative path component to append.
-    /// - Returns: A new `URL` with the appended path, or `nil` if invalid.
+    /// This computed property parses the URL's query string using
+    /// `URLComponents` and returns a dictionary where each key corresponds to
+    /// a query item's name and its associated value is the query item's value.
+    /// If the URL does not contain any query parameters or is invalid, an
+    /// empty dictionary is returned.
     ///
     /// ## Example
     /// ```swift
-    /// let baseURL = URL("https://example.com")
-    /// if let newURL = baseURL.appendingSafePathComponent("path/to/resource") {
-    ///     print(newURL) // Prints: https://example.com/path/to/resource
+    /// if let url = URL(string: "https://example.com?foo=bar&key=value") {
+    ///     let parameters = url.queryParameters
+    ///     print(parameters)
+    ///     // Output: ["foo": "bar", "key": "value"]
     /// }
     /// ```
-    func appendingSafePathComponent(_ component: String) -> URL? {
-        return appendingPathComponent(component, isDirectory: false)
+    var queryParameters: [String: String] {
+        URLComponents(url: self, resolvingAgainstBaseURL: true)?
+            .queryItems?
+            .reduce(into: [String: String]()) { result, item in
+                result[item.name] = item.value
+            } ?? [:]
     }
-
-    // MARK: Queries
 
     /// Adds or updates query parameters to the URL.
     ///
@@ -135,8 +175,8 @@ public extension URL {
     /// ## Example
     /// ```swift
     /// if let url = URL(string: "https://example.com") {
-    ///     let updatedURL = url.addingQueryParameters(
-    ///         ["key": "value", "foo": "bar"]
+    ///     let updatedURL = url.appending(
+    ///         queryParameters: ["key": "value", "foo": "bar"]
     ///     )
     ///     print(updatedURL)
     ///     // Output: "https://example.com?key=value&foo=bar"
@@ -147,15 +187,10 @@ public extension URL {
     ///     // Output: "https://example.com?existing=value&newKey=newValue"
     /// }
     /// ```
-    func addingQueryParameters(_ parameters: [String: String]) -> URL? {
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
-        var queryItems = components?.queryItems ?? []
-        parameters.forEach { key, value in
-            queryItems.append(URLQueryItem(name: key, value: value))
-        }
-        components?.queryItems = queryItems
+    func appending(queryParameters: [String: String]) -> URL {
+        let queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
 
-        return components?.url
+        return appending(queryItems: queryItems)
     }
 
     /// Retrieves the value of a query parameter from the URL.
@@ -176,5 +211,30 @@ public extension URL {
         let components = URLComponents(url: self, resolvingAgainstBaseURL: false)
 
         return components?.queryItems?.first(where: { $0.name == key })?.value
+    }
+
+    // MARK: Schemes
+
+    /// A Boolean value indicating whether the URL uses an HTTP or HTTPS scheme.
+    ///
+    /// This computed property performs a case-insensitive check on the URL's
+    /// scheme and returns `true` if the scheme is "http" or "https", and
+    /// `false` if not.
+    ///
+    /// ## Example
+    /// ```swift
+    /// if let url = URL(string: "https://example.com") {
+    ///     print(url.isHTTP)
+    ///     // Output: true
+    /// }
+    /// if let url = URL(string: "ftp://example.com") {
+    ///     print(url.isHTTP)
+    ///     // Output: false
+    /// }
+    /// ```
+    var isHTTP: Bool {
+        guard let scheme = scheme?.lowercased() else { return false }
+
+        return scheme == "http" || scheme == "https"
     }
 }
