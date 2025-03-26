@@ -40,39 +40,6 @@ public extension URL {
         self.init(string: "\(string)")!
     }
 
-    // MARK: Favicons
-
-    /// Constructs the favicon URL for the given URL, assuming that a website’s favicon is located at the standard path `/favicon.ico`.
-    ///
-    /// - Returns: An optional URL representing the favicon location, or `nil` if the URL is not valid.
-    /// - Note: Returns `nil` if the original URL does not contain a valid scheme or host.
-    ///
-    /// ## Example
-    /// ```
-    /// if
-    ///     let url = URL(string: "https://www.example.com"),
-    ///     let favicon = url.favicon {
-    ///     print("Favicon URL: \(favicon)")
-    ///     // Output: "https://example.com/favicon.ico"
-    /// } else {
-    ///     print("Invalid URL or missing favicon.")
-    /// }
-    ///
-    /// ```
-    var favicon: URL? {
-        guard let scheme = self.scheme,
-              let host = self.host else {
-            return nil
-        }
-
-        var components = URLComponents()
-        components.scheme = scheme
-        components.host = host
-        components.path = "/favicon.ico"
-
-        return components.url
-    }
-
     // MARK: JSON
 
     /// Loads and decodes a JSON file at the URL into a specified `Decodable`
@@ -236,5 +203,58 @@ public extension URL {
         guard let scheme = scheme?.lowercased() else { return false }
 
         return scheme == "http" || scheme == "https"
+    }
+
+    // MARK: Websites
+
+    /// Constructs the favicon URL for the given website's URL, assuming that its favicon is located at the standard path `/favicon.ico`.
+    ///
+    /// - Returns: An optional URL representing the favicon location, or `nil` if the URL is not valid.
+    /// - Note: Returns `nil` if the original URL does not contain a valid scheme or host.
+    ///
+    /// ## Example
+    /// ```
+    /// if
+    ///     let url = URL(string: "https://www.example.com"),
+    ///     let favicon = url.favicon {
+    ///     print("Favicon URL: \(favicon)")
+    ///     // Output: "https://example.com/favicon.ico"
+    /// } else {
+    ///     print("Invalid URL or missing favicon.")
+    /// }
+    ///
+    /// ```
+    var favicon: URL? {
+        homepage?.appending(path: "favicon.ico")
+    }
+
+    /// Constructs the homepage URL for the given website's URL.
+    ///
+    /// - Returns: An optional URL representing the website location, or `nil` if the URL is not valid.
+    /// - Note: Returns `nil` if the original URL does not contain a valid scheme or host.
+    ///
+    /// ## Example
+    /// ```
+    /// if
+    ///     let url = URL(string: "https://www.example.com/path"),
+    ///     let homepage = url.homepage {
+    ///     print("Homepage URL: \(homepage)")
+    ///     // Output: "https://example.com/"
+    /// } else {
+    ///     print("Invalid URL or missing homepage.")
+    /// }
+    ///
+    /// ```
+    var homepage: URL? {
+        guard let scheme = self.scheme,
+              let host = self.host else {
+            return nil
+        }
+
+        var components = URLComponents()
+        components.scheme = scheme
+        components.host = host
+
+        return components.url
     }
 }

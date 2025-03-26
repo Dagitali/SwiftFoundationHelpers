@@ -31,25 +31,6 @@ private struct MockModel: Codable, Equatable {
 /// A test suite to validate the functionality of  `URL` extensions.
 @Suite("URLExtensions Tests")
 struct URLExtensionsTests {
-    // MARK: Favicons
-
-    /// Tests the `favicon` computed property.
-    /// This ensures the property correctly construct the favicon's URL .
-    @Test
-    func faviconComputedProperty() {
-        // Given...
-        let url = URL(string: "https://www.example.com")!
-
-        // When...
-        let faviconURL = url.favicon
-
-        // Then...
-        #expect(
-            faviconURL?.absoluteString == "https://www.example.com/favicon.ico",
-            "Favicon URL should be 'https://www.example.com/favicon.ico'."
-        )
-    }
-
     // MARK: JSON
 
     /// Tests the `decode()` instance method.
@@ -107,7 +88,6 @@ struct URLExtensionsTests {
     }
 
     // MARK: Queries
-
 
     /// Tests the `queryParameters` computed property.
     /// This ensures the property correctly returns a dictionary of query items
@@ -221,7 +201,7 @@ struct URLExtensionsTests {
             ]
         )
     )
-    func isHTTPComputedProperty(urlString: String, expected: Bool) {
+    func isHTTP(urlString: String, expected: Bool) {
         // Given...
         let url = URL(string: urlString)!
 
@@ -233,6 +213,49 @@ struct URLExtensionsTests {
             actual == expected,
             """
             The URL's schema should \(expected ? "be" : "not be") of type "HTTPS" or "HTTP".
+            """
+        )
+    }
+
+    // MARK: Websites
+
+    /// Tests the `favicon` computed property.
+    /// This ensures the property correctly constructs the favicon's URL .
+    @Test
+    func favicon() {
+        // Given...
+        let homepage = "https://www.example.com"
+        let expected = "\(homepage)/favicon.ico"
+        let url = URL(string: expected)!
+
+        // When...
+        let actual = url.favicon
+
+        // Then...
+        #expect(
+            actual?.absoluteString == expected,
+            """
+            The favicon URL should be "\(expected)".
+            """
+        )
+    }
+
+    /// Tests the `homepage` computed property.
+    /// This ensures the property correctly constructs the homepage's URL .
+    @Test
+    func homepage() {
+        // Given...
+        let expected = "https://www.example.com"
+        let url = URL(string: "\(expected)/path/to/somewhere")!
+
+        // When...
+        let actual = url.homepage
+
+        // Then...
+        #expect(
+            actual?.absoluteString == expected,
+            """
+            The homepage URL should be "\(expected)".
             """
         )
     }
