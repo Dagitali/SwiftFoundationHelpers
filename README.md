@@ -54,6 +54,7 @@ Enhance your Foundation types with powerful, reusable extensions for these Swift
 * `Date`
 * `String`
 * `URL`
+* `UserDefaults`
 
 ## Installation
 
