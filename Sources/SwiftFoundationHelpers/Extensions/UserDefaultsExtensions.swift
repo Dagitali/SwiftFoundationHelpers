@@ -27,38 +27,38 @@ public extension UserDefaults {
     ///   working with `UserDefaults`.
     struct Key {
         // App State
-        static let hasSeenOnboarding = "hasSeenOnboarding"
-        static let isFirstLaunch = "isFirstLaunch"
-        static let lastAppVersion = "lastAppVersion"
-        static let lastBuildNumber = "lastBuildNumber"
-        static let lastLaunchDate = "lastLaunchDate"
-        static let lastOpenedTab = "lastOpenedTab"
-        static let lastUpdateCheck = "lastUpdateCheck"
-        static let launchCount = "launchCount"
-        static let savedSearchFilters = "savedSearchFilters"
+        public static let hasSeenOnboarding = "hasSeenOnboarding"
+        public static let isFirstLaunch = "isFirstLaunch"
+        public static let lastAppVersion = "lastAppVersion"
+        public static let lastBuildNumber = "lastBuildNumber"
+        public static let lastLaunchDate = "lastLaunchDate"
+        public static let lastOpenedTab = "lastOpenedTab"
+        public static let lastUpdateCheck = "lastUpdateCheck"
+        public static let launchCount = "launchCount"
+        public static let savedSearchFilters = "savedSearchFilters"
 
         // Feature Flags
-        static let enableAlphaFeatures = "enableAlphaFeatures"
-        static let enableBetaFeatures = "enableBetaFeatures"
-        static let enableDebugMode = "enableDebugMode"
-        static let enableDemoMode = "enableDemoMode"
-        static let enableTestingMode = "enableTestingMode"
+        public static let enableAlphaFeatures = "enableAlphaFeatures"
+        public static let enableBetaFeatures = "enableBetaFeatures"
+        public static let enableDebugMode = "enableDebugMode"
+        public static let enableDemoMode = "enableDemoMode"
+        public static let enableTestingMode = "enableTestingMode"
 
         // User Authentication
-        static let isLoggedIn = "isLoggedIn"
-        static let lastLoginDate = "lastLoginDate"
-        static let sessionToken = "sessionToken"
+        public static let isLoggedIn = "isLoggedIn"
+        public static let lastLoginDate = "lastLoginDate"
+        public static let sessionToken = "sessionToken"
 
         // User Preferences
-        static let appearanceMode = "appearanceMode"
-        static let autoLogin = "autoLogin"
-        static let browser = "browser"
-        static let language = "language"
-        static let notificationsEnabled = "notificationsEnabled"
+        public static let appearanceMode = "appearanceMode"
+        public static let autoLogin = "autoLogin"
+        public static let browser = "browser"
+        public static let language = "language"
+        public static let notificationsEnabled = "notificationsEnabled"
 
         // User Profile
-        static let email = "email"
-        static let phoneNumber = "phoneNumber"
-        static let username = "username"
+        public static let email = "email"
+        public static let phoneNumber = "phoneNumber"
+        public static let username = "username"
     }
 }
