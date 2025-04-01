@@ -48,7 +48,7 @@ readability, and adopt reusable patterns tailored for modern Swift apps and pack
 
 ### Extensions
 
-Enhance your Foundation types with powerful, reusable extensions for these Swift Foundation types:
+Enhance native Swift Foundation types with new properties and methods:
 
 - `Array`
 - `Bundle`
