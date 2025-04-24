@@ -9,7 +9,7 @@
  See the LICENSE.txt file for this package’s licensing information.
 
  Abstract:
- Helper extensions for working with `String` types.
+ Helper extensions for working with the `String` type.
 
  References:
  1. https://medium.com/stackademic/10-swift-extensions-i-use-all-the-time-a05bab1038bd
