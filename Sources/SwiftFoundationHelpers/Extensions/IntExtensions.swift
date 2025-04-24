@@ -9,7 +9,7 @@
  See the LICENSE.txt file for this package’s licensing information.
 
  Abstract:
- Helper extensions for working with `Int` types.
+ Helper extensions for working with the `Int` type.
 */
 
 import Foundation

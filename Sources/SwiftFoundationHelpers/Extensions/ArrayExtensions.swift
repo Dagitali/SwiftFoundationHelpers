@@ -9,7 +9,7 @@
  See the LICENSE.txt file for this package’s licensing information.
 
  Abstract:
- Helper extensions for working with `Array` types.
+ Helper extensions for working with the `Array` type.
 */
 
 import Foundation
