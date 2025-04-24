@@ -8,6 +8,7 @@ let package = Package(
     name: "SwiftFoundationHelpers",
     platforms: [
         .iOS(.v18),
+        .macCatalyst(.v18),
         .macOS(.v15),
         .tvOS(.v18),
         .visionOS(.v2),
