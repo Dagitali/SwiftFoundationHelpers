@@ -9,7 +9,7 @@
  See the LICENSE.txt file for this package’s licensing information.
 
  Abstract:
- Helper extensions for working with `URL` types.
+ Helper extensions for working with the `Bundle` type.
 
  References:
  1. https://www.avanderlee.com/swift/url-components/

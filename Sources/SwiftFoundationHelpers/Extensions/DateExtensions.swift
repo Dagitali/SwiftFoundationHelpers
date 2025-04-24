@@ -9,7 +9,7 @@
  See the LICENSE.txt file for this package’s licensing information.
 
  Abstract:
- Helper extensions for working with `Date` types.
+ Helper extensions for working with the `Date` type.
 */
 
 import Foundation
