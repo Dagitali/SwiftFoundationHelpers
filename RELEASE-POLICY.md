@@ -35,9 +35,11 @@ are not compatibility commitments.
 SwiftFoundationHelpers follows [Semantic Versioning 2.0.0] for stable releases. A release version
 has the form `MAJOR.MINOR.PATCH`, and its Git tag has the form `vMAJOR.MINOR.PATCH`, where:
 
-- `MAJOR` releases are for intentionally breaking public changes
-- `MINOR` releases add backward-compatible public capability
-- `PATCH` releases are for backward-compatible fixes and release-hygiene corrections
+- `MAJOR` releases are for intentionally breaking public changes.
+- `MINOR` releases add backward-compatible public capability and may contain documented
+  breaking changes during pre-1.0 development.
+- `PATCH` releases contain backward-compatible fixes and release-hygiene corrections within a
+  stable release line.
 
 ### Patch Releases
 
