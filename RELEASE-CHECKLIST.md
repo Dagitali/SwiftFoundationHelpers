@@ -1,8 +1,7 @@
 # SwiftFoundationHelpers Release Checklist And Stable-Line Maintenance
 
-Use this checklist to prepare, publish, and maintain SwiftFoundationHelpers releases. The package is
-distributed as tagged source through Swift Package Manager; it does not produce or submit an app
-binary.
+Use this checklist to prepare, publish, and maintain SwiftFoundationHelpers releases distributed as
+tagged source through Swift Package Manager.
 
 - [Release Scope](#release-scope)
 - [Pre-Release](#pre-release)
@@ -35,8 +34,12 @@ binary.
 - [ ] Confirm the candidate version is greater than the latest `v<MAJOR>.<MINOR>.<PATCH>` tag and
   has not already been used.
 - [ ] Verify patch releases contain no intentional public API additions or breaking changes.
-- [ ] Verify minor releases are backward compatible and document all additive public capability.
-- [ ] For major releases, document every breaking change and provide practical migration guidance.
+- [ ] For releases at or after 1.0, verify minor releases are backward compatible and document all
+  additive public capability.
+- [ ] During pre-1.0 development, verify patch releases remain compatible within their minor line;
+  document any breaking minor-release change and provide practical migration guidance.
+- [ ] For major releases, document every breaking change and provide practical migration
+  guidance.
 - [ ] Preserve supported deprecated API for at least the period described in [RELEASE-POLICY.md]
   unless an approved security, legal, or correctness exception applies.
 - [ ] Compare the candidate's public API with the latest stable tag and investigate every reported
@@ -86,6 +89,7 @@ binary.
 
 - [ ] Verify `README.md` accurately describes the package, supported features, installation, and
   current public API.
+- [ ] Confirm the README SwiftPM dependency example names the candidate stable version.
 - [ ] Verify all README and DocC examples compile conceptually against the candidate API and use no
   removed or renamed symbols.
 - [ ] Build the DocC archive and resolve documentation warnings or broken symbol links.
@@ -97,7 +101,8 @@ binary.
 - [ ] Confirm new file, URL, bundle, codec, regular-expression, or `UserDefaults` behavior validates
   untrusted input and does not log sensitive values.
 - [ ] Confirm license and copyright notices remain accurate.
-- [ ] Draft release notes using the categories configured in `.github/release.yml`.
+- [ ] Draft complete release notes using the categories configured in `.github/release.yml`; the
+  generic body currently emitted by `.github/workflows/publish.yml` is not sufficient evidence.
 
 ## GitFlow Release Branch
 
@@ -110,6 +115,8 @@ binary.
 - [ ] Include the version, one-sentence tag annotation, release notes, public API compatibility
   assessment, supported-platform evidence, and known follow-ups in the pull request.
 - [ ] Require the configured review and status checks before merging.
+- [ ] If an active workflow does not trigger automatically for the release or hotfix pull request,
+  dispatch it manually against the candidate commit and retain the result.
 - [ ] Merge only through the protected GitHub pull-request flow.
 
 ## Release Candidate Verification
@@ -135,7 +142,8 @@ binary.
   repository's release workflow.
 - [ ] Push the tag once and confirm it resolves to the intended commit.
 - [ ] Confirm the tag-triggered publish workflow completes successfully.
-- [ ] Confirm the GitHub Release uses the correct tag, title, release notes, and prerelease status.
+- [ ] Confirm the GitHub Release uses the correct tag, title, complete release notes, and prerelease
+  status; replace any generic automated body before declaring the release complete.
 - [ ] Confirm the tagged source contains the intended `Package.swift`, sources, tests,
   documentation, and license.
 - [ ] Confirm the documentation workflow completes successfully for `main`.
