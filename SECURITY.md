@@ -2,7 +2,6 @@
 
 Thank you for helping to keep SwiftFoundationHelpers and its consumers safe.
 
-- [Supported Surface](#supported-surface)
 - [Supported Versions](#supported-versions)
 - [Security Scope](#security-scope)
   - [In Scope](#in-scope)
@@ -14,12 +13,6 @@ Thank you for helping to keep SwiftFoundationHelpers and its consumers safe.
 - [Coordinated Disclosure](#coordinated-disclosure)
 - [Security Releases](#security-releases)
 
-## Supported Surface
-
-The supported security surface is the documented public behavior in the current supported release
-line. Historical files, experimental paths, and undocumented internal behavior are not stable
-security contracts unless project documentation explicitly promotes them.
-
 ## Supported Versions
 
 The latest stable release line receives security support unless the repository explicitly documents
@@ -30,6 +23,11 @@ not supported as stable production releases.
 See [RELEASE-POLICY.md] for the complete release and compatibility policy.
 
 ## Security Scope
+
+The supported security surface includes the current stable package source, its documented public
+behavior, and repository infrastructure capable of compromising consumers or published releases.
+Historical versions receive fixes only as described under Supported Versions, but a report involving
+internal implementation is still relevant when it affects a supported release.
 
 ### In Scope
 
@@ -72,8 +70,8 @@ These responsibilities do not exclude a package defect from security considerati
 If you discover a security vulnerability in SwiftFoundationHelpers, please report it responsibly:
 
 - **Do not** open a public issue, discussion, or pull request for a suspected vulnerability.
-- Report it privately by emailing [`security@dagitali.com`](mailto://security@dagitali.com). If that
-  channel is unavailable, use another private maintainer contact published by the repository.
+- Report it privately by emailing [security@dagitali.com]. If that channel is unavailable, use
+  another private maintainer contact published by the repository.
 
 Ordinary bugs, feature requests, and usage questions that do not involve sensitive security details
 may be reported through the repository's public [issue tracker].
@@ -139,3 +137,4 @@ When appropriate, a security release includes:
 
 [issue tracker]: https://github.com/Dagitali/SwiftFoundationHelpers/issues
 [RELEASE-POLICY.md]: RELEASE-POLICY.md
+[security@dagitali.com]: mailto:security@dagitali.com
