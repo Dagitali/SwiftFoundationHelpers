@@ -2,7 +2,7 @@
 //  StringExtensionsTests.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -35,7 +35,7 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "world", // Case-sensitive
+                "world",  // Case-sensitive
                 "World"  // Case-insensitive
             ],
             [true, false]
@@ -64,16 +64,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "  Hello  ",     // Leading and trailing whitespace
-                "\n\nworld\n\n", // Leading and trailing newlines
+                "  Hello  ",  // Leading and trailing whitespace
+                "\n\nworld\n\n",  // Leading and trailing newlines
 
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
+                "",  // Empty string
+                " ",  // Case-insensitive
+                "\n\n"  // Multiple newlines
             ],
             [
                 false, false,
-                true, true, true,
+                true, true, true
             ]
         )
     )
@@ -96,10 +96,10 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "12345",    // Numeric
+                "12345",  // Numeric
 
-                "12345abc", // Alphanumeric
-                ""          // Empty string
+                "12345abc",  // Alphanumeric
+                ""  // Empty string
             ],
             [
                 true,
@@ -127,10 +127,10 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                ("abc123", "\\w+\\d+"), // Starts with letters, ends with digits
+                ("abc123", "\\w+\\d+"),  // Starts with letters, ends with digits
 
-                ("abc123", "^\\d+$"),   // Doesn't start with digits
-                ("", ".+")              // Empty string
+                ("abc123", "^\\d+$"),  // Doesn't start with digits
+                ("", ".+")  // Empty string
             ],
             [
                 true,
@@ -229,6 +229,34 @@ struct StringExtensionsTests {
         )
     }
 
+    /// Verifies the original method signatures remain usable as function
+    /// values after adding explicit-distance overloads.
+    @Test
+    func matchClosestPreservesSourceCompatibleSignatures() {
+        let arrayMatcher: ([String]) -> String? = "appl".matchClosest(in:)
+        let dictionaryMatcher: ([String: Int]) -> Int? = "appl".matchClosest(in:)
+        let enumMatcher: (Fruit.Type) -> Fruit? = "appl".matchClosest(in:)
+
+        #expect(arrayMatcher(["apple"]) == "apple")
+        #expect(dictionaryMatcher(["apple": 1]) == 1)
+        #expect(enumMatcher(Fruit.self) == .apple)
+    }
+
+    /// Tests explicit distance limits and deterministic dictionary ties.
+    @Test
+    func matchClosestUsesDeterministicPolicy() {
+        #expect("appl".matchClosest(in: ["apple"], maximumDistance: 0) == nil)
+        #expect("apple".matchClosest(in: ["apple"], maximumDistance: -1) == nil)
+
+        let tiedMatches = ["hat": "second", "cat": "first"]
+        #expect(
+            "bat".matchClosest(
+                in: tiedMatches,
+                maximumDistance: 2
+            ) == "first"
+        )
+    }
+
     /// Tests the `levenshteinDistance()` method.
     ///
     /// This ensures it calculates the correct Levenshtein distance between 2
@@ -271,16 +299,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "  Hello  ",     // Leading and trailing whitespace
-                "\n\nworld\n\n", // Leading and trailing newlines
+                "  Hello  ",  // Leading and trailing whitespace
+                "\n\nworld\n\n",  // Leading and trailing newlines
 
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
+                "",  // Empty string
+                " ",  // Case-insensitive
+                "\n\n"  // Multiple newlines
             ],
             [
                 "hello", "world",
-                "", "", "",
+                "", "", ""
             ]
         )
     )
@@ -297,6 +325,21 @@ struct StringExtensionsTests {
         )
     }
 
+    /// Tests `trimmedNonEmpty` for present, blank, and optional strings.
+    @Test
+    func trimmedNonEmpty() {
+        #expect("  Charlotte  ".trimmedNonEmpty == "Charlotte")
+        #expect(" \n\t ".trimmedNonEmpty == nil)
+
+        let missing: String? = nil
+        let present: String? = "  Interstate 77  "
+        let blank: String? = " \n "
+
+        #expect(missing.trimmedNonEmpty == nil)
+        #expect(present.trimmedNonEmpty == "Interstate 77")
+        #expect(blank.trimmedNonEmpty == nil)
+    }
+
     /// Tests the `removedWhitespace()` method.
     ///
     /// This ensures it correctly removed all whitespace and newlines from the
@@ -304,8 +347,8 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                " Hello \n World ", // Leading and trailing whitespace
-                ""                  // Empty string
+                " Hello \n World ",  // Leading and trailing whitespace
+                ""  // Empty string
             ],
             ["HelloWorld", ""]
         )
@@ -329,8 +372,8 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "Swift Extensions are great", // Sentence
-                ""                            // Empty string
+                "Swift Extensions are great",  // Sentence
+                ""  // Empty string
             ],
             ["great are Extensions Swift", ""]
         )
@@ -355,16 +398,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "  Hello  ",     // Leading and trailing whitespace
-                "\n\nworld\n\n", // Leading and trailing newlines
+                "  Hello  ",  // Leading and trailing whitespace
+                "\n\nworld\n\n",  // Leading and trailing newlines
 
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
+                "",  // Empty string
+                " ",  // Case-insensitive
+                "\n\n"  // Multiple newlines
             ],
             [
                 "Hello", "world",
-                "", "", "",
+                "", "", ""
             ]
         )
     )
@@ -381,6 +424,17 @@ struct StringExtensionsTests {
         )
     }
 
+    // MARK: Ordering
+
+    /// Tests localized standard ordering, including embedded numbers and
+    /// equal strings.
+    @Test
+    func localizedStandardOrdering() {
+        #expect("Route 2".isLocalizedStandardOrdered(before: "Route 10"))
+        #expect(!"Route 10".isLocalizedStandardOrdered(before: "Route 2"))
+        #expect(!"Route 2".isLocalizedStandardOrdered(before: "Route 2"))
+    }
+
     // MARK: Validation
 
     /// Tests the `isValidEmail()` method.
@@ -390,23 +444,23 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "test@example.com",                  // Simple email
-                "user.name+tag+sorting@example.com", // Email with special characters
+                "test@example.com",  // Simple email
+                "user.name+tag+sorting@example.com",  // Email with special characters
 
-                "plainaddress",                      // Missing @ symbol
-                "missingdomain@.com",                // Missing domain
-                "@missingusername.com"               // Missing username
+                "plainaddress",  // Missing @ symbol
+                "missingdomain@.com",  // Missing domain
+                "@missingusername.com"  // Missing username
             ],
             [
                 true, true,
-                false , false, false
+                false, false, false
             ]
         )
     )
     func isValidEmail(string: String, expected: Bool) {
         // When...
         let actual = string.isValidEmail
-        
+
         // Then...
         #expect(
             actual == expected,
@@ -423,17 +477,17 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "P@ssw0rd!",     // Strong password
-                "Str0ng#Pass",   // Strong password w/ multiple special
+                "P@ssw0rd!",  // Strong password
+                "Str0ng#Pass",  // Strong password w/ multiple special
 
                 "weakpassword",  // No uppercase, no special character
-                "SHORT1!",       // Less than 8 characters
-                "NoNumber!",     // Missing number
-                "NoSpecialChar1" // Missing special character
+                "SHORT1!",  // Less than 8 characters
+                "NoNumber!",  // Missing number
+                "NoSpecialChar1"  // Missing special character
             ],
             [
                 true, true,
-                false , false, false, false
+                false, false, false, false
             ]
         )
     )
@@ -457,16 +511,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "0123456789", // Starts with 0
-                "0987654321", // Random number
+                "0123456789",  // Starts with 0
+                "0987654321",  // Random number
 
                 "123456789",  // Does not start with 0
-                "01234abc",   // Contains letters
-                ""            // Empty string
+                "01234abc",  // Contains letters
+                ""  // Empty string
             ],
             [
                 true, true,
-                false , false, false
+                false, false, false
             ]
         )
     )

@@ -2,7 +2,7 @@
 //  UserDefaultsExtensions.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*

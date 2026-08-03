@@ -2,7 +2,7 @@
 //  URLExtensionsTests.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -31,6 +31,16 @@ private struct MockModel: Codable, Equatable {
 /// A test suite to validate the functionality of  `URL` extensions.
 @Suite("URLExtensions Tests")
 struct URLExtensionsTests {
+    // MARK: Initialization
+
+    /// Tests that URL validation reports malformed input instead of trapping.
+    @Test
+    func validatingInitializerThrowsForMalformedURL() {
+        #expect(throws: URLError.self) {
+            try URL(validating: "%")
+        }
+    }
+
     // MARK: JSON
 
     /// Tests the `decode()` instance method.
@@ -40,7 +50,8 @@ struct URLExtensionsTests {
     @Test
     func decode() {
         // Given...
-        guard let testFileURL = Bundle.module.url(forResource: "example", withExtension: "json") else {
+        guard let testFileURL = Bundle.module.url(forResource: "example", withExtension: "json")
+        else {
             Issue.record("Failed to locate test JSON file.")
             return
         }
@@ -50,13 +61,39 @@ struct URLExtensionsTests {
 
         // Then...
         #expect(
-            decodedModel != nil,
-            "Decoded model should not be nil."
-        )
-        #expect(
             decodedModel == MockModel(id: 1, name: "Test Object"),
             "Decoded model does not match expected value."
         )
+    }
+
+    /// Tests that malformed JSON propagates its decoding error.
+    @Test
+    func decodeMalformedJSONThrows() throws {
+        let outputURL = FileManager.default.temporaryDirectory
+            .appending(path: "malformed.json")
+        try Data("not json".utf8).write(to: outputURL, options: .atomic)
+
+        #expect(throws: DecodingError.self) {
+            let _: MockModel = try outputURL.decode(
+                as: MockModel.self,
+                using: JSONDecoder()
+            )
+        }
+    }
+
+    /// Tests decoding with an explicit decoder.
+    @Test
+    func decodeUsingDecoder() throws {
+        let testFileURL = try #require(
+            Bundle.module.url(forResource: "example", withExtension: "json")
+        )
+
+        let decodedModel: MockModel = try testFileURL.decode(
+            as: MockModel.self,
+            using: JSONDecoder()
+        )
+
+        #expect(decodedModel == MockModel(id: 1, name: "Test Object"))
     }
 
     /// Tests the `encode()` instance method.
@@ -85,6 +122,50 @@ struct URLExtensionsTests {
             decodedModel == modelToEncode,
             "Decoded model should match the encoded model."
         )
+    }
+
+    /// Tests that the default encoder writes object keys deterministically.
+    @Test
+    func encodeDeterministicallySortsJSONKeys() throws {
+        let outputURL = FileManager.default.temporaryDirectory
+            .appending(path: "sorted-keys.json")
+
+        try outputURL.encodeDeterministically(["z": 1, "a": 2])
+        let output = try String(contentsOf: outputURL, encoding: .utf8)
+
+        #expect(output.range(of: "\"a\"")!.lowerBound < output.range(of: "\"z\"")!.lowerBound)
+    }
+
+    /// Tests the throwing encoder overload with caller-supplied policy.
+    @Test
+    func encodeUsingEncoder() throws {
+        let outputURL = FileManager.default.temporaryDirectory
+            .appending(path: "explicit-encoder.json")
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+
+        try outputURL.encode(
+            MockModel(id: 42, name: "Encoded Object"),
+            using: encoder
+        )
+
+        let decodedModel: MockModel = try outputURL.decode(
+            as: MockModel.self,
+            using: JSONDecoder()
+        )
+        #expect(decodedModel == MockModel(id: 42, name: "Encoded Object"))
+    }
+
+    /// Verifies the original JSON methods retain their function types.
+    @Test
+    func jsonMethodsPreserveSourceCompatibleSignatures() {
+        let outputURL = FileManager.default.temporaryDirectory
+            .appending(path: "compatible-signatures.json")
+        let decode: (MockModel.Type) -> MockModel? = outputURL.decode(as:)
+        let encode: (MockModel) -> Void = outputURL.encode(_:)
+
+        encode(MockModel(id: 42, name: "Encoded Object"))
+        #expect(decode(MockModel.self) == MockModel(id: 42, name: "Encoded Object"))
     }
 
     // MARK: Queries
@@ -130,9 +211,31 @@ struct URLExtensionsTests {
 
         // Then...
         #expect(
-            updatedURL.absoluteString == "https://example.com?key=value&new-key=new-param" ||
-            updatedURL.absoluteString == "https://example.com?foo=bar&new-key=new-param"
+            updatedURL.absoluteString == "https://example.com?key=value&new-key=new-param"
+                || updatedURL.absoluteString == "https://example.com?foo=bar&new-key=new-param"
         )
+    }
+
+    /// Tests that dictionary query parameters use stable key ordering.
+    @Test
+    func appendingQueryParametersSortsKeys() {
+        let baseURL = URL(string: "https://example.com")!
+
+        let url = baseURL.appending(
+            queryParameters: ["z": "last", "a": "first"],
+            sortingKeys: true
+        )
+
+        #expect(url.absoluteString == "https://example.com?a=first&z=last")
+    }
+
+    /// Verifies the original query-appending method retains its function type.
+    @Test
+    func appendingQueryParametersPreservesSourceCompatibleSignature() {
+        let baseURL = URL(string: "https://example.com")!
+        let append: ([String: String]) -> URL = baseURL.appending(queryParameters:)
+
+        #expect(append(["key": "value"]).queryParameter(for: "key") == "value")
     }
 
     /// Tests the `queryParameter()` instance  method.
@@ -194,7 +297,7 @@ struct URLExtensionsTests {
             [
                 "https://example.com",
                 "http://example.com",
-                "ftp://example.com",
+                "ftp://example.com"
             ],
             [
                 true, true, false

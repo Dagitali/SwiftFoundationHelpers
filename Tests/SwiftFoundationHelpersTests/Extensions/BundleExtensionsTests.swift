@@ -2,7 +2,7 @@
 //  BundleExtensionsTests.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -32,7 +32,7 @@ private struct MockModel: Codable, Equatable {
 @Suite("BundleExtensions Tests")
 struct BundleExtensionsTests {
     // MARK: JSON
-    
+
     /// Tests the `decode()` method.
     ///
     /// This ensures the method correctly decodes the JSON file into the
@@ -40,8 +40,11 @@ struct BundleExtensionsTests {
     @Test
     func decode() {
         // Given...
-        let decodedModel = Bundle.module.decode("example.json", as: MockModel.self)
-        
+        let decodedModel = Bundle.module.decode(
+            "example.json",
+            as: MockModel.self
+        )
+
         // Then...
         #expect(
             decodedModel != nil,
@@ -51,5 +54,46 @@ struct BundleExtensionsTests {
             decodedModel == MockModel(id: 1, name: "Test Object"),
             "Decoded model does not match expected value."
         )
+    }
+
+    /// Tests that the source-compatible overload returns `nil` for a missing
+    /// resource.
+    @Test
+    func decodeMissingResourceReturnsNil() {
+        // Given...
+        let decodedModel = Bundle.module.decode(
+            "missing.json",
+            as: MockModel.self
+        )
+
+        // Then...
+        #expect(decodedModel == nil)
+    }
+
+    /// Tests that a missing bundled resource produces a structured error.
+    @Test
+    func decodeMissingResourceThrows() {
+        // Then...
+        #expect(throws: BundleResourceError.self) {
+            let _: MockModel = try Bundle.module.decode(
+                "missing.json",
+                as: MockModel.self,
+                using: JSONDecoder()
+            )
+        }
+    }
+
+    /// Tests the throwing overload with a caller-supplied decoder.
+    @Test
+    func decodeUsingDecoder() throws {
+        // Given...
+        let decodedModel = try Bundle.module.decode(
+            "example.json",
+            as: MockModel.self,
+            using: JSONDecoder()
+        )
+
+        // Then...
+        #expect(decodedModel == MockModel(id: 1, name: "Test Object"))
     }
 }
