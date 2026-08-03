@@ -2,7 +2,7 @@
 //  DateExtensionsTests.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -21,9 +21,26 @@ import Testing
 /// A test suite to validate the functionality of  `Date` extensions.
 @Suite("DateExtensions Tests")
 struct DateExtensionsTests {
-    // MARK: Fixtures
+    // MARK: Private Fixtures
 
-    private let dateComponents = DateComponents(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0)
+    private var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        return calendar
+    }
+
+    private var referenceDate: Date {
+        calendar.date(
+            from: DateComponents(
+                year: 1970,
+                month: 1,
+                day: 1,
+                hour: 0,
+                minute: 0,
+                second: 0
+            )
+        )!
+    }
 
     // MARK: Arithmetic
 
@@ -32,11 +49,12 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns a new date by adding the
     /// specified number of days to the current date.
     @Test
-    func addingDays() {
-        let date = Calendar.current.date(from: dateComponents)!
-        let result = date.addingDays(7)
+    func addingDays() throws {
+        let result = try #require(
+            referenceDate.addingDays(7, calendar: calendar)
+        )
 
-        #expect(Calendar.current.dateComponents([.year, .month, .day], from: result).day == 8)
+        #expect(calendar.dateComponents([.year, .month, .day], from: result).day == 8)
     }
 
     /// Tests the `addingMonths()` method.
@@ -44,11 +62,12 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns a new date by adding the
     /// specified number of months to the current date.
     @Test
-    func addingMonths() {
-        let date = Calendar.current.date(from: dateComponents)!
-        let result = date.addingMonths(1)
+    func addingMonths() throws {
+        let result = try #require(
+            referenceDate.addingMonths(1, calendar: calendar)
+        )
 
-        #expect(Calendar.current.dateComponents([.year, .month], from: result).month == 2)
+        #expect(calendar.dateComponents([.year, .month], from: result).month == 2)
     }
 
     /// Tests the `addingSeconds()` method.
@@ -56,11 +75,23 @@ struct DateExtensionsTests {
     /// This ensures the method correctly returns a new date by adding the
     /// specified number of seconds to the current date.
     @Test
-    func addingSeconds() {
-        let date = Calendar.current.date(from: dateComponents)!
-        let result = date.addingSeconds(60)
+    func addingSeconds() throws {
+        let result = try #require(
+            referenceDate.addingSeconds(
+                60,
+                calendar: calendar
+            )
+        )
 
-        #expect(Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: result).minute == 1)
+        #expect(calendar.dateComponents([.minute], from: result).minute == 1)
+    }
+
+    /// Verifies that the original arithmetic signatures remain available.
+    @Test
+    func sourceCompatibleArithmetic() {
+        #expect(referenceDate.addingDays(0) == referenceDate)
+        #expect(referenceDate.addingMonths(0) == referenceDate)
+        #expect(referenceDate.addingSeconds(0) == referenceDate)
     }
 
     // MARK: Checks
@@ -70,14 +101,12 @@ struct DateExtensionsTests {
     /// This ensures the method correctly checks if the date is in the future.
     @Test
     func isInFuture() {
-        let currentDate = Date()
-        let futureDate = currentDate.addingTimeInterval(3600) // 1 hour from now
-        let pastDate = currentDate.addingTimeInterval(-3600) // 1 hour ago
+        let futureDate = referenceDate.addingTimeInterval(3600)
+        let pastDate = referenceDate.addingTimeInterval(-3600)
 
-        #expect(futureDate.isInFuture == true)
-
-        #expect(pastDate.isInFuture == false)
-        #expect(currentDate.isInFuture == false)
+        #expect(futureDate.isInFuture(relativeTo: referenceDate))
+        #expect(!pastDate.isInFuture(relativeTo: referenceDate))
+        #expect(!referenceDate.isInFuture(relativeTo: referenceDate))
     }
 
     /// Tests the `isSameDay()` method.
@@ -86,13 +115,19 @@ struct DateExtensionsTests {
     /// calendar day.
     @Test
     func isSameDay() {
-        let date = Calendar.current.date(from: dateComponents)!
-        let sameDate = date.addingTimeInterval(3600 * 23) // Jan 1, 1970
-        let nextDate = date.addingTimeInterval(3600 * 24) // Jan 2, 1970
+        let sameDate = referenceDate.addingTimeInterval(3600 * 23)
+        let nextDate = referenceDate.addingTimeInterval(3600 * 24)
 
-        #expect(date.isSameDay(as: sameDate) == true)
+        #expect(referenceDate.isSameDay(as: sameDate, calendar: calendar))
+        #expect(!referenceDate.isSameDay(as: nextDate, calendar: calendar))
+    }
 
-        #expect(date.isSameDay(as: nextDate) == false)
+    /// Verifies that the original check signatures remain available.
+    @Test
+    func sourceCompatibleChecks() {
+        #expect(Date.distantFuture.isInFuture)
+        #expect(!Date.distantPast.isInFuture)
+        #expect(referenceDate.isSameDay(as: referenceDate))
     }
 
     // MARK: Conversions (Integer)
@@ -103,9 +138,13 @@ struct DateExtensionsTests {
     /// date as an integer.
     @Test
     func dayOfWeek() {
-        let date = Calendar.current.date(from: dateComponents)! // Thursday
+        #expect(referenceDate.dayOfWeek(in: calendar) == 5)
+    }
 
-        #expect(date.dayOfWeek == 5)
+    /// Verifies that the original weekday property remains available.
+    @Test
+    func sourceCompatibleDayOfWeek() {
+        #expect((1...7).contains(referenceDate.dayOfWeek))
     }
 
     // MARK: Conversions (String)
@@ -117,13 +156,53 @@ struct DateExtensionsTests {
     @Test
     func formatted() {
         let utc = TimeZone(identifier: "UTC")!
+        let locale = Locale(identifier: "en_US_POSIX")
 
         let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
-        #expect(date1.formatted("yyyy-MM-dd", timeZone: utc) == "1970-01-01")
-        #expect(date1.formatted("MMM dd, yyyy", timeZone: utc) == "Jan 01, 1970")
+        #expect(
+            date1.formatted(
+                "yyyy-MM-dd",
+                timeZone: utc,
+                locale: locale,
+                calendar: calendar
+            ) == "1970-01-01"
+        )
+        #expect(
+            date1.formatted(
+                "MMM dd, yyyy",
+                timeZone: utc,
+                locale: locale,
+                calendar: calendar
+            ) == "Jan 01, 1970"
+        )
 
         let date2 = Date(timeIntervalSince1970: 3600 * 24) // Jan 2, 1970
-        #expect(date2.formatted("yyyy-MM-dd", timeZone: utc) == "1970-01-02")
-        #expect(date2.formatted("MMM dd, yyyy", timeZone: utc) == "Jan 02, 1970")
+        #expect(
+            date2.formatted(
+                "yyyy-MM-dd",
+                timeZone: utc,
+                locale: locale,
+                calendar: calendar
+            ) == "1970-01-02"
+        )
+        #expect(
+            date2.formatted(
+                "MMM dd, yyyy",
+                timeZone: utc,
+                locale: locale,
+                calendar: calendar
+            ) == "Jan 02, 1970"
+        )
+    }
+
+    /// Verifies that the original formatting signature remains available.
+    @Test
+    func sourceCompatibleFormatting() {
+        let utc = TimeZone(secondsFromGMT: 0)!
+
+        #expect(
+            referenceDate.formatted("yyyy-MM-dd", timeZone: utc)
+                == "1970-01-01"
+        )
     }
 }
