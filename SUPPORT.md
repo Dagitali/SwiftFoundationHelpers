@@ -5,6 +5,7 @@ information maintainers need to investigate package issues effectively.
 
 - [Support Policy](#support-policy)
 - [Supported Versions And Platforms](#supported-versions-and-platforms)
+- [Maintenance Expectations](#maintenance-expectations)
 - [Where To Get Help](#where-to-get-help)
 - [Before Reporting A Problem](#before-reporting-a-problem)
 - [What To Include](#what-to-include)
@@ -134,7 +135,7 @@ problem.
 
 [bug report]: https://github.com/Dagitali/SwiftFoundationHelpers/issues/new?template=bug-report.yml
 [DocC]: https://dagitali.github.io/SwiftFoundationHelpers/documentation/swiftfoundationhelpers/
-[feature]: /Dagitali/SwiftFoundationHelpers/issues/new?template=feature-request.yml
+[feature]: https://github.com/Dagitali/SwiftFoundationHelpers/issues/new?template=feature-request.yml
 [GitHub Discussions]: https://github.com/Dagitali/SwiftFoundationHelpers/discussions
 [MIT License]: LICENSE
 [README]: README.md
