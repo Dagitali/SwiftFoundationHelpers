@@ -2,7 +2,7 @@
 //  StringExtensions.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -73,6 +73,11 @@ public extension String {
     /// print(text.contains("World"))
     /// // Output: false
     /// ```
+    @available(
+        *,
+        deprecated,
+        message: "Use the standard library String.contains(_:) method instead."
+    )
     func contains(_ substring: String) -> Bool {
         range(of: substring) != nil
     }
@@ -101,9 +106,64 @@ public extension String {
 
     // MARK: Matching
 
+    /// Calculates the Levenshtein distance between the current string and
+    /// another string.
+    ///
+    /// - Parameter other: The string to compare against.
+    /// - Returns: The Levenshtein distance between the two strings.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let distance = "kitten".levenshteinDistance(to: "sitting")
+    /// print(distance)
+    /// // Outputs: 3
+    /// ```
+    func levenshteinDistance(to other: String) -> Int {
+        let lhs = Array(self)
+        let rhs = Array(other)
+
+        guard !lhs.isEmpty else { return rhs.count }
+        guard !rhs.isEmpty else { return lhs.count }
+
+        let rows: [Character]
+        let columns: [Character]
+        if lhs.count >= rhs.count {
+            rows = lhs
+            columns = rhs
+        } else {
+            rows = rhs
+            columns = lhs
+        }
+
+        var previousRow = Array(0...columns.count)
+        var currentRow = Array(repeating: 0, count: columns.count + 1)
+
+        for (rowIndex, rowCharacter) in rows.enumerated() {
+            currentRow[0] = rowIndex + 1
+
+            for (columnIndex, columnCharacter) in columns.enumerated() {
+                let insertion = currentRow[columnIndex] + 1
+                let deletion = previousRow[columnIndex + 1] + 1
+                let substitution = previousRow[columnIndex]
+                    + (rowCharacter == columnCharacter ? 0 : 1)
+
+                currentRow[columnIndex + 1] = Swift.min(
+                    insertion,
+                    deletion,
+                    substitution
+                )
+            }
+
+            swap(&previousRow, &currentRow)
+        }
+
+        return previousRow[columns.count]
+    }
+
     /// Finds the closest match in an array of strings using the Levenshtein
     /// distance.
-    /// - Parameter list: An array of strings to compare against.
+    /// - Parameter list: An array of strings to compare against. When multiple
+    ///   values are equally close, the first value wins.
     /// - Returns: The closest matching string if found within the acceptable
     ///   distance.
     ///
@@ -115,18 +175,42 @@ public extension String {
     ///     print("Did you mean: \(closestMatch)?")
     /// }
     /// ```
+    @available(
+        *,
+        deprecated,
+        message: "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
+    )
     func matchClosest(in list: [String]) -> String? {
-        let maxDistance = 2  // Adjust based on tolerance for spelling errors
-        var bestMatch: (String, Int)? = nil
+        matchClosest(in: list, maximumDistance: 2)  // Adjust based on tolerance for spelling errors
+    }
+
+    /// Finds the closest match in an array of strings using an explicit
+    /// Levenshtein-distance limit.
+    ///
+    /// - Parameters:
+    ///   - list: The strings to compare against. When multiple values are
+    ///     equally close, the first value wins.
+    ///   - maximumDistance: The greatest accepted edit distance. A negative
+    ///     value accepts no matches.
+    /// - Returns: The closest matching string within `maximumDistance`, or
+    ///   `nil` when no value qualifies.
+    func matchClosest(
+        in list: [String],
+        maximumDistance: Int
+    ) -> String? {
+        guard maximumDistance >= 0 else { return nil }
+
+        var bestMatch: (word: String, distance: Int)?
 
         for word in list {
             let distance = self.levenshteinDistance(to: word)
-            if distance <= maxDistance, (bestMatch == nil || distance < bestMatch!.1) {
+            if distance <= maximumDistance,
+                bestMatch.map({ distance < $0.distance }) ?? true {
                 bestMatch = (word, distance)
             }
         }
 
-        return bestMatch?.0
+        return bestMatch?.word
     }
 
     /// Finds the closest key match in a given dictionary using the Levenshtein
@@ -149,12 +233,44 @@ public extension String {
     ///     print("Did you mean: \(closestMatch)?")
     /// }
     /// ```
+    @available(
+        *,
+        deprecated,
+        message: "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
+    )
     func matchClosest<T>(in dictionary: [String: T]) -> T? {
         let keys = Array(dictionary.keys)
-        if let bestKey = self.matchClosest(in: keys) {
-            return dictionary[bestKey]
-        }
-        return nil
+        guard let bestKey = matchClosest(
+            in: keys,
+            maximumDistance: 2
+        ) else { return nil }
+
+        return dictionary[bestKey]
+    }
+
+    /// Finds the closest key in a dictionary using an explicit, deterministic
+    /// matching policy.
+    ///
+    /// Dictionary keys are sorted before comparison, so the lexicographically
+    /// first key wins when multiple keys have the same edit distance.
+    ///
+    /// - Parameters:
+    ///   - dictionary: A dictionary whose string keys are compared.
+    ///   - maximumDistance: The greatest accepted edit distance. A negative
+    ///     value accepts no matches.
+    /// - Returns: The value for the closest qualifying key, or `nil` when no
+    ///   key qualifies.
+    func matchClosest<T>(
+        in dictionary: [String: T],
+        maximumDistance: Int
+    ) -> T? {
+        let keys = dictionary.keys.sorted()
+        guard let bestKey = matchClosest(
+            in: keys,
+            maximumDistance: maximumDistance
+        ) else { return nil }
+
+        return dictionary[bestKey]
     }
 
     /// Finds the closest match in an enum that conforms to CaseIterable and
@@ -176,50 +292,78 @@ public extension String {
     ///     print("Did you mean: \(closestMatch.rawValue)?")
     /// }
     /// ```
-    func matchClosest<T: CaseIterable & RawRepresentable>(in enumType: T.Type) -> T? where T.RawValue == String {
-        let cases = enumType.allCases.map { $0.rawValue }
-        if let bestRawValue = self.matchClosest(in: cases) {
-            return enumType.allCases.first { $0.rawValue == bestRawValue }
-        }
-        return nil
+    @available(
+        *,
+        deprecated,
+        message: "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
+    )
+    func matchClosest<T: CaseIterable & RawRepresentable>(
+        in enumType: T.Type
+    ) -> T? where T.RawValue == String {
+        let cases = enumType.allCases.map(\.rawValue)
+        guard let bestRawValue = matchClosest(
+            in: cases,
+            maximumDistance: 2
+        ) else { return nil }
+
+        return enumType.allCases.first { $0.rawValue == bestRawValue }
     }
 
-    /// Calculates the Levenshtein distance between the current string and
-    /// another string.
+    /// Finds the closest raw value in a `CaseIterable` string-backed enum
+    /// using an explicit Levenshtein-distance limit.
+    ///
+    /// - Parameters:
+    ///   - enumType: A case-iterable enum type with `String` raw values.
+    ///   - maximumDistance: The greatest accepted edit distance. A negative
+    ///     value accepts no matches.
+    /// - Returns: The closest matching enum case, or `nil` when no case
+    ///   qualifies.
+    func matchClosest<T: CaseIterable & RawRepresentable>(
+        in enumType: T.Type,
+        maximumDistance: Int
+    ) -> T? where T.RawValue == String {
+        let cases = enumType.allCases.map { $0.rawValue }
+        guard let bestRawValue = matchClosest(
+            in: cases,
+            maximumDistance: maximumDistance
+        ) else { return nil }
+
+        return enumType.allCases.first { $0.rawValue == bestRawValue }
+    }
+
+    // MARK: Ordering
+
+    /// Determines whether the string sorts before another string using
+    /// localized standard ordering.
+    ///
+    /// Localized standard ordering compares embedded numbers naturally, so
+    /// `"Route 2"` sorts before `"Route 10"`.
     ///
     /// - Parameter other: The string to compare against.
-    /// - Returns: The Levenshtein distance between the two strings.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let distance = "kitten".levenshteinDistance(to: "sitting")
-    /// print(distance)
-    /// // Outputs: 3
-    /// ```
-    func levenshteinDistance(to other: String) -> Int {
-        let lhsCount = self.count
-        let rhsCount = other.count
-
-        if lhsCount == 0 { return rhsCount }
-        if rhsCount == 0 { return lhsCount }
-
-        var matrix = Array(repeating: Array(repeating: 0, count: rhsCount + 1), count: lhsCount + 1)
-
-        for i in 0...lhsCount { matrix[i][0] = i }
-        for j in 0...rhsCount { matrix[0][j] = j }
-
-        for i in 1...lhsCount {
-            for j in 1...rhsCount {
-                let cost = self[self.index(self.startIndex, offsetBy: i - 1)] ==
-                           other[other.index(other.startIndex, offsetBy: j - 1)] ? 0 : 1
-                matrix[i][j] = Swift.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost)
-            }
-        }
-
-        return matrix[lhsCount][rhsCount]
+    /// - Returns: `true` when this string sorts before `other`.
+    func isLocalizedStandardOrdered(before other: String) -> Bool {
+        localizedStandardCompare(other) == .orderedAscending
     }
 
     // MARK: Transformation
+
+    /// Returns the string after trimming surrounding whitespace and newlines,
+    /// or `nil` when the trimmed result is empty.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let name = "  Charlotte  ".trimmedNonEmpty
+    /// print(name as Any)
+    /// // Output: Optional("Charlotte")
+    ///
+    /// let blank = " \n ".trimmedNonEmpty
+    /// print(blank as Any)
+    /// // Output: nil
+    /// ```
+    var trimmedNonEmpty: String? {
+        let trimmed = trimmed()
+        return trimmed.isEmpty ? nil : trimmed
+    }
 
     /// Normalizes the string by trimming all leading and trailing whitespace
     /// and newlines and converting all letters to lowercase.
@@ -355,5 +499,15 @@ public extension String {
     /// ```
     var isValidPhone: Bool {
         wholeMatch(of: /^0[0-9]+$/) != nil
+    }
+}
+
+@available(iOS 18.0, macCatalyst 18.0, macOS 15.0, tvOS 18.0, visionOS 2.0, watchOS 11.0, *)
+public extension Optional where Wrapped == String {
+    /// Returns the wrapped string after trimming surrounding whitespace and
+    /// newlines, or `nil` when the optional is missing or the trimmed result
+    /// is empty.
+    var trimmedNonEmpty: String? {
+        flatMap(\.trimmedNonEmpty)
     }
 }
