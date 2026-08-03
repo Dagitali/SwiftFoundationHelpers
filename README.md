@@ -1,101 +1,142 @@
 # SwiftFoundationHelpers
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Dagitali/SwiftFoundationHelpers?sort=semver)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/lint.yml/badge.svg)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/test.yml/badge.svg)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/release.yml/badge.svg)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/document.yml/badge.svg)
-![Build Status](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/publish.yml/badge.svg)
+![Latest release](https://img.shields.io/github/v/release/Dagitali/SwiftFoundationHelpers?sort=semver)
+![Lint](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/lint.yml/badge.svg)
+![Tests](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/test.yml/badge.svg)
+![Release](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/release.yml/badge.svg)
+![Documentation](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/document.yml/badge.svg)
+![Publish](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/publish.yml/badge.svg)
 ![Codecov](https://codecov.io/gh/Dagitali/SwiftFoundationHelpers/branch/main/graph/badge.svg)
-![GitHub](https://img.shields.io/github/license/Dagitali/SwiftFoundationHelpers)
-![GitHub issues](https://img.shields.io/github/issues/Dagitali/SwiftFoundationHelpers)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Dagitali/SwiftFoundationHelpers)
-![GitHub top language](https://img.shields.io/github/languages/top/Dagitali/SwiftFoundationHelpers)
-![GitHub repo size](https://img.shields.io/github/repo-size/Dagitali/SwiftFoundationHelpers)
-![GitHub contributors](https://img.shields.io/github/contributors/Dagitali/SwiftFoundationHelpers)
+![MIT license](https://img.shields.io/github/license/Dagitali/SwiftFoundationHelpers)
 
-A Swift package that includes an integrated collection of Swift Foundation extensions and related
-custom abstractions.
+SwiftFoundationHelpers is a Swift package containing focused Foundation and standard-library
+extensions for common collection, date, string, URL, bundle-resource, integer, and preference tasks.
 
-- [SwiftFoundationHelpers](#swiftfoundationhelpers)
-  - [Overview](#overview)
-  - [Features](#features)
-    - [Extensions](#extensions)
-  - [Installation](#installation)
-    - [Using Swift Package Manager (SPM)](#using-swift-package-manager-spm)
-  - [Documentation](#documentation)
-    - [Community Health](#community-health)
-    - [Project](#project)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Features](#features)
+  - [Extensions](#extensions)
+- [Installation](#installation)
+  - [Xcode](#xcode)
+  - [Package.swift](#packageswift)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
 ## Overview
 
-SwiftFoundationHelpers is a Swift package designed to complement Swift Foundation, Apple’s native
-framework for building Swift apps and packages.  It simplifies everyday coding tasks by extending
-key Foundation types such as String, Date, Array, and more.
+The package complements Foundation with small, reusable APIs that reduce repeated application code
+without replacing native functionality. Public helpers favor explicit policy inputs, deterministic
+results, source compatibility, and error propagation where practical.
 
-This package focuses on providing practical, reusable extensions and abstractions that:
+SwiftFoundationHelpers is distributed as source through Swift Package Manager and has no third-party
+runtime dependencies.
 
-- Simplify common patterns in Swift Foundation.
-- Extend Swift Foundation’s capabilities without overriding or replacing its native functionality.
+## Requirements
 
-By integrating SwiftFoundationHelpers into your project, you can reduce boilerplate code, improve
-readability, and adopt reusable patterns tailored for modern Swift apps and packages.
+The current package manifest requires Swift tools 6.0 or newer and declares these minimum platforms:
+
+| Platform | Minimum version |
+| --- | --- |
+| iOS | 18 |
+| Mac Catalyst | 18 |
+| macOS | 15 |
+| tvOS | 18 |
+| visionOS | 2 |
+| watchOS | 11 |
+
+`Package.swift` is the source of truth if these requirements change.
 
 ## Features
 
 ### Extensions
 
-Enhance native Swift Foundation types with new properties and methods:
+Enhance Foundation and Swift standard-library types with focused properties and methods:
 
-- `Array`
-- `Bundle`
-- `Date`
-- `String`
-- `URL`
-- `UserDefaults`
+- `Array` duplicate removal that preserves first-occurrence ordering.
+- `Bundle` JSON decoding and encoding, including throwing variants and `BundleResourceError`.
+- `Date` arithmetic, comparison, calendar-aware queries, and formatting helpers.
+- `Int` range and repeated-action conveniences.
+- `String` validation, normalization, matching, ordering, and transformation helpers.
+- `Optional<String>` normalization for trimmed, nonempty values.
+- `URL` validation, JSON coding, query manipulation, HTTP checks, and homepage or favicon helpers.
+- `UserDefaults.Key` constants for consistently named, non-sensitive preference keys. The deprecated
+  `sessionToken` key remains available only for source compatibility and must not be used for
+  credentials.
+
+See the [DocC documentation] for complete signatures, availability, errors, and behavior.
 
 ## Installation
 
-### Using Swift Package Manager (SPM)
+### Xcode
 
-To integrate SwiftFoundationHelpers into your project:
-
-1. Open your project in **Xcode**.
-2. Navigate to **File > Add Packages**.
-3. Enter the URL for this repository:
+1. In Xcode, choose **File > Add Package Dependencies**.
+2. Enter the repository URL:
 
    <https://github.com/Dagitali/SwiftFoundationHelpers>
 
-4. Select the latest version and add it to your target.
+3. Select an appropriate stable version rule.
+4. Add the `SwiftFoundationHelpers` library product to the intended target.
+
+### Package.swift
+
+Add the package dependency and library product to the consuming target:
+
+```swift
+dependencies: [
+    .package(
+        url: "https://github.com/Dagitali/SwiftFoundationHelpers.git",
+        from: "0.22.0"
+    )
+],
+targets: [
+    .target(
+        name: "ExampleTarget",
+        dependencies: ["SwiftFoundationHelpers"]
+    )
+]
+```
+
+Use the latest stable version appropriate for the consuming project. Review the [release policy]
+before changing version requirements.
+
+## Usage
+
+Import Foundation and SwiftFoundationHelpers, then call the extensions on their native types:
+
+```swift
+import Foundation
+import SwiftFoundationHelpers
+
+let uniqueNumbers = [3, 1, 3, 2].removingDuplicates()
+// [3, 1, 2]
+
+let displayName = "  Dagitali  ".trimmedNonEmpty
+// Optional("Dagitali")
+
+let endpoint = try URL(validating: "https://example.com/resource.json")
+let page = endpoint.homepage
+// Optional(https://example.com/)
+```
+
+Prefer the throwing and policy-explicit overloads for new code when callers need actionable errors
+or deterministic calendar, codec, matching, or file-writing behavior. Deprecated convenience
+overloads remain available only for the compatibility period defined by the release policy.
 
 ## Documentation
 
-For detailed API documentation and more usage examples, visit the [SwiftFoundationHelpers][docs]
-documentation site.  For project documentation, refer to the files listed in the subsections that
-follow.
-
-### Community Health
-
-- [Code of Conduct](CODE_OF_CONDUCT.md)
-- [Contributing](CONTRIBUTING.md)
-
-### Project
-
-- [References](REFERENCES.md)
+- [DocC documentation] provides the public API reference.
+- [SUPPORT.md] explains support channels and useful reproduction details.
+- [SECURITY.md] defines private vulnerability reporting and coordinated disclosure.
+- [RELEASE-POLICY.md] defines compatibility, versioning, deprecation, and release expectations.
+- [REFERENCES.md] records implementation and repository-maintenance references.
 
 ## Contributing
 
-Contributions are welcome!  If you’d like to add a new feature, fix a bug, or improve the
-documentation:
-
-1. Fork this repository.
-2. Create a new feature branch for your changes (`git checkout -b feature/feature-name`).
-3. Commit your changes (`git commit -m "Add feature"`).
-4. Push to your branch (`git push origin feature-name`).
-5. Submit a pull request with a detailed description.
+Contributions are welcome. Read [CONTRIBUTING.md] for development setup, testing, branch, public
+API, and pull-request requirements, and follow [CODE_OF_CONDUCT.md] in all project interactions.
 
 ## License
 
@@ -103,9 +144,14 @@ SwiftFoundationHelpers is available under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-SwiftFoundationHelpers is inspired by common patterns in Swift development, aiming to reduce
-boilerplate code and increase productivity.  Feedback and contributions are always appreciated!
+SwiftFoundationHelpers draws on common patterns from the Swift and Foundation communities. Thank
+you to the maintainers, contributors, and documentation authors whose work improves the ecosystem.
 
-Special thanks to the Swift Foundation community for fostering creativity and collaboration.
-
-[docs]: https://dagitali.github.io/SwiftFoundationHelpers/documentation/swiftfoundationhelpers/
+[CODE_OF_CONDUCT.md]: CODE_OF_CONDUCT.md
+[CONTRIBUTING.md]: CONTRIBUTING.md
+[DocC documentation]: https://dagitali.github.io/SwiftFoundationHelpers/documentation/swiftfoundationhelpers/
+[REFERENCES.md]: REFERENCES.md
+[release policy]: RELEASE-POLICY.md
+[RELEASE-POLICY.md]: RELEASE-POLICY.md
+[SECURITY.md]: SECURITY.md
+[SUPPORT.md]: SUPPORT.md

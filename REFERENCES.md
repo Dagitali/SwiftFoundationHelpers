@@ -1,122 +1,139 @@
 # References
 
-The following is a list of sources that were helpful or inspirational when learning new topics,
-troubleshooting bugs, authoring documentation, etc.  while developing or maintaining
-[this project](README.md).
+These sources inform SwiftFoundationHelpers implementation, testing, documentation, repository
+governance, and release practices. Prefer primary documentation when adding or updating guidance.
 
-- [References](#references)
-  - [Markup Languages: Markdown](#markup-languages-markdown)
-  - [Markup Languages: YAML](#markup-languages-yaml)
-  - [Platforms: EditorConfig](#platforms-editorconfig)
-  - [Platforms: `git`](#platforms-git)
-  - [Platforms: `git flow`](#platforms-git-flow)
-  - [Platforms: GitHub](#platforms-github)
-  - [Platforms: `pre-commit`](#platforms-pre-commit)
-  - [Programming Languages: `swift`](#programming-languages-swift)
-  - [Software Engineering](#software-engineering)
+- [Swift](#swift)
+  - [Language And API Design](#language-and-api-design)
+  - [Foundation](#foundation)
+  - [Swift Package Manager](#swift-package-manager)
+  - [Swift Testing](#swift-testing)
+  - [DocC](#docc)
+- [File Formats](#file-formats)
+  - [Markdown](#markdown)
+  - [YAML](#yaml)
+- [Platforms And Tools](#platforms-and-tools)
+  - [Git](#git)
+  - [GitHub](#github)
+  - [GitFlow](#gitflow)
+  - [Pre-commit](#pre-commit)
+- [Software Engineering](#software-engineering)
+  - [Continuous Integration/Development (CI/CD)](#continuous-integrationdevelopment-cicd)
+  - [Logging](#logging)
+- [Project Governance](#project-governance)
+  - [Community Health](#community-health)
+  - [Licensing](#licensing)
+  - [Security](#security)
+  - [Versioning And Releases](#versioning-and-releases)
 
-## Markup Languages: Markdown
+## Swift
 
-1. <https://daringfireball.net/projects/markdown/syntax>
-2. <https://www.markdownguide.org/basic-syntax>
-3. <https://www.markdownguide.org/cheat-sheet>
+### Language And API Design
 
-## Markup Languages: YAML
+1. <https://docs.swift.org/swift-book/>: The Swift Programming Language.
+2. <https://www.swift.org/documentation/api-design-guidelines/>: Swift API Design Guidelines.
+3. <https://www.swift.org/swift-evolution/>: Swift Evolution proposals and process.
 
-1. <https://stackoverflow.com/questions/22268952/what-is-the-difference-between-yaml-and-yml-extension>
+### Foundation
 
-## Platforms: EditorConfig
+1. <https://developer.apple.com/documentation/foundation>: Apple Foundation documentation.
+2. <https://github.com/swiftlang/swift-foundation>: Open-source Swift implementation of Foundation.
 
-Examples
+### Swift Package Manager
 
-1. <https://github.com/jokeyrhyme/standard-editorconfig>
+1. <https://developer.apple.com/documentation/packagedescription>: `PackageDescription` API.
+2. <https://developer.apple.com/documentation/xcode/swift-packages>: Using Swift packages in Xcode.
+3. <https://docs.swift.org/package-manager/>: Swift Package Manager documentation.
 
-General
+### Swift Testing
 
-1. <https://editorconfig.org>
+1. <https://developer.apple.com/documentation/testing>: Swift Testing documentation.
+2. <https://github.com/swiftlang/swift-testing>: Swift Testing source and project documentation.
 
-## Platforms: `git`
+### DocC
 
-Configuration
+1. <https://www.swift.org/documentation/docc/>: Swift-DocC documentation.
+2. <https://developer.apple.com/documentation/xcode/documenting-apps-frameworks-and-packages>:
+   Documenting Swift packages in Xcode.
 
-1. <https://fileinfo.com/extension/gitattributes>
-2. <https://git-scm.com/docs/gitattributes>
-3. <https://git-scm.com/docs/gitignore>
-4. <https://gitignore.io>
+## File Formats
 
-General
+### Markdown
 
-1. <https://git-scm.com>
-2. <https://gitforwindows.org>
-3. <https://github.com/git/git>
+1. <https://spec.commonmark.org/>: CommonMark specification.
+2. <https://github.github.com/gfm/>: GitHub Flavored Markdown specification.
+3. <https://www.markdownguide.org/basic-syntax/>: Markdown basic syntax.
 
-Manuals
+### YAML
 
-1. <https://git-scm.com/book>
+1. <https://yaml.org/spec/>: YAML specification.
 
-Setup
+## Platforms And Tools
 
-1. <https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config>
-2. <https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup>
+### Git
 
-Tags
+1. <https://git-scm.com/book/en/v2>: Pro Git.
+2. <https://git-scm.com/docs>: Git reference documentation.
+3. <https://git-scm.com/docs/gitignore>: `gitignore` documentation.
+4. <https://git-scm.com/docs/gitattributes>: `gitattributes` documentation.
 
-1. <https://www.atlassian.com/git/tutorials/inspecting-a-repository/git-tag>
+### GitHub
 
-Tips & Tricks
+1. <https://docs.github.com/en/actions>: GitHub Actions documentation.
+2. <https://docs.github.com/en/communities>: GitHub community-health documentation.
+3. <https://docs.github.com/en/pull-requests>: GitHub pull-request documentation.
+4. <https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches>:
+   GitHub protected-branch documentation.
 
-1. <https://stackoverflow.com/questions/63241071/automate-git-merge-commit-message>
+### GitFlow
 
-## Platforms: `git flow`
+1. <https://nvie.com/posts/a-successful-git-branching-model/>: Original GitFlow branching model.
+2. <https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow>:
+   Atlassian GitFlow guide.
 
-1. <https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow>
-2. <https://github.com/nvie/gitflow>
-3. <https://gist.github.com/JamesMGreene/cdd0ac49f90c987e45ac>
-4. <https://medium.com/@roalcantara/a-guide-to-improve-the-git-hub-flow-and-commits-messages-b495461e1115>
-5. <https://nvie.com/posts/a-successful-git-branching-model>
-6. <https://git-flow.readthedocs.io/en/latest/releases.html>
+### Pre-commit
 
-## Platforms: GitHub
-
-Community
-
-1. <https://docs.github.com/en/github/building-a-strong-community>
-
-Training
-
-1. <https://lab.github.com/githubtraining/introduction-to-github>
-
-## Platforms: `pre-commit`
-
-Examples
-
-1. <https://github.com/ScribeMD/pre-commit-hooks/blob/main/.pre-commit-config.yaml>
-
-General
-
-1. <https://github.com/pre-commit/pre-commit>
-2. <https://pre-commit.com>
-
-## Programming Languages: `swift`
-
-General
-
-1. <https://docs.swift.org/swift-book>
+1. <https://github.com/pre-commit/pre-commit>: Pre-commit source repository.
+2. <https://pre-commit.com/>: Pre-commit framework documentation.
 
 ## Software Engineering
 
-Continuous Integration/Development (CI/CD)
+### Continuous Integration/Development (CI/CD)
 
 1. <https://github.com/badges/shields>
 2. <https://naereen.github.io/badges>
 3. <https://shields.io/category/version>
 4. <https://en.wikipedia.org/wiki/CI/CD>
 
-Logging
+### Logging
 
 1. <https://www.scalyr.com/blog/log-formatting-best-practices-readable>
 2. <https://en.wikipedia.org/wiki/ISO_8601>
 
-Versioning
+## Project Governance
 
-1. <https://semver.org>
+### Community Health
+
+1. <https://www.bestpractices.dev/>: OpenSSF Best Practices Badge Program.
+2. <https://www.contributor-covenant.org/>: Contributor Covenant.
+3. <https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions>:
+   GitHub community-health guidance.
+
+### Licensing
+
+1. <https://choosealicense.com/licenses/mit/>: MIT License overview.
+2. <https://spdx.org/licenses/MIT.html>: SPDX MIT License entry.
+
+### Security
+
+1. <https://www.cisa.gov/resources-tools/resources/coordinated-vulnerability-disclosure-process>:
+   CISA coordinated vulnerability disclosure guidance.
+2. <https://docs.github.com/en/code-security/security-advisories/working-with-repository-security-advisories/about-repository-security-advisories>:
+   GitHub repository security advisories.
+
+### Versioning And Releases
+
+1. <https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes>:
+   GitHub automatically generated release notes.
+2. <https://keepachangelog.com/>: Keep a Changelog.
+3. <https://semver.org/>: Semantic Versioning.
