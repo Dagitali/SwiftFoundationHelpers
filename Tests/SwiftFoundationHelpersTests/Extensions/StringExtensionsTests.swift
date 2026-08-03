@@ -2,7 +2,7 @@
 //  StringExtensionsTests.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -229,6 +229,34 @@ struct StringExtensionsTests {
         )
     }
 
+    /// Verifies the original method signatures remain usable as function
+    /// values after adding explicit-distance overloads.
+    @Test
+    func matchClosestPreservesSourceCompatibleSignatures() {
+        let arrayMatcher: ([String]) -> String? = "appl".matchClosest(in:)
+        let dictionaryMatcher: ([String: Int]) -> Int? = "appl".matchClosest(in:)
+        let enumMatcher: (Fruit.Type) -> Fruit? = "appl".matchClosest(in:)
+
+        #expect(arrayMatcher(["apple"]) == "apple")
+        #expect(dictionaryMatcher(["apple": 1]) == 1)
+        #expect(enumMatcher(Fruit.self) == .apple)
+    }
+
+    /// Tests explicit distance limits and deterministic dictionary ties.
+    @Test
+    func matchClosestUsesDeterministicPolicy() {
+        #expect("appl".matchClosest(in: ["apple"], maximumDistance: 0) == nil)
+        #expect("apple".matchClosest(in: ["apple"], maximumDistance: -1) == nil)
+
+        let tiedMatches = ["hat": "second", "cat": "first"]
+        #expect(
+            "bat".matchClosest(
+                in: tiedMatches,
+                maximumDistance: 2
+            ) == "first"
+        )
+    }
+
     /// Tests the `levenshteinDistance()` method.
     ///
     /// This ensures it calculates the correct Levenshtein distance between 2
@@ -295,6 +323,21 @@ struct StringExtensionsTests {
             The trimmed string should be "\(expected)", not "\(actual)".
             """
         )
+    }
+
+    /// Tests `trimmedNonEmpty` for present, blank, and optional strings.
+    @Test
+    func trimmedNonEmpty() {
+        #expect("  Charlotte  ".trimmedNonEmpty == "Charlotte")
+        #expect(" \n\t ".trimmedNonEmpty == nil)
+
+        let missing: String? = nil
+        let present: String? = "  Interstate 77  "
+        let blank: String? = " \n "
+
+        #expect(missing.trimmedNonEmpty == nil)
+        #expect(present.trimmedNonEmpty == "Interstate 77")
+        #expect(blank.trimmedNonEmpty == nil)
     }
 
     /// Tests the `removedWhitespace()` method.
@@ -381,6 +424,17 @@ struct StringExtensionsTests {
         )
     }
 
+    // MARK: Ordering
+
+    /// Tests localized standard ordering, including embedded numbers and
+    /// equal strings.
+    @Test
+    func localizedStandardOrdering() {
+        #expect("Route 2".isLocalizedStandardOrdered(before: "Route 10"))
+        #expect(!"Route 10".isLocalizedStandardOrdered(before: "Route 2"))
+        #expect(!"Route 2".isLocalizedStandardOrdered(before: "Route 2"))
+    }
+
     // MARK: Validation
 
     /// Tests the `isValidEmail()` method.
@@ -406,7 +460,7 @@ struct StringExtensionsTests {
     func isValidEmail(string: String, expected: Bool) {
         // When...
         let actual = string.isValidEmail
-        
+
         // Then...
         #expect(
             actual == expected,
