@@ -52,13 +52,13 @@ cross-platform support are central design constraints.
 - Read `CONTRIBUTING.md` before changing contribution or branch conventions.
 - Read `RELEASE-POLICY.md` before changing public API compatibility, supported platforms,
   versioning, or release automation.
-- Explain material architectural choices in pull-request descriptions.
 - Add or update tests whenever behavior or the public API changes.
 - Keep generated code focused on the requested change.
 - Avoid unrelated refactors.
 - Avoid unrelated dependencies, generated files, abstractions, and repository-wide rewrites.
 - Update DocC comments and README examples when a public API changes.
-- Explain material public-API or compatibility choices in pull-request descriptions.
+- Explain material architectural, public-API, and compatibility choices in pull-request
+  descriptions.
 - Preserve copyright notices, licensing information, and relevant source references.
 
 ## Package Compatibility
@@ -104,7 +104,6 @@ cross-platform support are central design constraints.
   returning a fallback.
 - Prefer actors for mutable async state.
 - Prefer protocols for services that call Apple frameworks or networks.
-- Keep lines reasonably short.
 - Avoid force unwraps except in tests where failure should be immediate.
 - Avoid force casts except in tests where failure should be immediate.
 - Keep generic constraints as narrow as the implementation requires.
@@ -114,7 +113,6 @@ cross-platform support are central design constraints.
   package API.
 - Add explicit concurrency annotations only when they express a real isolation or sendability
   guarantee.
-- Follow the repository's formatting and lint configuration.
 
 ### Foundation Extension Design
 
@@ -140,7 +138,8 @@ default order is:
 2. Stored properties, with constants before variables where practical.
 3. Computed properties, with public or internal API before private helpers.
 4. Initializers.
-5. Public or internal methods grouped by behavior, with public or internal behavior before private helpers.
+5. Public or internal methods grouped by behavior, with public or internal behavior before private
+   helpers.
 6. Static API when it is not clearer beside related instance API.
 7. Private helpers.
 
