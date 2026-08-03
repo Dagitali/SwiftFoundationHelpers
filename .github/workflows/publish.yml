@@ -1,7 +1,7 @@
 # publish.yml
 # SwiftFoundationHelpers
 #
-# Copyright © 2025 Dagitali LLC. All rights reserved.
+# Copyright © 2026 Dagitali LLC. All rights reserved.
 #
 # A GitHub Actions workflow file that automates publishing software projects.
 #
@@ -15,7 +15,7 @@
 
 name: Publish
 
-on:
+"on":
   push:
     tags:
       - v*.*.*
