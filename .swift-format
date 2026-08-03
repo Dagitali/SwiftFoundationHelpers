@@ -1,0 +1,15 @@
+{
+  "indentation": {
+    "spaces": 4
+  },
+  "indentConditionalCompilationBlocks": false,
+  "lineLength": 100,
+  "multiElementCollectionTrailingCommas": false,
+  "respectsExistingLineBreaks": true,
+  "rules": {
+    "NoAccessLevelOnExtensionDeclaration": false,
+    "OnlyOneTrailingClosureArgument": false,
+    "OrderedImports": false
+  },
+  "version": 1
+}
