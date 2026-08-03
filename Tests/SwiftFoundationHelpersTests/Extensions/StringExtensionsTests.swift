@@ -35,7 +35,7 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "world", // Case-sensitive
+                "world",  // Case-sensitive
                 "World"  // Case-insensitive
             ],
             [true, false]
@@ -64,16 +64,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "  Hello  ",     // Leading and trailing whitespace
-                "\n\nworld\n\n", // Leading and trailing newlines
+                "  Hello  ",  // Leading and trailing whitespace
+                "\n\nworld\n\n",  // Leading and trailing newlines
 
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
+                "",  // Empty string
+                " ",  // Case-insensitive
+                "\n\n"  // Multiple newlines
             ],
             [
                 false, false,
-                true, true, true,
+                true, true, true
             ]
         )
     )
@@ -96,10 +96,10 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "12345",    // Numeric
+                "12345",  // Numeric
 
-                "12345abc", // Alphanumeric
-                ""          // Empty string
+                "12345abc",  // Alphanumeric
+                ""  // Empty string
             ],
             [
                 true,
@@ -127,10 +127,10 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                ("abc123", "\\w+\\d+"), // Starts with letters, ends with digits
+                ("abc123", "\\w+\\d+"),  // Starts with letters, ends with digits
 
-                ("abc123", "^\\d+$"),   // Doesn't start with digits
-                ("", ".+")              // Empty string
+                ("abc123", "^\\d+$"),  // Doesn't start with digits
+                ("", ".+")  // Empty string
             ],
             [
                 true,
@@ -299,16 +299,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "  Hello  ",     // Leading and trailing whitespace
-                "\n\nworld\n\n", // Leading and trailing newlines
+                "  Hello  ",  // Leading and trailing whitespace
+                "\n\nworld\n\n",  // Leading and trailing newlines
 
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
+                "",  // Empty string
+                " ",  // Case-insensitive
+                "\n\n"  // Multiple newlines
             ],
             [
                 "hello", "world",
-                "", "", "",
+                "", "", ""
             ]
         )
     )
@@ -347,8 +347,8 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                " Hello \n World ", // Leading and trailing whitespace
-                ""                  // Empty string
+                " Hello \n World ",  // Leading and trailing whitespace
+                ""  // Empty string
             ],
             ["HelloWorld", ""]
         )
@@ -372,8 +372,8 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "Swift Extensions are great", // Sentence
-                ""                            // Empty string
+                "Swift Extensions are great",  // Sentence
+                ""  // Empty string
             ],
             ["great are Extensions Swift", ""]
         )
@@ -398,16 +398,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "  Hello  ",     // Leading and trailing whitespace
-                "\n\nworld\n\n", // Leading and trailing newlines
+                "  Hello  ",  // Leading and trailing whitespace
+                "\n\nworld\n\n",  // Leading and trailing newlines
 
-                "",              // Empty string
-                " ",             // Case-insensitive
-                "\n\n",          // Multiple newlines
+                "",  // Empty string
+                " ",  // Case-insensitive
+                "\n\n"  // Multiple newlines
             ],
             [
                 "Hello", "world",
-                "", "", "",
+                "", "", ""
             ]
         )
     )
@@ -444,16 +444,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "test@example.com",                  // Simple email
-                "user.name+tag+sorting@example.com", // Email with special characters
+                "test@example.com",  // Simple email
+                "user.name+tag+sorting@example.com",  // Email with special characters
 
-                "plainaddress",                      // Missing @ symbol
-                "missingdomain@.com",                // Missing domain
-                "@missingusername.com"               // Missing username
+                "plainaddress",  // Missing @ symbol
+                "missingdomain@.com",  // Missing domain
+                "@missingusername.com"  // Missing username
             ],
             [
                 true, true,
-                false , false, false
+                false, false, false
             ]
         )
     )
@@ -477,17 +477,17 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "P@ssw0rd!",     // Strong password
-                "Str0ng#Pass",   // Strong password w/ multiple special
+                "P@ssw0rd!",  // Strong password
+                "Str0ng#Pass",  // Strong password w/ multiple special
 
                 "weakpassword",  // No uppercase, no special character
-                "SHORT1!",       // Less than 8 characters
-                "NoNumber!",     // Missing number
-                "NoSpecialChar1" // Missing special character
+                "SHORT1!",  // Less than 8 characters
+                "NoNumber!",  // Missing number
+                "NoSpecialChar1"  // Missing special character
             ],
             [
                 true, true,
-                false , false, false, false
+                false, false, false, false
             ]
         )
     )
@@ -511,16 +511,16 @@ struct StringExtensionsTests {
     @Test(
         arguments: zip(
             [
-                "0123456789", // Starts with 0
-                "0987654321", // Random number
+                "0123456789",  // Starts with 0
+                "0987654321",  // Random number
 
                 "123456789",  // Does not start with 0
-                "01234abc",   // Contains letters
-                ""            // Empty string
+                "01234abc",  // Contains letters
+                ""  // Empty string
             ],
             [
                 true, true,
-                false , false, false
+                false, false, false
             ]
         )
     )

@@ -158,7 +158,7 @@ struct DateExtensionsTests {
         let utc = TimeZone(identifier: "UTC")!
         let locale = Locale(identifier: "en_US_POSIX")
 
-        let date1 = Date(timeIntervalSince1970: 0) // Jan 1, 1970
+        let date1 = Date(timeIntervalSince1970: 0)  // Jan 1, 1970
         #expect(
             date1.formatted(
                 "yyyy-MM-dd",
@@ -176,7 +176,7 @@ struct DateExtensionsTests {
             ) == "Jan 01, 1970"
         )
 
-        let date2 = Date(timeIntervalSince1970: 3600 * 24) // Jan 2, 1970
+        let date2 = Date(timeIntervalSince1970: 3600 * 24)  // Jan 2, 1970
         #expect(
             date2.formatted(
                 "yyyy-MM-dd",

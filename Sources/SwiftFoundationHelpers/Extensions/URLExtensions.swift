@@ -58,10 +58,12 @@ public extension URL {
     /// // Output: https://example.com/resource.json
     /// ```
     init(validating string: String) throws {
-        guard let url = URL(
-            string: string,
-            encodingInvalidCharacters: false
-        ) else {
+        guard
+            let url = URL(
+                string: string,
+                encodingInvalidCharacters: false
+            )
+        else {
             throw URLError(.badURL)
         }
 
@@ -149,7 +151,8 @@ public extension URL {
     @available(
         *,
         deprecated,
-        message: "Use encode(_:using:options:) or encodeDeterministically(_:options:) to preserve errors and make encoding policy explicit."
+        message:
+            "Use encode(_:using:options:) or encodeDeterministically(_:options:) to preserve errors and make encoding policy explicit."
     )
     func encode<T: Encodable>(_ object: T) {
         let encoder = JSONEncoder()
@@ -267,7 +270,8 @@ public extension URL {
         queryParameters: [String: String],
         sortingKeys: Bool
     ) -> URL {
-        let parameters = sortingKeys
+        let parameters =
+            sortingKeys
             ? queryParameters.sorted { $0.key < $1.key }
             : Array(queryParameters)
         let queryItems = parameters.map {
@@ -364,7 +368,8 @@ public extension URL {
     /// ```
     var homepage: URL? {
         guard let scheme = self.scheme,
-              let host = self.host else {
+            let host = self.host
+        else {
             return nil
         }
 

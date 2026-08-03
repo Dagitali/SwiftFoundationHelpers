@@ -144,7 +144,8 @@ public extension String {
             for (columnIndex, columnCharacter) in columns.enumerated() {
                 let insertion = currentRow[columnIndex] + 1
                 let deletion = previousRow[columnIndex + 1] + 1
-                let substitution = previousRow[columnIndex]
+                let substitution =
+                    previousRow[columnIndex]
                     + (rowCharacter == columnCharacter ? 0 : 1)
 
                 currentRow[columnIndex + 1] = Swift.min(
@@ -178,7 +179,8 @@ public extension String {
     @available(
         *,
         deprecated,
-        message: "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
+        message:
+            "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
     )
     func matchClosest(in list: [String]) -> String? {
         matchClosest(in: list, maximumDistance: 2)  // Adjust based on tolerance for spelling errors
@@ -205,7 +207,8 @@ public extension String {
         for word in list {
             let distance = self.levenshteinDistance(to: word)
             if distance <= maximumDistance,
-                bestMatch.map({ distance < $0.distance }) ?? true {
+                bestMatch.map({ distance < $0.distance }) ?? true
+            {
                 bestMatch = (word, distance)
             }
         }
@@ -236,14 +239,17 @@ public extension String {
     @available(
         *,
         deprecated,
-        message: "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
+        message:
+            "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
     )
     func matchClosest<T>(in dictionary: [String: T]) -> T? {
         let keys = Array(dictionary.keys)
-        guard let bestKey = matchClosest(
-            in: keys,
-            maximumDistance: 2
-        ) else { return nil }
+        guard
+            let bestKey = matchClosest(
+                in: keys,
+                maximumDistance: 2
+            )
+        else { return nil }
 
         return dictionary[bestKey]
     }
@@ -265,10 +271,12 @@ public extension String {
         maximumDistance: Int
     ) -> T? {
         let keys = dictionary.keys.sorted()
-        guard let bestKey = matchClosest(
-            in: keys,
-            maximumDistance: maximumDistance
-        ) else { return nil }
+        guard
+            let bestKey = matchClosest(
+                in: keys,
+                maximumDistance: maximumDistance
+            )
+        else { return nil }
 
         return dictionary[bestKey]
     }
@@ -295,16 +303,19 @@ public extension String {
     @available(
         *,
         deprecated,
-        message: "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
+        message:
+            "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
     )
     func matchClosest<T: CaseIterable & RawRepresentable>(
         in enumType: T.Type
     ) -> T? where T.RawValue == String {
         let cases = enumType.allCases.map(\.rawValue)
-        guard let bestRawValue = matchClosest(
-            in: cases,
-            maximumDistance: 2
-        ) else { return nil }
+        guard
+            let bestRawValue = matchClosest(
+                in: cases,
+                maximumDistance: 2
+            )
+        else { return nil }
 
         return enumType.allCases.first { $0.rawValue == bestRawValue }
     }
@@ -323,10 +334,12 @@ public extension String {
         maximumDistance: Int
     ) -> T? where T.RawValue == String {
         let cases = enumType.allCases.map { $0.rawValue }
-        guard let bestRawValue = matchClosest(
-            in: cases,
-            maximumDistance: maximumDistance
-        ) else { return nil }
+        guard
+            let bestRawValue = matchClosest(
+                in: cases,
+                maximumDistance: maximumDistance
+            )
+        else { return nil }
 
         return enumType.allCases.first { $0.rawValue == bestRawValue }
     }

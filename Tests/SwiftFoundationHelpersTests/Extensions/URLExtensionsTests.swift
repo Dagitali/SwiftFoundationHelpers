@@ -50,7 +50,8 @@ struct URLExtensionsTests {
     @Test
     func decode() {
         // Given...
-        guard let testFileURL = Bundle.module.url(forResource: "example", withExtension: "json") else {
+        guard let testFileURL = Bundle.module.url(forResource: "example", withExtension: "json")
+        else {
             Issue.record("Failed to locate test JSON file.")
             return
         }
@@ -210,8 +211,8 @@ struct URLExtensionsTests {
 
         // Then...
         #expect(
-            updatedURL.absoluteString == "https://example.com?key=value&new-key=new-param" ||
-            updatedURL.absoluteString == "https://example.com?foo=bar&new-key=new-param"
+            updatedURL.absoluteString == "https://example.com?key=value&new-key=new-param"
+                || updatedURL.absoluteString == "https://example.com?foo=bar&new-key=new-param"
         )
     }
 
@@ -296,7 +297,7 @@ struct URLExtensionsTests {
             [
                 "https://example.com",
                 "http://example.com",
-                "ftp://example.com",
+                "ftp://example.com"
             ],
             [
                 true, true, false

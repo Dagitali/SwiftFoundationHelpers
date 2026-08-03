@@ -100,7 +100,8 @@ public extension Date {
     @available(
         *,
         deprecated,
-        message: "Use addingSeconds(_:calendar:) or addingTimeInterval(_:) to make calculation behavior explicit."
+        message:
+            "Use addingSeconds(_:calendar:) or addingTimeInterval(_:) to make calculation behavior explicit."
     )
     func addingSeconds(_ seconds: Int) -> Date {
         Calendar.current.date(byAdding: .second, value: seconds, to: self) ?? self
@@ -226,7 +227,8 @@ public extension Date {
     @available(
         *,
         deprecated,
-        message: "Use formatted(_:timeZone:locale:calendar:) to supply all formatting context explicitly."
+        message:
+            "Use formatted(_:timeZone:locale:calendar:) to supply all formatting context explicitly."
     )
     func formatted(
         _ format: String = "yyyy-MM-dd HH:mm:ss",

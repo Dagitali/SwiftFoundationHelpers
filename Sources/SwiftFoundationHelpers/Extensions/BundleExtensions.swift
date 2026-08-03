@@ -29,7 +29,7 @@ public enum BundleResourceError: Error, Equatable, Sendable {
 
 @available(iOS 18.0, macCatalyst 18.0, macOS 15.0, tvOS 18.0, visionOS 2.0, watchOS 11.0, *)
 public extension Bundle {
-     // MARK: JSON
+    // MARK: JSON
 
     /// Loads and decodes a JSON file from the bundle into a specified
     /// `Decodable` type.
