@@ -1,37 +1,129 @@
 # Contributing Guidelines
 
-Version-controllable contributions toward improving [this project][README] (its source code,
-documentation, etc.) are welcome via GitHub's [pull request] process.  By submitting a merge
-request, you acknowledge and agree to licensing your contribution to [Dagitali LLC][owner].
+Contributions to SwiftFoundationHelpers are welcome through GitHub pull requests. By submitting a
+contribution, you agree that it may be distributed under the repository's [MIT License].
 
-When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change.
+- [Ways To Contribute](#ways-to-contribute)
+- [Before You Begin](#before-you-begin)
+- [Development Setup](#development-setup)
+- [Change Requirements](#change-requirements)
+- [Pull Request Process](#pull-request-process)
+- [Branch Workflow](#branch-workflow)
+- [Code Of Conduct](#code-of-conduct)
+- [Local Quality Gates](#local-quality-gates)
 
-- [Contributing Guidelines](#contributing-guidelines)
-  - [Merge Request Process](#merge-request-process)
-  - [Code of Conduct](#code-of-conduct)
+## Ways To Contribute
 
-## Merge Request Process
+Useful contributions include:
 
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a
-   build.
-2. Update the [README] with details of changes to the interface.  This includes new environment
-   variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the [README] to the new version that this
-   pull request would represent.  The versioning scheme we use is [SemVer].
-4. You may merge in the merge request once you have the sign-off of two other developers.  If you do
-   not have permission to do that, you may request the second reviewer to merge it for you.
+- Reproducible bug reports involving supported package versions and platforms.
+- Focused fixes with regression tests.
+- Broadly reusable Foundation helpers and source-compatible API improvements.
+- Documentation corrections, examples, and DocC improvements.
+- Cross-platform compatibility validation.
+- Issue triage and constructive feedback on proposed API.
 
-## Code of Conduct
+SwiftFoundationHelpers intentionally remains a focused Foundation companion. Application-specific
+business logic and helpers that merely shorten one call without adding reusable behavior are
+unlikely to be accepted.
 
-All contributors are expected to honor and adhere to our [Code of Conduct] policy.  As such, please
-do the following:
+## Before You Begin
 
-1. Read it before making any contributions;
-2. Follow it in all your interactions with the project.
+Search existing issues, discussions, pull requests, Foundation API, and the Swift standard library
+before proposing new public API. Open an issue or discussion before starting a substantial feature,
+breaking change, new dependency, or platform-support change. Small corrections and focused bug fixes
+do not require advance approval.
 
+Read [AGENTS.md] for implementation and testing expectations and [RELEASE-POLICY.md] for public API
+compatibility and versioning rules.
+
+## Development Setup
+
+1. Fork and clone the repository.
+2. Create a topic branch from `develop`.
+3. Confirm the package resolves and its tests pass:
+
+   ```sh
+   swift package resolve
+   swift test
+   ```
+
+4. Install the repository's pre-commit hooks when contributing regularly:
+
+   ```sh
+   pre-commit install --install-hooks
+   ```
+
+The package requires the Swift tools version and minimum Apple platform versions declared in
+`Package.swift`. Xcode is required for testing Apple-platform destinations not exercised by
+`swift test` on the host.
+
+## Change Requirements
+
+- Keep changes focused and avoid unrelated refactoring.
+- Preserve source compatibility unless the breaking change is authorized and versioned according
+  to [RELEASE-POLICY.md].
+- Add or update Swift Testing coverage for public behavior, error paths, and regressions.
+- Keep tests isolated from the developer's locale, time zone, filesystem state, and shared
+  `UserDefaults` state.
+- Add DocC-parsable documentation to new or changed public API.
+- Update the README when features, installation, supported platforms, or examples change.
+- Update references and source attribution when an implementation derives from external guidance.
+- Do not add a dependency unless its durable value, license, security posture, and platform support
+  justify it.
+- Do not commit credentials, private data, build products, package caches, or local Xcode state.
+
+## Pull Request Process
+
+1. Rebase or merge the current `develop` branch into your topic branch as appropriate.
+2. Run the local quality gates relevant to the change.
+3. Push the complete topic branch and open a pull request into `develop`.
+4. Describe the problem, solution, public API and SemVer impact, test evidence, documentation
+   changes, and known limitations.
+5. Keep review follow-ups in the same focused scope.
+6. Merge only after the repository's configured review and status-check requirements pass.
+
+Do not increment a version in source files for an ordinary pull request. Swift Package Manager
+release versions are established by immutable `vMAJOR.MINOR.PATCH` Git tags during the maintainer
+release process.
+
+## Branch Workflow
+
+SwiftFoundationHelpers uses GitFlow-style branch roles:
+
+- `feature/*` branches add backward-compatible capability and target `develop`.
+- `bugfix/*` branches correct unreleased work or supported behavior and target `develop`.
+- `release/*` branches prepare a planned release from `develop` and target `main`.
+- `hotfix/*` branches correct the latest stable release from `main` and target `main`.
+
+After a release or hotfix reaches `main`, maintainers synchronize it back into `develop`. Protected
+branches remain authoritative; do not push directly to them or rely on a local GitFlow finish
+command to bypass GitHub review and required checks.
+
+## Code Of Conduct
+
+All contributors must read and follow our [Code of Conduct] policy in repository interactions and
+when representing the project.
+
+## Local Quality Gates
+
+Run the package tests before opening a pull request:
+
+```sh
+swift test
+```
+
+Run all configured pre-commit checks without modifying the commit history:
+
+```sh
+pre-commit run --all-files
+```
+
+When a change affects availability or platform-sensitive Foundation behavior, also run the relevant
+Xcode destinations represented by `.github/workflows/test.yml`. Build DocC for public API or
+documentation changes and resolve documentation warnings before requesting review.
+
+[AGENTS.md]: AGENTS.md
 [Code of Conduct]: CODE_OF_CONDUCT.md
-[owner]: https://dagitali.com
-[pull request]: https://github.com/Dagitali/SwiftFoundationHelpers/pulls
-[README]: README.md
-[SemVer]: http://semver.org
+[MIT License]: LICENSE
+[RELEASE-POLICY.md]: RELEASE-POLICY.md
