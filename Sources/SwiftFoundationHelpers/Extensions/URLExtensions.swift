@@ -2,7 +2,7 @@
 //  URLExtensions.swift
 //  SwiftFoundationHelpers
 //
-//  Copyright © 2025 Dagitali LLC. All rights reserved.
+//  Copyright © 2026 Dagitali LLC. All rights reserved.
 //
 
 /*
@@ -36,19 +36,49 @@ public extension URL {
     /// print(staticURL)
     /// // Output: https://example.com/resource.json
     /// ```
+    @available(
+        *,
+        deprecated,
+        message: "Use init(validating:) to report invalid URLs instead of trapping."
+    )
     init(_ string: StaticString) {
         self.init(string: "\(string)")!
     }
 
+    /// Initializes a URL by validating a string.
+    ///
+    /// - Parameter string: A string representing the URL.
+    /// - Throws: `URLError.badURL` when Foundation cannot form a URL from the
+    ///   supplied string.
+    ///
+    /// ## Example
+    /// ```swift
+    /// let url = try URL(validating: "https://example.com/resource.json")
+    /// print(url)
+    /// // Output: https://example.com/resource.json
+    /// ```
+    init(validating string: String) throws {
+        guard let url = URL(
+            string: string,
+            encodingInvalidCharacters: false
+        ) else {
+            throw URLError(.badURL)
+        }
+
+        self = url
+    }
+
     // MARK: JSON
 
-    /// Loads and decodes a JSON file at the URL into a specified `Decodable`
-    /// type.
+    /// Loads and decodes JSON from this URL.
     ///
-    /// - Parameter type: The type conforming to `Decodable` to decode the JSON
-    ///   into.
-    /// - Returns: An instance of the specified type, or `nil` if decoding
-    ///   fails.
+    /// This source-compatible convenience preserves the original behavior: it
+    /// uses a new `JSONDecoder`, reports failures to standard output, and
+    /// returns `nil`. Use ``decode(as:using:)`` to receive errors and supply a
+    /// configured decoder.
+    ///
+    /// - Parameter type: The type to decode.
+    /// - Returns: The decoded value, or `nil` if loading or decoding fails.
     ///
     /// ## Example
     /// ```swift
@@ -62,26 +92,48 @@ public extension URL {
     ///     print("Decoded Model:", model)
     /// }
     /// ```
+    @available(
+        *,
+        deprecated,
+        message: "Use decode(as:using:) to preserve loading and decoding errors."
+    )
     func decode<T: Decodable>(as type: T.Type) -> T? {
         guard let data = try? Data(contentsOf: self) else {
             print("Failed to load data from \(self).")
             return nil
         }
 
-        let decoder = JSONDecoder()
         do {
-            return try decoder.decode(T.self, from: data)
+            return try JSONDecoder().decode(type, from: data)
         } catch {
             print("Failed to decode JSON from \(self): \(error)")
             return nil
         }
     }
 
-    /// Encodes an `Encodable` object into JSON and writes it to the file at
-    /// this URL.
+    /// Loads and decodes JSON from this URL using a caller-supplied decoder.
     ///
-    /// - Parameter object: The object conforming to `Encodable` to encode into
-    ///   JSON.
+    /// - Parameters:
+    ///   - type: The type to decode.
+    ///   - decoder: The decoder to use.
+    /// - Returns: The decoded value.
+    /// - Throws: The underlying loading or decoding error.
+    func decode<T: Decodable>(
+        as type: T.Type,
+        using decoder: JSONDecoder
+    ) throws -> T {
+        let data = try Data(contentsOf: self)
+        return try decoder.decode(type, from: data)
+    }
+
+    /// Encodes a value as JSON and writes it to this URL.
+    ///
+    /// This source-compatible convenience preserves the original behavior: it
+    /// uses pretty-printed JSON, reports the result to standard output, and
+    /// consumes encoding and writing errors. Use ``encode(_:using:options:)``
+    /// to receive errors and supply explicit encoding policy.
+    ///
+    /// - Parameter object: The value to encode.
     ///
     /// ## Example
     /// ```swift
@@ -94,6 +146,11 @@ public extension URL {
     /// let model = ExampleModel(id: 42, name: "Encoded Object")
     /// outputURL.encode(model)
     ///```
+    @available(
+        *,
+        deprecated,
+        message: "Use encode(_:using:options:) or encodeDeterministically(_:options:) to preserve errors and make encoding policy explicit."
+    )
     func encode<T: Encodable>(_ object: T) {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -105,6 +162,39 @@ public extension URL {
         } catch {
             print("Failed to encode and write JSON to \(self): \(error)")
         }
+    }
+
+    /// Encodes a value with a caller-supplied encoder and writes it to this
+    /// URL.
+    ///
+    /// - Parameters:
+    ///   - object: The value to encode.
+    ///   - encoder: The encoder that defines the JSON policy.
+    ///   - options: Options used to write the encoded data.
+    /// - Throws: The underlying encoding or file-writing error.
+    func encode<T: Encodable>(
+        _ object: T,
+        using encoder: JSONEncoder,
+        options: Data.WritingOptions = .atomic
+    ) throws {
+        let data = try encoder.encode(object)
+        try data.write(to: self, options: options)
+    }
+
+    /// Encodes a value as deterministically ordered, pretty-printed JSON and
+    /// writes it to this URL.
+    ///
+    /// - Parameters:
+    ///   - object: The value to encode.
+    ///   - options: Options used to write the encoded data.
+    /// - Throws: The underlying encoding or file-writing error.
+    func encodeDeterministically<T: Encodable>(
+        _ object: T,
+        options: Data.WritingOptions = .atomic
+    ) throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        try encode(object, using: encoder, options: options)
     }
 
     // MARK: Queries
@@ -154,8 +244,35 @@ public extension URL {
     ///     // Output: "https://example.com?existing=value&newKey=newValue"
     /// }
     /// ```
+    @available(
+        *,
+        deprecated,
+        message: "Use appending(queryParameters:sortingKeys:) to choose query ordering explicitly."
+    )
     func appending(queryParameters: [String: String]) -> URL {
-        let queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        let queryItems = queryParameters.map {
+            URLQueryItem(name: $0.key, value: $0.value)
+        }
+
+        return appending(queryItems: queryItems)
+    }
+
+    /// Adds or updates query parameters, optionally sorting them by key.
+    ///
+    /// - Parameters:
+    ///   - queryParameters: The query parameters to add or update.
+    ///   - sortingKeys: Whether to sort parameters lexicographically by key.
+    /// - Returns: A new URL with the supplied query parameters.
+    func appending(
+        queryParameters: [String: String],
+        sortingKeys: Bool
+    ) -> URL {
+        let parameters = sortingKeys
+            ? queryParameters.sorted { $0.key < $1.key }
+            : Array(queryParameters)
+        let queryItems = parameters.map {
+            URLQueryItem(name: $0.key, value: $0.value)
+        }
 
         return appending(queryItems: queryItems)
     }
