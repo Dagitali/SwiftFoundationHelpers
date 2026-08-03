@@ -53,7 +53,7 @@ The current package manifest requires Swift tools 6.0 or newer and declares thes
 
 ### Extensions
 
-Enhance native Swift Foundation types with new properties and methods:
+Enhance Foundation and Swift standard-library types with focused properties and methods:
 
 - `Array` duplicate removal that preserves first-occurrence ordering.
 - `Bundle` JSON decoding and encoding, including throwing variants and `BundleResourceError`.
@@ -62,7 +62,9 @@ Enhance native Swift Foundation types with new properties and methods:
 - `String` validation, normalization, matching, ordering, and transformation helpers.
 - `Optional<String>` normalization for trimmed, nonempty values.
 - `URL` validation, JSON coding, query manipulation, HTTP checks, and homepage or favicon helpers.
-- `UserDefaults.Key` constants for consistently named preference keys.
+- `UserDefaults.Key` constants for consistently named, non-sensitive preference keys. The deprecated
+  `sessionToken` key remains available only for source compatibility and must not be used for
+  credentials.
 
 See the [DocC documentation] for complete signatures, availability, errors, and behavior.
 
