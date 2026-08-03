@@ -3,18 +3,17 @@
 Below is the Code of Conduct to which all of our contributors and participants are expected to
 adhere.
 
-- [Code of Conduct](#code-of-conduct)
-  - [Our Pledge](#our-pledge)
-  - [Our Standards](#our-standards)
-  - [Enforcement Responsibilities](#enforcement-responsibilities)
-  - [Scope](#scope)
-  - [Enforcement](#enforcement)
-  - [Enforcement Guidelines](#enforcement-guidelines)
-    - [1. Correction](#1-correction)
-    - [2. Warning](#2-warning)
-    - [3. Temporary Ban](#3-temporary-ban)
-    - [4. Permanent Ban](#4-permanent-ban)
-  - [Attribution](#attribution)
+- [Our Pledge](#our-pledge)
+- [Our Standards](#our-standards)
+- [Enforcement Responsibilities](#enforcement-responsibilities)
+- [Scope](#scope)
+- [Enforcement](#enforcement)
+- [Enforcement Guidelines](#enforcement-guidelines)
+  - [1. Correction](#1-correction)
+  - [2. Warning](#2-warning)
+  - [3. Temporary Ban](#3-temporary-ban)
+  - [4. Permanent Ban](#4-permanent-ban)
+- [Attribution](#attribution)
 
 ## Our Pledge
 
@@ -66,9 +65,9 @@ an appointed representative at an online or offline event.
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community
-leaders responsible for enforcement at *[INSERT CONTACT METHOD]*.  All complaints will be reviewed
-and investigated promptly and fairly.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported privately to the
+community leaders responsible for enforcement at [support@dagitali.com]. All complaints will be
+reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the reporter of any
 incident.
@@ -130,3 +129,4 @@ For answers to common questions about this code of conduct, see
 [2.0]: https://www.contributor-covenant.org/version/2/0/code_of_conduct.html
 [Contributor Covenant]: https://www.contributor-covenant.org
 [Mozilla CoC]: https://github.com/mozilla/diversity
+[support@dagitali.com]: mailto:support@dagitali.com
