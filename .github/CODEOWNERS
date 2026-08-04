@@ -1,0 +1,36 @@
+# CODEOWNERS
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali. All rights reserved.
+#
+# GitHub CODEOWNERS configuration for repository review ownership.
+#
+# Responsibilities
+# - Assign review ownership at minimum for repository automation, community
+#   health, agent guidance, and release governance.
+# - Keep ownership routing aligned with protected-branch review expectations.
+#
+# Maintainer Notes
+# - GitHub applies the last matching pattern when multiple CODEOWNERS patterns
+#   match a changed file.
+# - Keep governance-critical ownership broad enough to preserve review coverage
+#   for CI, support, security, release, and contributor-facing documents.
+#
+# References
+# - GitHub CODEOWNERS documentation: https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/
+#   customizing-your-repository/about-code-owners
+
+# Repository automation and governance
+/.github/                         @djrlj694
+
+# Repository community health and agent guidance
+/AGENTS.md                        @djrlj694
+/CODE_OF_CONDUCT.md               @djrlj694
+/CONTRIBUTING.md                  @djrlj694
+/README.md                        @djrlj694
+/REFERENCES.md                    @djrlj694
+/RELEASE-CHECKLIST.md             @djrlj694
+/RELEASE-POLICY.md                @djrlj694
+/SECURITY.md                      @djrlj694
+/SUPPORT.md                       @djrlj694
