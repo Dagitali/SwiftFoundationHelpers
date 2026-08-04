@@ -3,11 +3,27 @@
 #
 # Copyright © 2026 Dagitali LLC. All rights reserved.
 #
-# A GitHub configuration file for automatically generating release notes.
+# GitHub configuration for automatically generated release notes.
 #
-# See:
-# 1. https://docs.github.com/en/repositories/releasing-projects-on-github/
-#    automatically-generated-release-notes
+# Responsibilities
+# - Define how GitHub categorizes merged pull requests in generated release
+#   notes.
+# - Exclude pull requests that intentionally should not appear in release
+#   notes.
+#
+# Maintainer Notes
+# - Combine generated notes with `.github/RELEASE-NOTES-TEMPLATE.md` when
+#   drafting the final release text.
+# - Exclusions are applied before categorization.
+# - Categories are evaluated in order; a pull request appears in the first
+#   category matching one of its labels.
+# - Keep the catch-all category last so unmatched pull requests remain visible.
+# - Labels referenced below must exist in the repository and be applied before
+#   generating release notes.
+#
+# References
+# - GitHub release documentation:
+#   https://docs.github.com/en/repositories/releasing-projects-on-github
 
 ---
 
@@ -15,17 +31,75 @@ changelog:
   exclude:
     labels:
       - ignore-for-release
+      - internal
+      - no-release-notes
+      - skip-release-notes
     authors:
       - octocat
   categories:
-    - title: Breaking Changes 🛠
+    - title: Breaking Changes
       labels:
-        - Semver-Major
+        - release-note:breaking-change
+        - semver-major
+        - breaking
         - breaking-change
-    - title: Exciting New Features 🎉
+    - title: Highlights
       labels:
-        - Semver-Minor
+        - release-note:feature
+        - semver-minor
         - enhancement
+        - feature
+    - title: Fixes
+      labels:
+        - release-note:fix
+        - semver-patch
+        - bug
+        - bugfix
+        - fix
+    - title: Compatibility and Dependencies
+      labels:
+        - release-note:compatibility
+        - release-note:dependencies
+        - compatibility
+        - dependencies
+        - platform-support
+    - title: Deprecations
+      labels:
+        - release-note:deprecation
+        - deprecated
+        - deprecation
+    - title: Documentation
+      labels:
+        - release-note:documentation
+        - docs
+        - documentation
+    - title: Validation and Testing
+      labels:
+        - release-note:validation
+        - release-note:testing
+        - test
+        - testing
+        - tests
+        - validation
+    - title: Release and Distribution
+      labels:
+        - release-note:release-readiness
+        - distribution
+        - release
+        - release-readiness
+    - title: Maintenance
+      labels:
+        - release-note:maintenance
+        - automation
+        - chore
+        - ci
+        - dependencies
+        - pre-commit
+        - refactor
+    - title: Security
+      labels:
+        - release-note:security
+        - security
     - title: Other Changes
       labels:
         - "*"
