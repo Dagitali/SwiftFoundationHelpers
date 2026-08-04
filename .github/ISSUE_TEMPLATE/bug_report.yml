@@ -11,6 +11,9 @@
 # Maintainer Notes
 # - Keep the prompts focused on actionable reproduction details for
 #   maintainers.
+# - Keep shared prompts applicable to Swift packages and Apple-platform apps.
+# - Keep package-specific prompts limited to environment and integration data
+#   required to reproduce library defects.
 #
 # References
 # - GitHub issue templates:
@@ -24,9 +27,9 @@
 
 ---
 
-name: "🐛 Bug Report"
-description: Report a reproducible problem or defect in SwiftFoundationHelpers
-title: "[Bug]: "
+name: Bug Report
+description: Report a reproducible problem or defect in SwiftFoundationHelpers.
+title: "[Bug] "
 labels:
   - bug
   - needs-triage
@@ -36,46 +39,49 @@ body:
     attributes:
       value: |
         Thanks for filing a bug. Please include enough detail for maintainers
-        to reproduce the problem on a clean checkout or install.
+        to reproduce the problem on a clean checkout, installation, or package
+        integration. Report suspected vulnerabilities privately as described in
+        [SECURITY.md](https://github.com/Dagitali/SwiftFoundationHelpers/security/policy).
   - type: textarea
     id: summary
     attributes:
       label: Summary
-      description: What failed, and what did you expect instead?
+      description: Briefly describe the problem and its impact.
       placeholder: >-
-        A short description of the SwiftFoundationHelpers bug and the expected
-        behavior.
+        A concise description of the SwiftFoundationHelpers bug.
     validations:
       required: true
   - type: dropdown
     id: affected-area
     attributes:
       label: Affected area
-      description: Which part of SwiftFoundationHelpers appears to be affected?
+      description: Which parts of SwiftFoundationHelpers appear to be affected?
+      multiple: true
       options:
-        - Array extensions
-        - Bundle extensions
-        - Date extensions
-        - Dictionary extensions
-        - Int extensions
-        - String extensions
-        - URL extensions
-        - UserDefaults extensions
-
-        - Documentation
+        - Existing Foundation extension
+        - Public API or source compatibility
+        - Package manifest, resolution, or integration
+        - Platform availability or behavior
+        - Tests
+        - Documentation or DocC
+        - CI, release, or repository automation
         - Other
     validations:
       required: true
   - type: dropdown
-    id: platform
+    id: platforms
     attributes:
-      label: Platform
-      description: Where did you see the problem?
+      label: Platforms
+      description: Where did you observe the problem?
+      multiple: true
       options:
         - iOS
         - iPadOS
+        - Mac Catalyst
         - macOS
-        - Multiple Apple platforms
+        - tvOS
+        - visionOS
+        - watchOS
         - Linux
         - Windows
         - Not platform-specific
@@ -83,20 +89,26 @@ body:
     validations:
       required: true
   - type: textarea
-    id: reproduction
+    id: reproduction-steps
     attributes:
-      label: Reproduction
+      label: Reproduction steps
       description: >-
-        Provide exact steps, a self-contained code or text snippet, test,
-        sample inputs needed to reproduce the bug, and/or a small reproduction
-        repository that imports SwiftFoundationHelpers directly.
-      render: swift
+        Provide exact steps, commands, sample inputs, or a link to a small
+        reproduction package that imports SwiftFoundationHelpers directly.
       placeholder: |
-        1. Open ...
-        2. Create or edit ...
+        1. Resolve or build ...
+        2. Call or test ...
         3. Observe ...
     validations:
       required: true
+  - type: textarea
+    id: minimal-reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest relevant call site or test.
+      render: swift
+    validations:
+      required: false
   - type: textarea
     id: observed
     attributes:
@@ -118,8 +130,8 @@ body:
     id: package-version
     attributes:
       label: SwiftFoundationHelpers version or commit
-      description: Which release, tag, or commit SHA shows the problem?
-      placeholder: v1.2.3
+      description: Which release, tag, branch, or commit shows the problem?
+      placeholder: v1.2.3 or abc1234
     validations:
       required: true
   - type: input
@@ -132,10 +144,9 @@ body:
   - type: input
     id: os-version
     attributes:
-      label: OS version
-      description: >-
-        Include the exact iOS, iPadOS, or macOS version if known.
-      placeholder: iOS 26.0, iPadOS 26.0, or macOS 26.0
+      label: Operating system version
+      description: Include the exact host or device operating system version.
+      placeholder: macOS 15.6, iOS 18.5, Ubuntu 24.04, or Windows 11
     validations:
       required: true
   - type: input
@@ -146,18 +157,13 @@ body:
     validations:
       required: false
   - type: input
-    id: device
+    id: host-target
     attributes:
-      label: Device or Mac model
-      description: Include the device, simulator, or Mac model if relevant.
-      placeholder: iPhone 16 Pro, iPad Pro, MacBook Pro, or Xcode simulator
-  - type: input
-    id: platform
-    attributes:
-      label: Operating system and target platform
-      placeholder: macOS 15.6 targeting iOS 18.5
+      label: Build host and target
+      description: Identify both when building for a different target platform.
+      placeholder: macOS 15.6 host targeting iOS 18.5
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: install-source
     attributes:
@@ -170,6 +176,20 @@ body:
         - Other
     validations:
       required: true
+  - type: dropdown
+    id: integration-source
+    attributes:
+      label: Package integration source
+      description: How are you consuming or running SwiftFoundationHelpers?
+      options:
+        - SwiftPM dependency using a released version
+        - SwiftPM dependency using a branch or commit
+        - Xcode-integrated Swift package
+        - Local package or source checkout
+        - GitHub Actions or another CI environment
+        - Other
+    validations:
+      required: true
   - type: textarea
     id: dependency
     attributes:
@@ -178,8 +198,7 @@ body:
         Include the relevant SwiftPM dependency and target declaration.
       render: swift
     validations:
-      required: true
-
+      required: false
   - type: input
     id: last-working-version
     attributes:
@@ -194,8 +213,15 @@ body:
       label: Diagnostics
       description: |
         Include searchable compiler, runtime, or test output after removing
-        credentials, private paths, and other sensitive information.
+        credentials, private paths, personal data, and other sensitive values.
       render: shell
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add screenshots, links, or other relevant context.
     validations:
       required: false
   - type: checkboxes
@@ -204,18 +230,18 @@ body:
       label: Before submitting
       options:
         - label: >-
-            I searched existing issues, discussions, and PRs and did not find a
-            duplicate.
+            I searched existing issues, discussions, and pull requests and did
+            not find a duplicate.
           required: true
         - label: >-
-            I can reproduce this on the current default branch or latest
-            release.
+            I identified the affected version and, when practical, checked the
+            latest stable release or default branch.
           required: true
         - label: >-
-            I included enough detail for maintainers to reproduce or
+            I included enough information for maintainers to reproduce or
             investigate the issue.
           required: true
         - label: >-
             I did not include vulnerability details or sensitive data (secrets,
-            API keys, certificates, provisioning profiles, etc.).
+            private source, personal data, etc.).
           required: true
