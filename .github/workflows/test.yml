@@ -28,10 +28,17 @@ name: Test
     branches:
       - 'bugfix/**'
       - 'feature/**'
+      - 'hotfix/**'
+      - 'release/**'
+      - develop
+      - main
     types:
       - opened
       - closed
       - labeled
+      - ready_for_review
+      - reopened
+      - synchronize
   push:               # Allow automatic triggering for pushes.
     branches:
       - develop
