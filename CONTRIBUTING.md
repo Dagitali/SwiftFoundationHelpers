@@ -8,6 +8,7 @@ contribution, you agree that it may be distributed under the repository's [MIT L
 - [Development Setup](#development-setup)
 - [Change Requirements](#change-requirements)
 - [Pull Request Process](#pull-request-process)
+- [Release Labels](#release-labels)
 - [Branch Workflow](#branch-workflow)
 - [Code Of Conduct](#code-of-conduct)
 - [Local Quality Gates](#local-quality-gates)
@@ -86,6 +87,32 @@ The package requires the Swift tools version and minimum Apple platform versions
 Do not increment a version in source files for an ordinary pull request. Swift Package Manager
 release versions are established by immutable `vMAJOR.MINOR.PATCH` Git tags during the maintainer
 release process.
+
+## Release Labels
+
+GitHub generates release-note categories from merged pull-request labels. Before merging, apply the
+single `release-note:*` label that best describes the change:
+
+- `release-note:breaking-change`
+- `release-note:security`
+- `release-note:deprecation`
+- `release-note:feature`
+- `release-note:fix`
+- `release-note:compatibility` or `release-note:dependencies`
+- `release-note:documentation`
+- `release-note:testing` or `release-note:validation`
+- `release-note:release-readiness`
+- `release-note:maintenance`
+
+Also apply `semver-major`, `semver-minor`, or `semver-patch` when the pull request establishes or
+changes the intended release increment. Before 1.0, a breaking change may correctly carry both
+`release-note:breaking-change` and `semver-minor` under [RELEASE-POLICY.md].
+
+Use `no-release-notes` only for changes that provide no useful adopter-facing release information.
+Do not use it to hide public API, behavior, platform, dependency, security, or migration impact. The
+aliases retained in `.github/release.yml` support existing labels and automation, but new pull
+requests should prefer the canonical labels above. Maintainers must create referenced labels in the
+GitHub repository before relying on them for categorization.
 
 ## Branch Workflow
 
