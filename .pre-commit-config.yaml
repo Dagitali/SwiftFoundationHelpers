@@ -167,6 +167,16 @@ repos:
   #       files: ^\.github/(ISSUE_TEMPLATE|DISCUSSION_TEMPLATE)/.*\.ya?ml$
   #       exclude: ^\.github/ISSUE_TEMPLATE/config\.ya?ml$
 
+  # - repo: local
+  #   hooks:
+  #     - id: validate-release-config
+  #       name: Validate release-note configuration
+  #       entry: Scripts/validate_release_config.py
+  #       language: python
+  #       additional_dependencies:
+  #         - PyYAML==6.0.3
+  #       files: ^\.github/release\.ya?ml$
+
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:
