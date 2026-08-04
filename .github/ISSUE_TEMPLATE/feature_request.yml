@@ -1,0 +1,184 @@
+# feature_request.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub issue form for proposing features or feature improvements.
+#
+# Responsibilities
+# - Gather the minimum information needed to state a concrete problem and
+#   evaluate proposed solutions, use cases, alternatives, and impacts.
+#
+# Maintainer Notes
+# - Keep this form oriented toward actionable improvements rather than general
+#  support questions.
+# - Keep shared prompts applicable to Swift packages and Apple-platform apps.
+# - Keep package-specific prompts focused on broadly reusable Foundation API,
+#   source compatibility, platform availability, and SwiftPM integration.
+#
+# References
+# - GitHub issue templates:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   configuring-issue-templates-for-your-repository
+# - GitHub issue forms syntax:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   syntax-for-issue-forms
+
+---
+
+name: Feature Request
+description: >-
+  Propose a broadly reusable Foundation helper or package improvement.
+title: "[Feature] "
+labels:
+  - enhancement
+  - needs-triage
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for concrete feature requests. For general questions or
+        exploratory ideas, use GitHub Discussions instead.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: >-
+        Describe the recurring problem and why existing Swift or Foundation API
+        is insufficient when the request concerns public API.
+      placeholder: Describe the current limitation and who encounters it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution or desired change
+      description: >-
+        Describe the behavior, API, documentation, policy, or workflow change
+        you want. Focus on the outcome when the implementation is uncertain.
+      placeholder: Describe the proposed solution or desired change.
+    validations:
+      required: true
+  - type: textarea
+    id: usage
+    attributes:
+      label: Intended usage or workflow
+      description: >-
+        Show an intended Swift call site, example input and output, or
+        repository workflow when relevant.
+    validations:
+      required: false
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected area
+      description: Which part(s) of SwiftFoundationHelpers would this improve?
+      multiple: true
+      options:
+        - Existing or proposed extension
+        - Public API or source compatibility
+        - Package manifest, dependencies, or integration
+        - Platform availability or behavior
+        - Tests
+        - Documentation or DocC
+        - CI/CD or repository automation
+        - Contribution, security, or support policy
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: release-scope
+    attributes:
+      label: Expected release scope
+      description: How large does this request seem?
+      options:
+        - Patch-sized refinement or correction
+        - Minor-version feature or workflow addition
+        - Larger post-MVP or deferred idea
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: >-
+        What native APIs, workarounds, or alternate approaches have you
+        considered, and why are they insufficient?
+    validations:
+      required: false
+  - type: textarea
+    id: impact
+    attributes:
+      label: Compatibility, dependency, privacy, and security impact
+      description: >-
+        Describe any platform availability, source compatibility, SemVer,
+        dependency, security, privacy, or migration considerations you know.
+        Enter "None known" or "Unsure" when appropriate.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: >-
+        List observable outcomes that would make the request complete.
+      placeholder: |
+        - The requested API or workflow can ...
+        - Existing supported behavior remains ...
+        - Tests cover ...
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add supporting documentation, examples, or related issues.
+    validations:
+      required: false
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Documentation
+        - Contribution process
+        - Release process
+        - Security or support policy
+        - Configuration or settings
+        - Generated files or templates
+        - Hook behavior
+        - Automation or CI
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: >-
+            I searched existing issues, discussions, and pull requests and did
+            not find a duplicate request.
+          required: true
+        - label: >-
+            For public API requests, I also searched the Swift standard library
+            and Foundation for an existing solution.
+          required: false
+        - label: >-
+            This request describes a concrete consumer, contributor, or
+            repository need rather than a broad brainstorming topic.
+          required: true
+        - label: >-
+            This request is appropriate to a broadly reusable package or its
+            repository and is not application-specific business logic.
+          required: true
+        - label: I may be able to implement this proposal.
+          required: false
+        - label: >-
+            I did not include vulnerability details or sensitive data (secrets,
+            private source, personal data, etc.).
+          required: true

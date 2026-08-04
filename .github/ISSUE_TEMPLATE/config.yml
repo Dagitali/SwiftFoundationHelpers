@@ -2,11 +2,41 @@
 # SwiftFoundationHelpers
 #
 # Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub issue template configuration.
+#
+# Responsibilities
+# - Disable blank issues and direct users toward supported discussion, help,
+#   and security paths.
+#
+# Maintainer Notes
+# - Keep these links aligned with the repository's current Discussions,
+#   support, and security-reporting policies.
+#
+# References
+# - GitHub issue template chooser configuration:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   configuring-issue-templates-for-your-repository
+# - GitHub issue forms syntax:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   syntax-for-issue-forms
 
 ---
 
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 General Question
-    url: https://github.com/Dagitali/SwiftFoundationHelpers/discussions/
-    about: Please ask and answer questions as a discussion thread.
+  - name: Questions and usage help
+    url: https://github.com/Dagitali/SwiftFoundationHelpers/discussions
+    about: >-
+      Use GitHub Discussions for usage help, docs feedback, and exploratory
+      design questions.
+  - name: Support policy
+    url: https://github.com/Dagitali/SwiftFoundationHelpers/blob/main/SUPPORT.md
+    about: >-
+      Review supported versions, available help, and response expectations.
+  - name: Security disclosures
+    url: https://github.com/Dagitali/SwiftFoundationHelpers/security/policy
+    about: >-
+      Report suspected vulnerabilities privately under the security policy.
