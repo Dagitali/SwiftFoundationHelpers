@@ -6,11 +6,12 @@
 # GitHub issue template configuration.
 #
 # Responsibilities
-# - Disable blank issues and direct users toward the supported support paths.
+# - Disable blank issues and direct users toward supported discussion, help,
+#   and security paths.
 #
 # Maintainer Notes
 # - Keep these links aligned with the repository's current Discussions,
-#   support, and security-reporting surfaces.
+#   support, and security-reporting policies.
 #
 # References
 # - GitHub issue template chooser configuration:
@@ -31,12 +32,11 @@ contact_links:
     about: >-
       Use GitHub Discussions for usage help, docs feedback, and design
       questions.
-  - name: Support
+  - name: Support policy
     url: https://github.com/Dagitali/SwiftFoundationHelpers/blob/main/SUPPORT.md
     about: >-
-      Use the support policy for support questions that are not reproducible
-      bugs.
+      Review supported versions, available help, and response expectations.
   - name: Security disclosures
     url: https://github.com/Dagitali/SwiftFoundationHelpers/security/policy
     about: >-
-      Report security issues privately under the repository security policy.
+      Report suspected vulnerabilities privately under the security policy.
