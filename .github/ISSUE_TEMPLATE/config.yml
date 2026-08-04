@@ -30,8 +30,8 @@ contact_links:
   - name: Questions and usage help
     url: https://github.com/Dagitali/SwiftFoundationHelpers/discussions
     about: >-
-      Use GitHub Discussions for usage help, docs feedback, and design
-      questions.
+      Use GitHub Discussions for usage help, docs feedback, and exploratory
+      design questions.
   - name: Support policy
     url: https://github.com/Dagitali/SwiftFoundationHelpers/blob/main/SUPPORT.md
     about: >-
