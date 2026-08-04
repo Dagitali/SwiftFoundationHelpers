@@ -3,16 +3,20 @@
 #
 # Copyright © 2026 Dagitali LLC. All rights reserved.
 #
-# GitHub issue form for proposing user-facing features or feature improvements.
+# GitHub issue form for proposing features or feature improvements.
 #
 # Responsibilities
 # - Gather the minimum information needed to state a concrete problem and to
-#   propose and evaluate solutions and alternatives for feature requests.
+#   propose solutions and evaluate desired outcomes, use cases, alternatives,
+#   and impacts.
 #
 # Maintainer Notes
 # - Keep this form oriented toward actionable product improvements rather
 #   than general support questions.
 # - Keep this form's prompts focused on actionable details for maintainers.
+# - Keep shared prompts applicable to Swift packages and Apple-platform apps.
+# - Keep package-specific prompts focused on broadly reusable Foundation API,
+#   source compatibility, platform availability, and SwiftPM integration.
 #
 # References
 # - GitHub issue templates:
@@ -27,10 +31,10 @@
 ---
 
 name: Feature Request
-description: Propose a broadly reusable Foundation helper or package improvement
-title: "[Feature]: "
+description: >-
+  Propose a broadly reusable Foundation helper or package improvement.
+title: "[Feature] "
 labels:
-  - request
   - enhancement
   - needs-triage
 assignees: []
@@ -45,44 +49,45 @@ body:
     attributes:
       label: Problem to solve
       description: >-
-        Describe the repeated problem and why existing native API is
-        insufficient.
+        Describe the recurring problem and why existing Swift or Foundation API
+        is insufficient when the request concerns public API.
+      placeholder: Describe the current limitation and who encounters it.
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed solution
+      label: Proposed solution or desired change
       description: >-
-        Describe the SwiftFoundationHelpers behavior, documentation, policy, or
-        workflow change you want.
-      placeholder: Describe the requested change.
+        Describe the behavior, API, documentation, policy, or workflow change
+        you want. Focus on the outcome when the implementation is uncertain.
+      placeholder: Describe the proposed solution or desired change.
     validations:
       required: true
   - type: textarea
     id: usage
     attributes:
-      label: Intended usage
-      description: Show the intended call site or usage pattern.
-      render: swift
+      label: Intended usage or workflow
+      description: >-
+        Show an intended Swift call site, example input and output, or
+        repository workflow when relevant.
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: affected-area
     attributes:
       label: Affected area
-      description: Which part of SwiftFoundationHelpers would this improve?
+      description: Which part(s) of SwiftFoundationHelpers would this improve?
+      multiple: true
       options:
-        - Array extensions
-        - Bundle extensions
-        - Date extensions
-        - Dictionary extensions
-        - Int extensions
-        - String extensions
-        - URL extensions
-        - UserDefaults extensions
-        - Documentation
-        - Release, CI, or repository automation
+        - Existing or proposed extension
+        - Public API or source compatibility
+        - Package manifest, dependencies, or integration
+        - Platform availability or behavior
+        - Tests
+        - Documentation or DocC
+        - CI/CD or repository automation
+        - Contribution, security, or support policy
         - Other
     validations:
       required: true
@@ -103,18 +108,19 @@ body:
     attributes:
       label: Alternatives considered
       description: >-
-        What workarounds or alternate approaches have you considered, and why
-        are they insufficient?
+        What native APIs, workarounds, or alternate approaches have you
+        considered, and why are they insufficient?
     validations:
-      required: true
+      required: false
   - type: textarea
-    id: examples
+    id: impact
     attributes:
-      label: Example workflow or data
+      label: Compatibility, dependency, privacy, and security impact
       description: >-
-        Include sample route, trip, settings, export, shortcut, or diagnostic
-        workflow details if relevant. Avoid unnecessary precise location
-        history.
+        Describe any platform availability, source compatibility, SemVer,
+        dependency, security, privacy, or migration considerations you know.
+    validations:
+      required: false
   - type: textarea
     id: compatibility
     attributes:
@@ -136,11 +142,21 @@ body:
     attributes:
       label: Acceptance criteria
       description: >-
-        List observable outcomes that would make this feature complete.
+        List observable outcomes that would make the request complete.
       placeholder: |
         - Users can ...
-        - SwiftFoundationHelpers does not ...
+        - The requested API or workflow can ...
+        - Existing supported behavior remains ...
         - Tests cover ...
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add supporting documentation, examples, or related issues.
+    validations:
+      required: false
   - type: dropdown
     id: surface
     attributes:
@@ -163,29 +179,24 @@ body:
       label: Before submitting
       options:
         - label: >-
-            I searched existing issues, discussions, and PRs.
+            I searched existing issues, discussions, and pull requests and did
+            not find a duplicate request.
           required: true
         - label: >-
-            I also searched the Swift standard library and Foundation.
-          required: true
-        - label: >-
-            I did not find a duplicate.
-          required: true
+            For public API requests, I also searched the Swift standard library
+            and Foundation for an existing solution.
+          required: false
         - label: >-
             This request describes a concrete, user-facing need rather than a
             broad brainstorming topic.
           required: true
         - label: >-
-            The proposal is broadly reusable and not application-specific
-            business logic.
+            This request is appropriate to a broadly reusable package or its
+            repository and is not application-specific business logic.
           required: true
         - label: I may be able to implement this proposal.
           required: false
         - label: >-
-            I considered whether this request affects location privacy,
-            CloudKit sync, exports, widgets, or App Intents.
-          required: true
-        - label: >-
             I did not include vulnerability details or sensitive data (secrets,
-            API keys, certificates, provisioning profiles, etc.).
+            private source, personal data, etc.).
           required: true
