@@ -1,0 +1,92 @@
+# q-a.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub Discussion form for usage help and exploratory API-design questions.
+#
+# Responsibilities
+# - Gather the minimum context needed to understand and answer questions.
+# - Keep support conversations separate from reproducible defects and concrete
+#   feature requests.
+#
+# Maintainer Notes
+# - The filename must match the slug of the GitHub Discussions Q&A category.
+# - Keep vulnerability reports and sensitive information out of Discussions.
+#
+# References
+# - GitHub discussion category forms:
+#   https://docs.github.com/en/discussions/
+#   managing-discussions-for-your-community/
+#   creating-discussion-category-forms
+# - GitHub discussion form syntax:
+#   https://docs.github.com/en/discussions/
+#   managing-discussions-for-your-community/
+#   syntax-for-discussion-category-forms
+
+---
+
+title: "[Question] "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this category for usage help and exploratory API-design questions.
+        Open an issue instead when you can state a reproducible defect or a
+        concrete package or repository improvement.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or goal
+      description: >-
+        State your question and the outcome you are trying to achieve.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and attempted approaches
+      description: >-
+        Include the relevant documentation, Swift code, and approaches you
+        already considered or tried.
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: SwiftFoundationHelpers version or commit
+      placeholder: v1.2.3 or abc1234
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: >-
+        Include relevant Swift, Xcode, operating-system, and target-platform
+        versions when the question depends on them.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add links, examples, or other context that may help.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: >-
+            I reviewed the README, DocC documentation, and existing
+            discussions.
+          required: true
+        - label: >-
+            This discussion does not disclose a suspected vulnerability or
+            other sensitive information (secrets, private source, personal
+            data, etc.).
+          required: true
