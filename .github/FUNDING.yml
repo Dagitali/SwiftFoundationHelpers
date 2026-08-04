@@ -1,0 +1,71 @@
+# FUNDING.yml
+# Waytally
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub Sponsors and funding-link configuration.
+#
+# GitHub reads this file from the default branch only. Activate only links to
+# supported funding model platforms that resolve to real funding profiles.
+#
+# Responsibilities
+# - Define the funding profiles GitHub uses to render the repository Sponsor
+#   button.
+# - Keep active funding links limited to profiles that exist and are intended
+#   for project- or organization-level support.
+#
+# Maintainer Notes
+# - GitHub reads this file from the default branch only.
+# - Activate only links that resolve to real funding profiles.
+# - Leave unsupported or inactive services commented out so future maintainers
+#   can add them without reintroducing platform key names.
+#
+# References
+# - Buy Me a Coffee service:
+#   https://www.buymeacoffee.com/
+# - Community Bridge service:
+#   https://communitybridge.org/
+# - GitHub Sponsors documentation:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/
+#   customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+# - IssueHunt service:
+#   https://issuehunt.io/
+# - Ko-fi service:
+#   https://ko-fi.com/
+# - Liberapay service:
+#   https://liberapay.com/
+# - Open Collective service:
+#   https://opencollective.com/
+# - Otechie service:
+#   https://otechie.com/
+# - Patreon service:
+#   https://www.patreon.com/
+# - Polar service:
+#   https://polar.sh/
+# - Thanks Dev service:
+#   https://thanks.dev/
+# - Tidelift service:
+#   https://tidelift.com/
+
+---
+
+# Supported funding model platforms
+
+# Up to 4 GitHub Sponsors-enabled usernames: [user1, user2, user3, user4]
+github: [Dagitali]
+
+# 1 Buy Me a Coffee username
+buy_me_a_coffee: djrlj694
+
+# patreon: 1 Patreon username
+# open_collective: 1 Open Collective username
+# ko_fi:  1 Ko-fi username
+# tidelift: 1 Tidelift platform-name/package-name: npm/pkg1, pypi/pkg2, etc.
+# community_bridge: 1 Community Bridge project-name: cloud-foundry
+# liberapay: 1 Liberapay username
+# issuehunt: 1 IssueHunt username
+# lfx_crowdfunding: 1 LFX Crowdfunding project-name: cloud-foundry
+# polar: 1 Polar username
+# thanks_dev: 1 thanks.dev username
+# custom: Up to 4 custom sponsorship URLs: ['link1', 'link2', 'link3', 'link4']
