@@ -1,0 +1,64 @@
+# dependabot.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub Dependabot configuration for automated dependency update pull
+# requests.
+#
+# Responsibilities
+# - Keep pre-commit hook dependencies current through reviewable pull requests.
+# - Route dependency maintenance through the configured target branch before
+#   release promotion.
+# - Reduce supply-chain exposure from stale maintenance dependencies while
+#   preserving the existing CI.
+#
+# Maintainer Notes
+# - GitHub Actions updates scan `.github/workflows/` plus local action metadata
+#   files from the repository root.
+# - Dependency update pull requests intentionally target the configured
+#   target branch.
+# - Release and hotfix branches should receive dependency changes through
+#   normal GitFlow promotion unless an urgent security fix requires a dedicated
+#   hotfix branch.
+# - Release and hotfix branches should receive dependency changes through
+# - Keep external GitHub Actions pinned to full commit SHAs after accepting
+#   Dependabot updates.
+#
+# References
+# - GitHub Advisory Database service:
+#   https://github.com/advisories
+# - Dependabot repository:
+#   https://github.com/dependabot
+# - Dependabot documentation:
+#   https://docs.github.com/en/code-security/dependabot
+# - Dependabot configuration reference:
+#   https://docs.github.com/en/code-security/dependabot/
+#   dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# - Dependabot quickstart guide:
+#   https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/
+#   dependabot-quickstart-guide
+
+---
+
+version: 2
+
+updates:
+  - package-ecosystem: pre-commit
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+      day: monday
+      time: "10:00"
+      timezone: America/New_York
+    labels:
+      - dependencies
+      - pre-commit
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      pre-commit-hooks:
+        patterns:
+          - "*"
