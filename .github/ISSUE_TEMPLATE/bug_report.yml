@@ -165,26 +165,17 @@ body:
     validations:
       required: false
   - type: dropdown
-    id: install-source
-    attributes:
-      label: Install or run source
-      description: How are you running SwiftFoundationHelpers?
-      options:
-        - Xcode build from a source checkout
-        - GitHub Actions or CI
-        - Swift/Xcode test target
-        - Other
-    validations:
-      required: true
-  - type: dropdown
     id: integration-source
     attributes:
       label: Package integration source
       description: How are you consuming or running SwiftFoundationHelpers?
       options:
+        - Swift test target
         - SwiftPM dependency using a released version
         - SwiftPM dependency using a branch or commit
+        - Xcode build from a source checkout
         - Xcode-integrated Swift package
+        - Xcode test target
         - Local package or source checkout
         - GitHub Actions or another CI environment
         - Other
