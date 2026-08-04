@@ -2,102 +2,220 @@
 # SwiftFoundationHelpers
 #
 # Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub issue form for reporting reproducible bugs.
+#
+# Responsibilities
+# - Gather the minimum information needed to reproduce and triage defects.
+#
+# Maintainer Notes
+# - Keep the prompts focused on actionable reproduction details for
+#   maintainers.
+#
+# References
+# - GitHub issue templates:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   configuring-issue-templates-for-your-repository
+# - GitHub issue forms syntax:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   syntax-for-issue-forms
 
 ---
 
 name: "🐛 Bug Report"
-description: Report a bug
-title: "(short issue description)"
-labels: [bug, needs-triage]
+description: Report a reproducible problem or defect in SwiftFoundationHelpers
+title: "[Bug]: "
+labels:
+  - bug
+  - needs-triage
 assignees: []
 body:
-  - type: textarea
-    id: description
+  - type: markdown
     attributes:
-      label: Describe the bug
-      description: |
-        What is the problem? A clear and concise description of the bug.
+      value: |
+        Thanks for filing a bug. Please include enough detail for maintainers
+        to reproduce the problem on a clean checkout or install.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What failed, and what did you expect instead?
+      placeholder: >-
+        A short description of the SwiftFoundationHelpers bug and the expected
+        behavior.
     validations:
       required: true
-  - type: textarea
-    id: expected
+  - type: dropdown
+    id: affected-area
     attributes:
-      label: Expected Behavior
-      description: |
-        What did you expect to happen?
-    validations:
-      required: true
-  - type: textarea
-    id: current
-    attributes:
-      label: Current Behavior
-      description: |
-        What actually happened?
+      label: Affected area
+      description: Which part of SwiftFoundationHelpers appears to be affected?
+      options:
+        - Array extensions
+        - Bundle extensions
+        - Date extensions
+        - Dictionary extensions
+        - Int extensions
+        - String extensions
+        - URL extensions
+        - UserDefaults extensions
 
-        Please include full errors, uncaught exceptions, stack traces, and
-        relevant logs. If service responses are relevant, please include wire
-        logs.
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where did you see the problem?
+      options:
+        - iOS
+        - iPadOS
+        - macOS
+        - Multiple Apple platforms
+        - Linux
+        - Windows
+        - Not platform-specific
+        - Other
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
-      label: Reproduction Steps
-      description: |
-        Provide a self-contained, concise snippet of code that can be used to
-        reproduce the issue. For more complex issues provide a repo with the
-        smallest sample that reproduces the bug.
-
-        Avoid including business logic or unrelated code, it makes diagnosis
-        more difficult. The code sample should be an SSCCE. See
-        http://sscce.org/ for details. In short, please provide a code sample
-        that we can copy/paste, run and reproduce.
+      label: Reproduction
+      description: >-
+        Provide exact steps, a self-contained code or text snippet, test,
+        sample inputs needed to reproduce the bug, and/or a small reproduction
+        repository that imports SwiftFoundationHelpers directly.
+      render: swift
+      placeholder: |
+        1. Open ...
+        2. Create or edit ...
+        3. Observe ...
     validations:
       required: true
   - type: textarea
-    id: solution
+    id: observed
     attributes:
-      label: Possible Solution
-      description: |
-        Suggest a fix/reason for the bug
+      label: Observations
+      description: >-
+        Describe what you saw. Include screenshots, logs, failing test output,
+        or exact error messages if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expectations
+      description: >-
+        Describe what you expected to see.
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: SwiftFoundationHelpers version or commit
+      description: Which release, tag, or commit SHA shows the problem?
+      placeholder: v1.2.3
+    validations:
+      required: true
+  - type: input
+    id: swift-version
+    attributes:
+      label: Swift version
+      description: Paste the first line of `swift --version`.
+    validations:
+      required: true
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version
+      description: >-
+        Include the exact iOS, iPadOS, or macOS version if known.
+      placeholder: iOS 26.0, iPadOS 26.0, or macOS 26.0
+    validations:
+      required: true
+  - type: input
+    id: xcode-version
+    attributes:
+      label: Xcode version
+      description: Provide the version when Xcode or an Apple SDK is involved.
+    validations:
+      required: false
+  - type: input
+    id: device
+    attributes:
+      label: Device or Mac model
+      description: Include the device, simulator, or Mac model if relevant.
+      placeholder: iPhone 16 Pro, iPad Pro, MacBook Pro, or Xcode simulator
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system and target platform
+      placeholder: macOS 15.6 targeting iOS 18.5
+    validations:
+      required: true
+  - type: dropdown
+    id: install-source
+    attributes:
+      label: Install or run source
+      description: How are you running SwiftFoundationHelpers?
+      options:
+        - Xcode build from a source checkout
+        - GitHub Actions or CI
+        - Swift/Xcode test target
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: dependency
+    attributes:
+      label: Package dependency declaration
+      description: >-
+        Include the relevant SwiftPM dependency and target declaration.
+      render: swift
+    validations:
+      required: true
+
+  - type: input
+    id: last-working-version
+    attributes:
+      label: Last working version
+      description: >-
+        If this is a regression, provide the last known working version.
     validations:
       required: false
   - type: textarea
-    id: context
+    id: diagnostics
     attributes:
-      label: Additional Information/Context
+      label: Diagnostics
       description: |
-        Anything else that might be relevant for troubleshooting this bug.
-        Providing context helps us come up with a solution that is most useful
-        in the real world.
+        Include searchable compiler, runtime, or test output after removing
+        credentials, private paths, and other sensitive information.
+      render: shell
     validations:
       required: false
-
-  - type: input
-    id: cdk-version
+  - type: checkboxes
+    id: checks
     attributes:
-      label: CDK CLI Version
-      description: Output of `cdk version`
-    validations:
-      required: false
-  - type: input
-    id: section
-    attributes:
-      label: Section
-      description: Name of workshop section, if relevant
-    validations:
-      required: false
-  - type: input
-    id: browser
-    attributes:
-      label: Browser
-      description: all | Chrome | Firefox | Safari | etc...
-    validations:
-      required: false
-  - type: input
-    id: language
-    attributes:
-      label: Language
-      description: all | TypeScript | Python | etc...
-    validations:
-      required: false
+      label: Before submitting
+      options:
+        - label: >-
+            I searched existing issues, discussions, and PRs and did not find a
+            duplicate.
+          required: true
+        - label: >-
+            I can reproduce this on the current default branch or latest
+            release.
+          required: true
+        - label: >-
+            I included enough detail for maintainers to reproduce or
+            investigate the issue.
+          required: true
+        - label: >-
+            I did not include vulnerability details or sensitive data (secrets,
+            API keys, certificates, provisioning profiles, etc.).
+          required: true
