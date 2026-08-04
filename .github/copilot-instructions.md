@@ -10,7 +10,7 @@ It uses Swift Package Manager, Swift Testing, and DocC and supports the Apple pl
 - [Repository-Wide Expectations](#repository-wide-expectations)
 - [Mermaid Diagrams](#mermaid-diagrams)
 - [Swift Instructions](#swift-instructions)
-|- [Swift Testing Instructions](#swift-testing-instructions)
+- [Swift Testing Instructions](#swift-testing-instructions)
 
 ## Repository-Wide Expectations
 
@@ -32,7 +32,7 @@ It uses Swift Package Manager, Swift Testing, and DocC and supports the Apple pl
 - Follow the declaration ordering documented in `AGENTS.md`; do not alphabetize mixed API surfaces
   mechanically.
 
-Path-specific skill guidance lives in `.github/instructions/`.
+Path-specific instructions live in `.github/instructions/`.
 
 <!-- mermaid-ai-skills:start -->
 ## Mermaid Diagrams
