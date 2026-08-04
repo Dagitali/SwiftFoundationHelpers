@@ -6,14 +6,12 @@
 # GitHub issue form for proposing features or feature improvements.
 #
 # Responsibilities
-# - Gather the minimum information needed to state a concrete problem and to
-#   propose solutions and evaluate desired outcomes, use cases, alternatives,
-#   and impacts.
+# - Gather the minimum information needed to state a concrete problem and
+#   evaluate proposed solutions, use cases, alternatives, and impacts.
 #
 # Maintainer Notes
-# - Keep this form oriented toward actionable product improvements rather
-#   than general support questions.
-# - Keep this form's prompts focused on actionable details for maintainers.
+# - Keep this form oriented toward actionable improvements rather than general
+#  support questions.
 # - Keep shared prompts applicable to Swift packages and Apple-platform apps.
 # - Keep package-specific prompts focused on broadly reusable Foundation API,
 #   source compatibility, platform availability, and SwiftPM integration.
@@ -119,24 +117,9 @@ body:
       description: >-
         Describe any platform availability, source compatibility, SemVer,
         dependency, security, privacy, or migration considerations you know.
-    validations:
-      required: false
-  - type: textarea
-    id: compatibility
-    attributes:
-      label: Compatibility considerations
-      description: |
-        Identify affected platforms, availability requirements, dependencies,
-        source-compatibility concerns, and possible SemVer impact.
+        Enter "None known" or "Unsure" when appropriate.
     validations:
       required: true
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: Additional context
-      description: Add supporting documentation, examples, or related issues.
-    validations:
-      required: false
   - type: textarea
     id: acceptance-criteria
     attributes:
@@ -144,7 +127,6 @@ body:
       description: >-
         List observable outcomes that would make the request complete.
       placeholder: |
-        - Users can ...
         - The requested API or workflow can ...
         - Existing supported behavior remains ...
         - Tests cover ...
@@ -187,8 +169,8 @@ body:
             and Foundation for an existing solution.
           required: false
         - label: >-
-            This request describes a concrete, user-facing need rather than a
-            broad brainstorming topic.
+            This request describes a concrete consumer, contributor, or
+            repository need rather than a broad brainstorming topic.
           required: true
         - label: >-
             This request is appropriate to a broadly reusable package or its
