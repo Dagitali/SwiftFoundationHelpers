@@ -133,9 +133,9 @@ personal data, or unredacted consumer files in a support request. Use synthetic 
 paths, hostnames, account identifiers, and persisted values that are not required to reproduce the
 problem.
 
-[bug report]: https://github.com/Dagitali/SwiftFoundationHelpers/issues/new?template=bug-report.yml
+[bug report]: https://github.com/Dagitali/SwiftFoundationHelpers/issues/new?template=bug_report.yml
 [DocC]: https://dagitali.github.io/SwiftFoundationHelpers/documentation/swiftfoundationhelpers/
-[feature]: https://github.com/Dagitali/SwiftFoundationHelpers/issues/new?template=feature-request.yml
+[feature]: https://github.com/Dagitali/SwiftFoundationHelpers/issues/new?template=feature_request.yml
 [GitHub Discussions]: https://github.com/Dagitali/SwiftFoundationHelpers/discussions
 [MIT License]: LICENSE
 [README]: README.md
