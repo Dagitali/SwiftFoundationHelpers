@@ -2,78 +2,190 @@
 # SwiftFoundationHelpers
 #
 # Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub issue form for proposing user-facing features or feature improvements.
+#
+# Responsibilities
+# - Gather the minimum information needed to state a concrete problem and to
+#   propose and evaluate solutions and alternatives for feature requests.
+#
+# Maintainer Notes
+# - Keep this form oriented toward actionable product improvements rather
+#   than general support questions.
+# - Keep this form's prompts focused on actionable details for maintainers.
+#
+# References
+# - GitHub issue templates:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   configuring-issue-templates-for-your-repository
+# - GitHub issue forms syntax:
+#   https://docs.github.com/en/repositories/
+#   managing-your-repositorys-settings-and-features/customizing-your-repository/
+#   syntax-for-issue-forms
 
 ---
 
 name: Feature Request
-description: Request a new feature
-labels: [feature-request, needs-triage]
+description: Propose a broadly reusable Foundation helper or package improvement
+title: "[Feature]: "
+labels:
+  - request
+  - enhancement
+  - needs-triage
+assignees: []
 body:
-  - type: checkboxes
-    id: general
+  - type: markdown
     attributes:
-      label: General Information
+      value: |
+        Use this form for concrete feature requests. For general questions or
+        exploratory ideas, use GitHub Discussions instead.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: >-
+        Describe the repeated problem and why existing native API is
+        insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: >-
+        Describe the SwiftFoundationHelpers behavior, documentation, policy, or
+        workflow change you want.
+      placeholder: Describe the requested change.
+    validations:
+      required: true
+  - type: textarea
+    id: usage
+    attributes:
+      label: Intended usage
+      description: Show the intended call site or usage pattern.
+      render: swift
+    validations:
+      required: true
+  - type: dropdown
+    id: affected-area
+    attributes:
+      label: Affected area
+      description: Which part of SwiftFoundationHelpers would this improve?
       options:
-        - label: I may be able to implement this feature request
-          required: false
-        - label: This feature might incur a breaking change
-          required: false
-  - type: textarea
-    id: description
+        - Array extensions
+        - Bundle extensions
+        - Date extensions
+        - Dictionary extensions
+        - Int extensions
+        - String extensions
+        - URL extensions
+        - UserDefaults extensions
+        - Documentation
+        - Release, CI, or repository automation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: release-scope
     attributes:
-      label: Description
-      description: |
-        Describe the feature you would like added in as much detail as you can.
-        Make sure you explain how it'll enhance the project, user-experience or
-        feature set.
+      label: Expected release scope
+      description: How large does this request seem?
+      options:
+        - Patch-sized refinement or correction
+        - Minor-version feature or workflow addition
+        - Larger post-MVP or deferred idea
+        - Unsure
     validations:
       required: true
   - type: textarea
-    id: solution
+    id: alternatives
     attributes:
-      label: Proposed Solution
-      description: |
-        Whenever relevant, describe how you would like the feature to be
-        implemented. Include any documentation that can help understand your
-        idea in very concrete ways, such as code examples that leverage your
-        feature, captures of design diagrams, ...
+      label: Alternatives considered
+      description: >-
+        What workarounds or alternate approaches have you considered, and why
+        are they insufficient?
     validations:
       required: true
-  - type: input
-    id: cdk-version
+  - type: textarea
+    id: examples
     attributes:
-      label: CDK CLI Version
-      description: Output of `cdk version`
+      label: Example workflow or data
+      description: >-
+        Include sample route, trip, settings, export, shortcut, or diagnostic
+        workflow details if relevant. Avoid unnecessary precise location
+        history.
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility considerations
+      description: |
+        Identify affected platforms, availability requirements, dependencies,
+        source-compatibility concerns, and possible SemVer impact.
     validations:
-      required: false
-  - type: input
-    id: section
+      required: true
+  - type: textarea
+    id: additional-context
     attributes:
-      label: Section
-      description: Name of workshop section, if relevant
-    validations:
-      required: false
-  - type: input
-    id: browser
-    attributes:
-      label: Browser
-      description: all | Chrome | Firefox | Safari | etc...
-    validations:
-      required: false
-  - type: input
-    id: language
-    attributes:
-      label: Language
-      description: all | TypeScript | Python | etc...
+      label: Additional context
+      description: Add supporting documentation, examples, or related issues.
     validations:
       required: false
   - type: textarea
-    id: other
+    id: acceptance-criteria
     attributes:
-      label: Other information
-      description: |
-        e.g. detailed explanation, stacktraces, related issues, suggestions how
-        to fix, links for us to have context, eg. associated pull-request,
-        stackoverflow, gitter, etc
+      label: Acceptance criteria
+      description: >-
+        List observable outcomes that would make this feature complete.
+      placeholder: |
+        - Users can ...
+        - SwiftFoundationHelpers does not ...
+        - Tests cover ...
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Documentation
+        - Contribution process
+        - Release process
+        - Security or support policy
+        - Configuration or settings
+        - Generated files or templates
+        - Hook behavior
+        - Automation or CI
+        - Other
     validations:
-      required: false
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: >-
+            I searched existing issues, discussions, and PRs.
+          required: true
+        - label: >-
+            I also searched the Swift standard library and Foundation.
+          required: true
+        - label: >-
+            I did not find a duplicate.
+          required: true
+        - label: >-
+            This request describes a concrete, user-facing need rather than a
+            broad brainstorming topic.
+          required: true
+        - label: >-
+            The proposal is broadly reusable and not application-specific
+            business logic.
+          required: true
+        - label: I may be able to implement this proposal.
+          required: false
+        - label: >-
+            I considered whether this request affects location privacy,
+            CloudKit sync, exports, widgets, or App Intents.
+          required: true
+        - label: >-
+            I did not include vulnerability details or sensitive data (secrets,
+            API keys, certificates, provisioning profiles, etc.).
+          required: true
