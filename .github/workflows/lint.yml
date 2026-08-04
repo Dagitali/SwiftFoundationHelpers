@@ -50,9 +50,11 @@ jobs:
         run: |
           python3 -m venv ~/.venv
           source ~/.venv/bin/activate
-      - name: Install Pre-Commit
+      - name: Install pre-commit
         run: |
           pip install pre-commit
-      - name: Run Pre-Commit hooks
+      - name: Run pre-commit hooks
+        env:
+          SKIP: no-commit-to-branch
         run: |
           pre-commit run --all-files
