@@ -19,10 +19,21 @@ name: Lint
     branches:
       - 'bugfix/**'
       - 'feature/**'
+      - 'hotfix/**'
+      - 'release/**'
+      - develop
+      - main
     types:
       - opened
       - closed
       - labeled
+      - ready_for_review
+      - reopened
+      - synchronize
+  push:               # Verify changes after merging to an integration branch.
+    branches:
+      - develop
+      - main
   workflow_dispatch:  # Allow manual triggering.
 
 jobs:
