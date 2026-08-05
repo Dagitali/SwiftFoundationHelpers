@@ -1,0 +1,143 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for generating an SPDX source-inventory SBOM.
+#
+# Responsibilities
+# - Inventory and hash selected tracked repository files.
+# - Generate and validate an SPDX 2.3 JSON document.
+# - Keep artifact upload policy in the calling workflow.
+#
+# Maintainer Notes
+# - This is a source inventory, not a full dependency SBOM.
+# - Keep default pathspecs aligned with the package, tests, and license files.
+# - Keep artifact naming, retention, and release gating in the calling
+#   workflow.
+#
+# References
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+# - GitHub Actions metadata reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   metadata-syntax
+# - SPDX specifications:
+#   https://spdx.dev/use/specifications/
+
+---
+
+name: Generate Source SBOM
+description: Generate an SPDX source-inventory SBOM from tracked files.
+
+inputs:
+  output-path:
+    description: Destination path for the SPDX JSON document.
+    required: true
+  document-name:
+    description: Human-readable SPDX document name.
+    required: false
+    default: SwiftFoundationHelpers package source inventory
+  namespace-slug:
+    description: URL-safe name used in the SPDX document namespace.
+    required: false
+    default: swiftfoundationhelpers-sbom
+  file-patterns:
+    description: Newline-delimited git pathspecs to inventory.
+    required: false
+    default: |
+      Package.swift
+      Package.resolved
+      Sources/**
+      Tests/**
+      LICENSE*
+
+runs:
+  using: composite
+  steps:
+    - name: Generate SBOM
+      shell: bash
+      env:
+        DOCUMENT_NAME: ${{ inputs.document-name }}
+        FILE_PATTERNS: ${{ inputs.file-patterns }}
+        NAMESPACE_SLUG: ${{ inputs.namespace-slug }}
+        OUTPUT_PATH: ${{ inputs.output-path }}
+      run: |
+        python3 - <<'PY'
+        import datetime
+        import hashlib
+        import json
+        import os
+        import pathlib
+        import subprocess
+
+        output_path = pathlib.Path(os.environ["OUTPUT_PATH"])
+        patterns = [
+            pattern.strip()
+            for pattern in os.environ["FILE_PATTERNS"].splitlines()
+            if pattern.strip()
+        ]
+        revision = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            text=True,
+        ).strip()
+        tracked_files = subprocess.check_output(
+            ["git", "ls-files", "--", *patterns],
+            text=True,
+        ).splitlines()
+
+        if not tracked_files:
+            raise SystemExit("No tracked files matched the SBOM pathspecs.")
+
+        files = []
+        for file_path in tracked_files:
+            path = pathlib.Path(file_path)
+            checksum = hashlib.sha256(path.read_bytes()).hexdigest()
+            spdx_id = "".join(
+                character if character.isalnum() or character == "."
+                else "-"
+                for character in file_path
+            )
+            files.append(
+                {
+                    "fileName": file_path,
+                    "SPDXID": f"SPDXRef-File-{spdx_id}",
+                    "checksums": [
+                        {
+                            "algorithm": "SHA256",
+                            "checksumValue": checksum,
+                        }
+                    ],
+                    "licenseConcluded": "NOASSERTION",
+                    "licenseInfoInFiles": ["NOASSERTION"],
+                    "copyrightText": "NOASSERTION",
+                }
+            )
+
+        document = {
+            "spdxVersion": "SPDX-2.3",
+            "dataLicense": "CC0-1.0",
+            "SPDXID": "SPDXRef-DOCUMENT",
+            "name": os.environ["DOCUMENT_NAME"],
+            "documentNamespace": (
+                f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/"
+                f"{os.environ['NAMESPACE_SLUG']}-{revision}"
+            ),
+            "creationInfo": {
+                "created": datetime.datetime.now(
+                    datetime.timezone.utc
+                ).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+                "creators": ["Tool: GitHub Actions source inventory"],
+            },
+            "files": files,
+        }
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(
+            json.dumps(document, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        PY
+
+        python3 -m json.tool "$OUTPUT_PATH" > /dev/null

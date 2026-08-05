@@ -1,0 +1,90 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for Xcode package tests and coverage export.
+#
+# Responsibilities
+# - Run package tests through `xcodebuild test`.
+# - Enable Xcode code coverage and export an `xccov` JSON report.
+#
+# Maintainer Notes
+# - Host-platform tests remain in the SwiftPM test matrix.
+# - Keep test result and coverage artifact upload in the calling workflow.
+# - Keep this action focused on test execution and report export only.
+# - Preserve `if: always()` coverage export so failed test runs still upload
+#   useful diagnostics when a result bundle exists.
+#
+# References
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+# - GitHub Actions metadata reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   metadata-syntax
+# - Xcode command-line tool reference:
+#   https://developer.apple.com/documentation/xcode/
+#   xcode-command-line-tool-reference
+
+---
+
+name: Xcode Package Test With Coverage
+description: Test a Swift package scheme and export an xccov JSON report.
+
+inputs:
+  scheme:
+    description: Swift package scheme to test.
+    required: true
+  destination:
+    description: xcodebuild test destination.
+    required: true
+  derived-data-path:
+    description: DerivedData path.
+    required: true
+  result-bundle-path:
+    description: xcresult bundle output path.
+    required: true
+  coverage-report-path:
+    description: xccov JSON report output path.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Show Xcode version
+      shell: bash
+      run: xcodebuild -version
+
+    - name: Run Swift package tests
+      shell: bash
+      env:
+        DERIVED_DATA_PATH: ${{ inputs.derived-data-path }}
+        DESTINATION: ${{ inputs.destination }}
+        RESULT_BUNDLE_PATH: ${{ inputs.result-bundle-path }}
+        SCHEME: ${{ inputs.scheme }}
+      run: |
+        mkdir -p "$(dirname "$DERIVED_DATA_PATH")"
+        mkdir -p "$(dirname "$RESULT_BUNDLE_PATH")"
+        xcodebuild test \
+          -scheme "$SCHEME" \
+          -destination "$DESTINATION" \
+          -derivedDataPath "$DERIVED_DATA_PATH" \
+          -resultBundlePath "$RESULT_BUNDLE_PATH" \
+          -enableCodeCoverage YES \
+          CODE_SIGNING_ALLOWED=NO
+
+    - name: Export coverage report
+      if: always()
+      shell: bash
+      env:
+        COVERAGE_REPORT_PATH: ${{ inputs.coverage-report-path }}
+        RESULT_BUNDLE_PATH: ${{ inputs.result-bundle-path }}
+      run: |
+        if [[ -d "$RESULT_BUNDLE_PATH" ]]; then
+          mkdir -p "$(dirname "$COVERAGE_REPORT_PATH")"
+          xcrun xccov view --report --json "$RESULT_BUNDLE_PATH" \
+            > "$COVERAGE_REPORT_PATH"
+        else
+          echo "No test result bundle found at $RESULT_BUNDLE_PATH"
+        fi

@@ -1,0 +1,61 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# A composite action that prepares Swift for host builds and tests.
+#
+# Responsibilities
+# - Install the configured Swift toolchain on Linux and Windows runners.
+# - Use the Xcode-provided Swift toolchain on macOS runners.
+# - Verify that Swift is available to subsequent workflow steps.
+#
+# Maintainer Notes
+# - Keep the requested Swift version compatible with `Package.swift`.
+# - Keep Windows installation aligned with Swift's official instructions.
+# - Pin third-party actions to reviewed full commit SHAs.
+#
+# References
+# - Swift installation documentation:
+#   https://www.swift.org/install/
+# - Swift setup action:
+#   https://github.com/swift-actions/setup-swift
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+
+---
+
+name: Set up Swift host
+description: Prepare Swift on Linux, macOS, or Windows runners.
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Swift on Linux
+      if: runner.os == 'Linux'
+      uses: swift-actions/setup-swift@7591e4f04c00624cb043783da51a7fd6ee0a6bf6
+      with:
+        swift-version: "6.0"
+
+    - name: Install Swift on Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        winget install --id Swift.Toolchain -e --source winget `
+          --accept-package-agreements `
+          --accept-source-agreements `
+          --disable-interactivity
+
+        $machinePath = [Environment]::GetEnvironmentVariable(
+          "Path",
+          "Machine"
+        )
+        $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+        "$machinePath;$userPath" -split ";" |
+          Where-Object { $_ } |
+          ForEach-Object { $_ >> $env:GITHUB_PATH }
+
+    - name: Verify Swift toolchain
+      shell: bash
+      run: swift --version
