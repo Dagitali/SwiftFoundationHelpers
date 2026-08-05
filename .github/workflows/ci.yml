@@ -68,7 +68,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ARTIFACT_PREFIX: swiftfoundationhelpers
+  ARTIFACT_PREFIX: ${{ github.event.repository.name }}
   PACKAGE_SCHEME: SwiftFoundationHelpers
   SWIFT_VERSION: '6.0'
 
@@ -107,20 +107,24 @@ jobs:
 
       - name: Locate coverage report
         id: coverage
-        if: always()
+        if: ${{ !cancelled() }}
         shell: bash
         run: |
           printf 'path=%s\n' "$(swift test --show-codecov-path)" \
             >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
-        if: always()
+        if: >-
+          ${{
+            !cancelled() &&
+            steps.coverage.outputs.path != ''
+          }}
         uses: ./.github/actions/upload-artifact
         with:
           name: >-
             ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-host-coverage
           path: ${{ steps.coverage.outputs.path }}
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: '14'
 
   apple-platform-build:
@@ -211,20 +215,21 @@ jobs:
             ${{ runner.temp }}/${{ matrix.slug }}-coverage.json
 
       - name: Upload test result
-        if: always()
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/upload-artifact
         with:
           name: >-
             ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-test-result
           path: ${{ runner.temp }}/${{ matrix.slug }}-tests.xcresult
-          if-no-files-found: error
+          if-no-files-found: warn
+          compression-level: '0'
           retention-days: '14'
 
       - name: Upload coverage report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/upload-artifact
         with:
           name: ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-coverage
           path: ${{ runner.temp }}/${{ matrix.slug }}-coverage.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: '14'
