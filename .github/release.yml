@@ -93,7 +93,6 @@ changelog:
         - automation
         - chore
         - ci
-        - dependencies
         - pre-commit
         - refactor
     - title: Security

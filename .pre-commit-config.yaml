@@ -156,26 +156,26 @@ repos:
 
   ### YAML ###
 
-  # - repo: local
-  #   hooks:
-  #     - id: validate-community-forms
-  #       name: Validate GitHub community forms
-  #       entry: Scripts/validate_community_forms.py
-  #       language: python
-  #       additional_dependencies:
-  #         - PyYAML==6.0.3
-  #       files: ^\.github/(ISSUE_TEMPLATE|DISCUSSION_TEMPLATE)/.*\.ya?ml$
-  #       exclude: ^\.github/ISSUE_TEMPLATE/config\.ya?ml$
+  - repo: local
+    hooks:
+      - id: validate-community-forms
+        name: Validate GitHub community forms
+        entry: Scripts/validate_community_forms.py
+        language: python
+        additional_dependencies:
+          - PyYAML==6.0.3
+        files: ^\.github/(ISSUE_TEMPLATE|DISCUSSION_TEMPLATE)/.*\.ya?ml$
+        exclude: ^\.github/ISSUE_TEMPLATE/config\.ya?ml$
 
-  # - repo: local
-  #   hooks:
-  #     - id: validate-release-config
-  #       name: Validate release-note configuration
-  #       entry: Scripts/validate_release_config.py
-  #       language: python
-  #       additional_dependencies:
-  #         - PyYAML==6.0.3
-  #       files: ^\.github/release\.ya?ml$
+  - repo: local
+    hooks:
+      - id: validate-release-config
+        name: Validate release-note configuration
+        entry: Scripts/validate_release_config.py
+        language: python
+        additional_dependencies:
+          - PyYAML==6.0.3
+        files: ^\.github/release\.ya?ml$
 
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
