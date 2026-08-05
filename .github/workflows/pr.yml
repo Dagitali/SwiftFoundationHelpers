@@ -55,7 +55,8 @@ run-name: >-
 
 "on":
   pull_request:
-    branches:
+    branches: &protected-branches
+      # Protected/long-lived GitFlow branches
       - develop
       - main
     types:
@@ -64,18 +65,21 @@ run-name: >-
       - reopened
       - synchronize
   merge_group:
-    branches:
-      - develop
-      - main
+    branches: *protected-branches
   push:
     branches:
+      # GitFlow working branches
       - 'bugfix/**'
+      - 'feature/**'
+
+      # Release-oriented GitFlow branches
+      - 'hotfix/**'
+      - 'release/**'
+
+      # Extended working branches
       - 'chore/**'
       - 'ci/**'
       - 'docs/**'
-      - 'feature/**'
-      - 'hotfix/**'
-      - 'release/**'
       - 'sync/**'
   workflow_dispatch:
 
@@ -127,7 +131,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
+      - &checkout
+        name: Check out repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
       - name: Install validation tools
@@ -152,8 +157,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - *checkout
 
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
@@ -185,8 +189,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - *checkout
 
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
