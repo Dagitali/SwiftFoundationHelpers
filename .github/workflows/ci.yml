@@ -55,8 +55,11 @@ run-name: >-
 "on":
   push:
     branches:
+      # Protected/long-lived GitFlow branches
       - develop
       - main
+
+      # Release-oriented GitFlow branches
       - 'release/**'
       - 'hotfix/**'
   workflow_dispatch:
@@ -93,7 +96,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
+      - &checkout
+        name: Check out repository
         # Pinned v6.0.3
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
@@ -110,15 +114,12 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: |
-          printf 'path=%s\n' "$(swift test --show-codecov-path)" \
-            >> "$GITHUB_OUTPUT"
+          coverage_path=$(swift test --show-codecov-path | tail -n 1)
+          coverage_path=${coverage_path%$'\r'}
+          printf 'path=%s\n' "$coverage_path" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
-        if: >-
-          ${{
-            !cancelled() &&
-            steps.coverage.outputs.path != ''
-          }}
+        if: ${{ !cancelled() && steps.coverage.outputs.path != '' }}
         uses: ./.github/actions/upload-artifact
         with:
           name: >-
@@ -156,9 +157,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
-        # Pinned v6.0.3
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - *checkout
 
       - name: Build for ${{ matrix.name }}
         uses: ./.github/actions/xcode-package-build
@@ -197,9 +196,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Check out repository
-        # Pinned v6.0.3
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - *checkout
 
       - name: Test on ${{ matrix.name }}
         uses: ./.github/actions/xcode-package-test-with-coverage
