@@ -17,13 +17,13 @@
 #   chain risk.
 # - The dynamic run name is part of the workflow contract: it should identify
 #   the event trigger for clarity.
-# - SwiftFoundationHelpers currently has no third-party package dependencies,
-#   so this workflow inventories tracked package files rather than a resolved
-#   dependency graph.
+# - The package has no third-party runtime dependencies. Resolved documentation
+#   tooling is represented by its tracked manifest and lockfile, not as an SPDX
+#   dependency-component graph.
 # - Keep inventory generation in `.github/actions/generate-source-sbom` and
 #   artifact policy in this workflow.
-# - Add dependency components from `Package.resolved`, or adopt a SwiftPM-aware
-#   generator, if third-party package dependencies are introduced.
+# - Adopt a SwiftPM-aware generator if third-party runtime dependencies are
+#   introduced and dependency components become part of the SBOM contract.
 #
 # References
 # - SBOM documentation:
@@ -72,10 +72,17 @@ run-name: >-
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SBOM_FILENAME: ${{ github.event.repository.name }}-source.spdx.json
+
 jobs:
   generate-sbom:
     name: Generate package source inventory SBOM
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -88,13 +95,12 @@ jobs:
       - name: Generate SBOM (SPDX package source inventory)
         uses: ./.github/actions/generate-source-sbom
         with:
-          output-path: >-
-            ${{ runner.temp }}/swiftfoundationhelpers-sbom.spdx.json
+          output-path: ${{ runner.temp }}/${{ env.SBOM_FILENAME }}
 
       - name: Upload SBOM artifact
         uses: ./.github/actions/upload-artifact
         with:
-          name: sbom
-          path: ${{ runner.temp }}/swiftfoundationhelpers-sbom.spdx.json
+          name: source-sbom
+          path: ${{ runner.temp }}/${{ env.SBOM_FILENAME }}
           if-no-files-found: error
           retention-days: 30
