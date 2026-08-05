@@ -17,9 +17,8 @@
 #   chain risk.
 # - The dynamic run name is part of the workflow contract: it should identify
 #   the event trigger for clarity.
-# - The package has no third-party runtime dependencies. Resolved documentation
-#   tooling is represented by its tracked manifest and lockfile, not as an SPDX
-#   dependency-component graph.
+# - This source inventory represents tracked manifests and lockfiles; it does
+#   not construct an SPDX dependency-component graph.
 # - Keep inventory generation in `.github/actions/generate-source-sbom` and
 #   artifact policy in this workflow.
 # - Path filters mirror the source-inventory inputs and their automation.
@@ -59,12 +58,14 @@ run-name: >-
 "on":
   push:
     branches:
-      # Protected/long-lived and release-oriented GitFlow branches
+      # Protected/long-lived GitFlow branches
       - main
       - develop
+
+      # Release-oriented GitFlow branches
       - 'release/**'
       - 'hotfix/**'
-    paths:
+    paths: &sbom-paths
       - 'Package.swift'
       - 'Package.resolved'
       - 'Sources/**'
@@ -79,16 +80,7 @@ run-name: >-
       # Protected/long-lived GitFlow branches
       - main
       - develop
-    paths:
-      - 'Package.swift'
-      - 'Package.resolved'
-      - 'Sources/**'
-      - 'Tests/**'
-      - 'LICENSE*'
-      - 'Scripts/generate_source_sbom.py'
-      - '.github/actions/generate-source-sbom/action.yml'
-      - '.github/actions/upload-artifact/action.yml'
-      - '.github/workflows/sbom.yml'
+    paths: *sbom-paths
   workflow_dispatch:
 
 permissions: {}
