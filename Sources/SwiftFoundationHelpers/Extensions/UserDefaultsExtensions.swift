@@ -47,6 +47,17 @@ public extension UserDefaults {
         // User Authentication
         public static let isLoggedIn = "isLoggedIn"
         public static let lastLoginDate = "lastLoginDate"
+
+        /// A legacy key retained only for source compatibility.
+        ///
+        /// Authentication tokens and other credentials must not be stored in
+        /// `UserDefaults`. Use secure credential storage appropriate to the
+        /// consuming platform.
+        @available(
+            *,
+            deprecated,
+            message: "Do not store credentials in UserDefaults; use secure platform storage."
+        )
         public static let sessionToken = "sessionToken"
 
         // User Preferences
