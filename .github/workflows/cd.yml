@@ -50,6 +50,7 @@ run-name: >-
 "on":
   push:
     branches:
+      # Default protected/long-lived GitFlow branch
       - main
     tags:
       - 'v*.*.*'
@@ -109,7 +110,7 @@ jobs:
             --hosting-base-path "$DOCC_HOSTING_BASE_PATH"
 
           printf \
-            '<script>window.location.href += "/documentation/%s"</script>\n' \
+            '<meta http-equiv="refresh" content="0;url=documentation/%s">\n' \
             "$docc_module_path" \
             > "$OUTPUT_PATH/index.html"
 
@@ -143,8 +144,15 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Expected a stable semantic-version tag such as v1.2.3."
+          number='(0|[1-9][0-9]*)'
+          prerelease='(0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)'
+          semver_pattern="^v${number}\.${number}\.${number}"
+          semver_pattern+="(-${prerelease}(\.${prerelease})*)?"
+          semver_pattern+='(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
+
+          if [[ ! "$RELEASE_TAG" =~ $semver_pattern ]]; then
+            echo 'Expected a semantic-version tag such as v1.2.3 or'
+            echo 'v1.2.3-beta.1.'
             exit 1
           fi
 
