@@ -11,7 +11,7 @@
 # - Upload workflow evidence such as build logs, test results, coverage
 #   reports, and SBOMs.
 # - Preserve caller control over artifact names, paths, retention, and missing
-#   file behavior.
+#   file and compression behavior.
 #
 # Maintainer Notes
 # - Update the pinned upload-artifact SHA deliberately and in one reviewable
@@ -47,6 +47,10 @@ inputs:
     description: Behavior when no files match, such as warn or error.
     required: false
     default: warn
+  compression-level:
+    description: Zlib compression level from 0 through 9.
+    required: false
+    default: '6'
   retention-days:
     description: Artifact retention period in days.
     required: false
@@ -62,4 +66,5 @@ runs:
         name: ${{ inputs.name }}
         path: ${{ inputs.path }}
         if-no-files-found: ${{ inputs.if-no-files-found }}
+        compression-level: ${{ inputs.compression-level }}
         retention-days: ${{ inputs.retention-days }}

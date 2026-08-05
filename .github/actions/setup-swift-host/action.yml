@@ -15,6 +15,7 @@
 # - Keep the requested Linux Swift version compatible with `Package.swift`.
 # - Windows Package Manager installs the current stable Swift toolchain; use a
 #   dedicated setup action if an exact Windows toolchain becomes necessary.
+# - Skip Windows installation when the runner already exposes Swift in `PATH`.
 # - Keep Windows installation aligned with Swift's official instructions.
 # - Pin third-party actions to reviewed full commit SHAs.
 #
@@ -51,10 +52,12 @@ runs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        winget install --id Swift.Toolchain -e --source winget `
-          --accept-package-agreements `
-          --accept-source-agreements `
-          --disable-interactivity
+        if (-not (Get-Command swift -ErrorAction SilentlyContinue)) {
+          winget install --id Swift.Toolchain -e --source winget `
+            --accept-package-agreements `
+            --accept-source-agreements `
+            --disable-interactivity
+        }
 
         $machinePath = [Environment]::GetEnvironmentVariable(
           "Path",

@@ -103,7 +103,7 @@ runs:
           CODE_SIGNING_ALLOWED=NO
 
     - name: Export coverage report
-      if: always()
+      if: ${{ !cancelled() }}
       shell: bash
       env:
         COVERAGE_REPORT_PATH: ${{ inputs.coverage-report-path }}
@@ -114,6 +114,6 @@ runs:
           xcrun xccov view --report --json "$RESULT_BUNDLE_PATH" \
             > "$COVERAGE_REPORT_PATH"
         else
-          echo "No test result bundle found at $RESULT_BUNDLE_PATH" >&2
-          exit 1
+          message="No result bundle found at $RESULT_BUNDLE_PATH"
+          echo "::warning title=Coverage unavailable::$message"
         fi
