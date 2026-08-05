@@ -68,7 +68,6 @@ concurrency:
 
 env:
   DOCC_HOSTING_BASE_PATH: ${{ github.event.repository.name }}
-  DOCC_MODULE_PATH: swiftfoundationhelpers
   DOCC_TARGET: SwiftFoundationHelpers
   OUTPUT_PATH: ${{ github.workspace }}/docs
 
@@ -98,6 +97,10 @@ jobs:
 
       - name: Build static DocC website
         run: |
+          docc_module_path=$(
+            printf '%s' "$DOCC_TARGET" | tr '[:upper:]' '[:lower:]'
+          )
+
           swift package --allow-writing-to-directory "$OUTPUT_PATH" \
             generate-documentation \
             --target "$DOCC_TARGET" \
@@ -107,7 +110,7 @@ jobs:
 
           printf \
             '<script>window.location.href += "/documentation/%s"</script>\n' \
-            "$DOCC_MODULE_PATH" \
+            "$docc_module_path" \
             > "$OUTPUT_PATH/index.html"
 
       - name: Upload GitHub Pages artifact
