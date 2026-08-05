@@ -17,7 +17,7 @@
 # - External GitHub Actions are pinned to full commit SHAs to reduce supply-
 #   chain risk.
 # - Host tests cover Linux, macOS, and Windows without requiring Apple SDKs.
-# - Swift formatting uses the toolchain selected by the hosted macOS image.
+# - Swift formatting uses the same configured Linux toolchain as host tests.
 # - The dynamic run name is part of the workflow contract: it should identify
 #   the short-lived source branch and the long-running target branch for PR
 #   review clarity.
@@ -41,6 +41,17 @@
 ---
 
 name: Pull Request (PR) Gates
+
+run-name: >-
+  ${{
+    github.event_name == 'pull_request' &&
+    format('PR gates: {0} -> {1}', github.head_ref, github.base_ref) ||
+    github.event_name == 'merge_group' &&
+    format('PR gates: merge queue for {0}', github.ref_name) ||
+    github.event_name == 'push' &&
+    format('PR gates: push on {0}', github.ref_name) ||
+    'PR gates: manual dispatch'
+  }}
 
 "on":
   pull_request:
@@ -71,8 +82,11 @@ name: Pull Request (PR) Gates
 permissions: {}
 
 concurrency:
-  group: pr-${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  SWIFT_VERSION: '6.0'
 
 jobs:
   pr-target-guard:
@@ -133,7 +147,7 @@ jobs:
 
   swift-format:
     name: Swift Format
-    runs-on: macos-26
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -141,9 +155,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
+      - name: Set up Swift host
+        uses: ./.github/actions/setup-swift-host
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
+
       - name: Lint Swift source
         run: |
-          xcrun swift-format lint \
+          swift format lint \
             --strict \
             --configuration .swift-format \
             --recursive \
@@ -171,9 +190,8 @@ jobs:
 
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
-
-      - name: Build package
-        run: swift build
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
 
       - name: Test package
         run: swift test --parallel
