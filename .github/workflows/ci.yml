@@ -6,11 +6,11 @@
 # Responsibilities
 # - Run broader platform validation for protected/long-lived GitFlow
 #   integration branches.
-# - Test the package on Linux, macOS, and Windows hosts.
+# - Test with coverage on Linux, macOS, and Windows hosts through SwiftPM.
 # - Compile against every declared Apple platform SDK with Xcode.
-# - Run one macOS Xcode test for coverage evidence.
+# - Test with coverage on every declared Apple platform destination.
 # - Validate integration branches after changes merge.
-# - Upload failed test result bundles and compact coverage reports.
+# - Upload per-host and per-Apple-destination coverage and test results.
 #
 # Maintainer Notes
 # - Global permissions are intentionally set to none; each job declares the
@@ -76,10 +76,13 @@ jobs:
         include:
           - name: Linux
             runner: ubuntu-24.04
+            artifact: linux
           - name: macOS
             runner: macos-26
+            artifact: macos
           - name: Windows
             runner: windows-2025
+            artifact: windows
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     permissions:
@@ -92,8 +95,45 @@ jobs:
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
 
-      - name: Test package
-        run: swift test --parallel
+      - name: Test package with coverage
+        run: swift test --parallel --enable-code-coverage
+
+      - name: Collect coverage report on Unix
+        if: always() && runner.os != 'Windows'
+        shell: bash
+        run: |
+          coverage_path=$(swift test --show-codecov-path)
+          output_path="$RUNNER_TEMP/SwiftFoundationHelpers-codecov.json"
+
+          if [[ -f "$coverage_path" ]]; then
+            cp "$coverage_path" "$output_path"
+          else
+            echo "No coverage report found at $coverage_path"
+            exit 1
+          fi
+
+      - name: Collect coverage report on Windows
+        if: always() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $coveragePath = swift test --show-codecov-path
+          $outputPath = "$env:RUNNER_TEMP/SwiftFoundationHelpers-codecov.json"
+
+          if (Test-Path $coveragePath) {
+            Copy-Item $coveragePath $outputPath
+          } else {
+            throw "No coverage report found at $coveragePath"
+          }
+
+      - name: Upload coverage report
+        if: always()
+        uses: ./.github/actions/upload-artifact
+        with:
+          name: >-
+            swiftfoundationhelpers-${{ matrix.artifact }}-host-coverage
+          path: ${{ runner.temp }}/SwiftFoundationHelpers-codecov.json
+          if-no-files-found: error
+          retention-days: '14'
 
   apple-platform-build:
     name: Apple Platform Build (${{ matrix.name }})
@@ -137,9 +177,37 @@ jobs:
             ${{ runner.temp }}/DerivedData/${{ matrix.derived_data }}
 
   apple-platform-test:
-    name: Apple Platform Test (macOS)
+    name: Apple Platform Test (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS
+            destination: ''
+            simulator_platform: iOS
+            artifact: ios
+          - name: Mac Catalyst
+            destination: platform=macOS,variant=Mac Catalyst
+            simulator_platform: ''
+            artifact: mac-catalyst
+          - name: macOS
+            destination: platform=macOS
+            simulator_platform: ''
+            artifact: macos
+          - name: tvOS
+            destination: ''
+            simulator_platform: tvOS
+            artifact: tvos
+          - name: visionOS
+            destination: ''
+            simulator_platform: visionOS
+            artifact: visionos
+          - name: watchOS
+            destination: ''
+            simulator_platform: watchOS
+            artifact: watchos
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
@@ -147,32 +215,33 @@ jobs:
         # Pinned v6.0.3
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
-      - name: Test on macOS
+      - name: Test on ${{ matrix.name }}
         uses: ./.github/actions/xcode-package-test-with-coverage
         with:
           scheme: SwiftFoundationHelpers
-          destination: platform=macOS
-          derived-data-path: ${{ runner.temp }}/DerivedData/macOSTests
+          destination: ${{ matrix.destination }}
+          simulator-platform: ${{ matrix.simulator_platform }}
+          derived-data-path: >-
+            ${{ runner.temp }}/DerivedData/Test-${{ matrix.artifact }}
           result-bundle-path: >-
-            ${{ runner.temp }}/SwiftFoundationHelpers-macOS.xcresult
+            ${{ runner.temp }}/${{ matrix.artifact }}-tests.xcresult
           coverage-report-path: >-
-            ${{ runner.temp }}/SwiftFoundationHelpers-macOS-coverage.json
+            ${{ runner.temp }}/${{ matrix.artifact }}-coverage.json
 
-      - name: Upload failed test result
-        if: failure()
+      - name: Upload test result
+        if: always()
         uses: ./.github/actions/upload-artifact
         with:
-          name: swiftfoundationhelpers-macOS-test-result
-          path: ${{ runner.temp }}/SwiftFoundationHelpers-macOS.xcresult
-          if-no-files-found: warn
+          name: swiftfoundationhelpers-${{ matrix.artifact }}-test-result
+          path: ${{ runner.temp }}/${{ matrix.artifact }}-tests.xcresult
+          if-no-files-found: error
           retention-days: '14'
 
       - name: Upload coverage report
         if: always()
         uses: ./.github/actions/upload-artifact
         with:
-          name: swiftfoundationhelpers-macOS-coverage
-          path: >-
-            ${{ runner.temp }}/SwiftFoundationHelpers-macOS-coverage.json
-          if-no-files-found: warn
+          name: swiftfoundationhelpers-${{ matrix.artifact }}-coverage
+          path: ${{ runner.temp }}/${{ matrix.artifact }}-coverage.json
+          if-no-files-found: error
           retention-days: '14'
