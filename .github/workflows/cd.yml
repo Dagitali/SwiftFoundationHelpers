@@ -38,6 +38,15 @@
 
 name: CD
 
+run-name: >-
+  ${{
+    github.ref_type == 'tag' &&
+    format('CD: publish {0}', github.ref_name) ||
+    github.event_name == 'push' &&
+    format('CD: deploy documentation from {0}', github.ref_name) ||
+    'CD: manually deploy documentation'
+  }}
+
 "on":
   push:
     branches:
@@ -54,11 +63,13 @@ name: CD
 permissions: {}
 
 concurrency:
-  group: cd-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
 
 env:
-  TARGET: SwiftFoundationHelpers
+  DOCC_HOSTING_BASE_PATH: ${{ github.event.repository.name }}
+  DOCC_MODULE_PATH: swiftfoundationhelpers
+  DOCC_TARGET: SwiftFoundationHelpers
   OUTPUT_PATH: ${{ github.workspace }}/docs
 
 jobs:
@@ -89,14 +100,15 @@ jobs:
         run: |
           swift package --allow-writing-to-directory "$OUTPUT_PATH" \
             generate-documentation \
-            --target "$TARGET" \
+            --target "$DOCC_TARGET" \
             --output-path "$OUTPUT_PATH" \
             --transform-for-static-hosting \
-            --hosting-base-path "$TARGET"
+            --hosting-base-path "$DOCC_HOSTING_BASE_PATH"
 
-          redirect='<script>window.location.href += '
-          redirect+='"/documentation/swiftfoundationhelpers"</script>'
-          printf '%s\n' "$redirect" > "$OUTPUT_PATH/index.html"
+          printf \
+            '<script>window.location.href += "/documentation/%s"</script>\n' \
+            "$DOCC_MODULE_PATH" \
+            > "$OUTPUT_PATH/index.html"
 
       - name: Upload GitHub Pages artifact
         # Pinned v4
