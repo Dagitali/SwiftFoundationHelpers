@@ -22,6 +22,7 @@
 #   dependency-component graph.
 # - Keep inventory generation in `.github/actions/generate-source-sbom` and
 #   artifact policy in this workflow.
+# - Path filters mirror the source-inventory inputs and their automation.
 # - Adopt a SwiftPM-aware generator if third-party runtime dependencies are
 #   introduced and dependency components become part of the SBOM contract.
 #
@@ -63,11 +64,31 @@ run-name: >-
       - develop
       - 'release/**'
       - 'hotfix/**'
+    paths:
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'Sources/**'
+      - 'Tests/**'
+      - 'LICENSE*'
+      - 'Scripts/generate_source_sbom.py'
+      - '.github/actions/generate-source-sbom/action.yml'
+      - '.github/actions/upload-artifact/action.yml'
+      - '.github/workflows/sbom.yml'
   pull_request:
     branches:
       # Protected/long-lived GitFlow branches
       - main
       - develop
+    paths:
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'Sources/**'
+      - 'Tests/**'
+      - 'LICENSE*'
+      - 'Scripts/generate_source_sbom.py'
+      - '.github/actions/generate-source-sbom/action.yml'
+      - '.github/actions/upload-artifact/action.yml'
+      - '.github/workflows/sbom.yml'
   workflow_dispatch:
 
 permissions: {}
