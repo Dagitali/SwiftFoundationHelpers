@@ -47,13 +47,13 @@
 name: SBOM
 
 run-name: >-
-  ${{
-    github.event_name == 'pull_request' &&
-    format('SBOM: {0} -> {1}', github.head_ref, github.base_ref) ||
-    github.event_name == 'push' &&
-    format('SBOM: push on {0}', github.ref_name) ||
+  ${{ case(
+    github.event_name == 'pull_request',
+    format('SBOM: {0} -> {1}', github.head_ref, github.base_ref),
+    github.event_name == 'push',
+    format('SBOM: push on {0}', github.ref_name),
     'SBOM: manual dispatch'
-  }}
+  ) }}
 
 "on":
   push:
