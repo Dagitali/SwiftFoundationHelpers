@@ -46,11 +46,11 @@
 name: CI
 
 run-name: >-
-  ${{
-    github.event_name == 'push' &&
-    format('CI: push on {0}', github.ref_name) ||
+  ${{ case(
+    github.event_name == 'push',
+    format('CI: push on {0}', github.ref_name),
     'CI: manual dispatch'
-  }}
+  ) }}
 
 "on":
   push:
@@ -73,7 +73,6 @@ concurrency:
 env:
   ARTIFACT_PREFIX: ${{ github.event.repository.name }}
   PACKAGE_SCHEME: SwiftFoundationHelpers
-  SWIFT_VERSION: '6.0'
 
 jobs:
   host-test:
@@ -103,8 +102,6 @@ jobs:
 
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
-        with:
-          swift-version: ${{ env.SWIFT_VERSION }}
 
       - name: Test package with coverage
         run: swift test --parallel --enable-code-coverage
@@ -125,8 +122,6 @@ jobs:
           name: >-
             ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-host-coverage
           path: ${{ steps.coverage.outputs.path }}
-          if-no-files-found: warn
-          retention-days: '14'
 
   apple-platform-build:
     name: Apple Platform Build (${{ matrix.name }})
@@ -218,9 +213,7 @@ jobs:
           name: >-
             ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-test-result
           path: ${{ runner.temp }}/${{ matrix.slug }}-tests.xcresult
-          if-no-files-found: warn
           compression-level: '0'
-          retention-days: '14'
 
       - name: Upload coverage report
         if: ${{ !cancelled() }}
@@ -228,5 +221,3 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-coverage
           path: ${{ runner.temp }}/${{ matrix.slug }}-coverage.json
-          if-no-files-found: warn
-          retention-days: '14'
