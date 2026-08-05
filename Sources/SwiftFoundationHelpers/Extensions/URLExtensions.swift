@@ -228,7 +228,7 @@ public extension URL {
 
     /// Adds or updates query parameters to the URL.
     ///
-    /// - Parameter parameters: A dictionary of query parameters to add or
+    /// - Parameter queryParameters: A dictionary of query parameters to add or
     ///   update.
     /// - Returns: A new URL with the updated query parameters.
     ///
