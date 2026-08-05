@@ -39,13 +39,13 @@
 name: CD
 
 run-name: >-
-  ${{
-    github.ref_type == 'tag' &&
-    format('CD: publish {0}', github.ref_name) ||
-    github.event_name == 'push' &&
-    format('CD: deploy documentation from {0}', github.ref_name) ||
+  ${{ case(
+    github.ref_type == 'tag',
+    format('CD: publish {0}', github.ref_name),
+    github.event_name == 'push',
+    format('CD: deploy documentation from {0}', github.ref_name),
     'CD: manually deploy documentation'
-  }}
+  ) }}
 
 "on":
   push:
