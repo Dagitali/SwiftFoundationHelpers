@@ -12,7 +12,7 @@
 # Maintainer Notes
 # - Keep code signing disabled because this action validates package sources.
 # - Require callers to select the scheme, destination, and DerivedData path.
-# - Keep test execution in the separate package-test action.
+# - Keep host test execution in SwiftPM-based workflow jobs.
 #
 # References
 # - Xcode command-line tool reference:
