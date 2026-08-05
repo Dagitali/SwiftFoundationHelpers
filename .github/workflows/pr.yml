@@ -1,0 +1,179 @@
+# pr.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub Actions workflow for required pull-request (PR) gates.
+#
+# Responsibilities
+# - Run pull-request and merge-queue integration gates: GitFlow target-branch
+#   validation, repository hygiene, Swift formatting, and host tests.
+# - Validate topic-branch pushes before a pull request is opened.
+# - Keep the baseline lightweight so pull requests get fast remote feedback.
+#
+# Maintainer Notes
+# - Global permissions are intentionally set to none; each job declares the
+#   minimum permissions it needs.
+# - External GitHub Actions are pinned to full commit SHAs to reduce supply-
+#   chain risk.
+# - Host tests cover Linux, macOS, and Windows without requiring Apple SDKs.
+# - Swift formatting uses the toolchain selected by the hosted macOS image.
+# - The dynamic run name is part of the workflow contract: it should identify
+#   the short-lived source branch and the long-running target branch for PR
+#   review clarity.
+#
+# References
+# - GitHub-hosted runners:
+#   https://docs.github.com/en/actions/concepts/runners/github-hosted-runners
+# - GitHub Actions expressions reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   expressions
+# - GitHub Actions security hardening guide:
+#   https://docs.github.com/en/actions/reference/security/secure-use
+# - GitHub Actions workflow syntax reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   workflow-syntax
+# - GitHub merge queue documentation:
+#   https://docs.github.com/en/repositories/
+#   configuring-branches-and-merges-in-your-repository/
+#   configuring-pull-request-merges/managing-a-merge-queue
+
+---
+
+name: Pull Request (PR) Gates
+
+"on":
+  pull_request:
+    branches:
+      - develop
+      - main
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+  merge_group:
+    branches:
+      - develop
+      - main
+  push:
+    branches:
+      - 'bugfix/**'
+      - 'chore/**'
+      - 'ci/**'
+      - 'docs/**'
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'release/**'
+      - 'sync/**'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pr-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-target-guard:
+    name: Guard PR target branch
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Validate GitFlow pull-request target
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [[ "$EVENT_NAME" == 'merge_group' ]]; then
+            echo 'Merge group inherits target validation from its'
+            echo 'pull requests.'
+            exit 0
+          fi
+
+          case "$HEAD_REF:$BASE_REF" in
+            bugfix/*:develop|chore/*:develop|ci/*:develop|docs/*:develop|\
+            feature/*:develop|sync/*:develop|\
+            hotfix/*:main|release/*:main)
+              ;;
+            *)
+              echo "Unsupported GitFlow pull request: $HEAD_REF -> $BASE_REF"
+              exit 1
+              ;;
+          esac
+
+  repository-hygiene:
+    name: Repository Hygiene
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - name: Install validation tools
+        run: |
+          python3 -m pip install \
+            pre-commit==4.3.0 \
+            yamllint==1.38.0
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+
+      - name: Run pre-commit checks
+        env:
+          SKIP: no-commit-to-branch,swift-format
+        run: pre-commit run --all-files --show-diff-on-failure
+
+      - name: Validate GitHub Actions workflows
+        run: '"$HOME/go/bin/actionlint"'
+
+  swift-format:
+    name: Swift Format
+    runs-on: macos-26
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - name: Lint Swift source
+        run: |
+          xcrun swift-format lint \
+            --strict \
+            --configuration .swift-format \
+            --recursive \
+            Package.swift Sources Tests
+
+  host-test:
+    name: Host Build And Test (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            runner: ubuntu-24.04
+          - name: macOS
+            runner: macos-26
+          - name: Windows
+            runner: windows-2025
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - name: Set up Swift host
+        uses: ./.github/actions/setup-swift-host
+
+      - name: Build package
+        run: swift build
+
+      - name: Test package
+        run: swift test --parallel
