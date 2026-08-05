@@ -64,8 +64,13 @@ run-name: >-
 permissions: {}
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  ARTIFACT_PREFIX: swiftfoundationhelpers
+  PACKAGE_SCHEME: SwiftFoundationHelpers
+  SWIFT_VERSION: '6.0'
 
 jobs:
   host-test:
@@ -76,13 +81,13 @@ jobs:
         include:
           - name: Linux
             runner: ubuntu-24.04
-            artifact: linux
+            slug: linux
           - name: macOS
             runner: macos-26
-            artifact: macos
+            slug: macos
           - name: Windows
             runner: windows-2025
-            artifact: windows
+            slug: windows
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     permissions:
@@ -94,44 +99,27 @@ jobs:
 
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
 
       - name: Test package with coverage
         run: swift test --parallel --enable-code-coverage
 
-      - name: Collect coverage report on Unix
-        if: always() && runner.os != 'Windows'
+      - name: Locate coverage report
+        id: coverage
+        if: always()
         shell: bash
         run: |
-          coverage_path=$(swift test --show-codecov-path)
-          output_path="$RUNNER_TEMP/SwiftFoundationHelpers-codecov.json"
-
-          if [[ -f "$coverage_path" ]]; then
-            cp "$coverage_path" "$output_path"
-          else
-            echo "No coverage report found at $coverage_path"
-            exit 1
-          fi
-
-      - name: Collect coverage report on Windows
-        if: always() && runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $coveragePath = swift test --show-codecov-path
-          $outputPath = "$env:RUNNER_TEMP/SwiftFoundationHelpers-codecov.json"
-
-          if (Test-Path $coveragePath) {
-            Copy-Item $coveragePath $outputPath
-          } else {
-            throw "No coverage report found at $coveragePath"
-          }
+          printf 'path=%s\n' "$(swift test --show-codecov-path)" \
+            >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
         if: always()
         uses: ./.github/actions/upload-artifact
         with:
           name: >-
-            swiftfoundationhelpers-${{ matrix.artifact }}-host-coverage
-          path: ${{ runner.temp }}/SwiftFoundationHelpers-codecov.json
+            ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-host-coverage
+          path: ${{ steps.coverage.outputs.path }}
           if-no-files-found: error
           retention-days: '14'
 
@@ -143,22 +131,22 @@ jobs:
         include:
           - name: iOS
             destination: generic/platform=iOS
-            derived_data: iOS
+            slug: ios
           - name: Mac Catalyst
             destination: generic/platform=macOS,variant=Mac Catalyst
-            derived_data: MacCatalyst
+            slug: mac-catalyst
           - name: macOS
             destination: platform=macOS
-            derived_data: macOS
+            slug: macos
           - name: tvOS
             destination: generic/platform=tvOS
-            derived_data: tvOS
+            slug: tvos
           - name: visionOS
             destination: generic/platform=visionOS
-            derived_data: visionOS
+            slug: visionos
           - name: watchOS
             destination: generic/platform=watchOS
-            derived_data: watchOS
+            slug: watchos
     runs-on: macos-26
     timeout-minutes: 45
     permissions:
@@ -171,10 +159,10 @@ jobs:
       - name: Build for ${{ matrix.name }}
         uses: ./.github/actions/xcode-package-build
         with:
-          scheme: SwiftFoundationHelpers
+          scheme: ${{ env.PACKAGE_SCHEME }}
           destination: ${{ matrix.destination }}
           derived-data-path: >-
-            ${{ runner.temp }}/DerivedData/${{ matrix.derived_data }}
+            ${{ runner.temp }}/DerivedData/Build-${{ matrix.slug }}
 
   apple-platform-test:
     name: Apple Platform Test (${{ matrix.name }})
@@ -183,29 +171,23 @@ jobs:
       matrix:
         include:
           - name: iOS
-            destination: ''
             simulator_platform: iOS
-            artifact: ios
+            slug: ios
           - name: Mac Catalyst
             destination: platform=macOS,variant=Mac Catalyst
-            simulator_platform: ''
-            artifact: mac-catalyst
+            slug: mac-catalyst
           - name: macOS
             destination: platform=macOS
-            simulator_platform: ''
-            artifact: macos
+            slug: macos
           - name: tvOS
-            destination: ''
             simulator_platform: tvOS
-            artifact: tvos
+            slug: tvos
           - name: visionOS
-            destination: ''
             simulator_platform: visionOS
-            artifact: visionos
+            slug: visionos
           - name: watchOS
-            destination: ''
             simulator_platform: watchOS
-            artifact: watchos
+            slug: watchos
     runs-on: macos-26
     timeout-minutes: 45
     permissions:
@@ -218,22 +200,23 @@ jobs:
       - name: Test on ${{ matrix.name }}
         uses: ./.github/actions/xcode-package-test-with-coverage
         with:
-          scheme: SwiftFoundationHelpers
+          scheme: ${{ env.PACKAGE_SCHEME }}
           destination: ${{ matrix.destination }}
           simulator-platform: ${{ matrix.simulator_platform }}
           derived-data-path: >-
-            ${{ runner.temp }}/DerivedData/Test-${{ matrix.artifact }}
+            ${{ runner.temp }}/DerivedData/Test-${{ matrix.slug }}
           result-bundle-path: >-
-            ${{ runner.temp }}/${{ matrix.artifact }}-tests.xcresult
+            ${{ runner.temp }}/${{ matrix.slug }}-tests.xcresult
           coverage-report-path: >-
-            ${{ runner.temp }}/${{ matrix.artifact }}-coverage.json
+            ${{ runner.temp }}/${{ matrix.slug }}-coverage.json
 
       - name: Upload test result
         if: always()
         uses: ./.github/actions/upload-artifact
         with:
-          name: swiftfoundationhelpers-${{ matrix.artifact }}-test-result
-          path: ${{ runner.temp }}/${{ matrix.artifact }}-tests.xcresult
+          name: >-
+            ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-test-result
+          path: ${{ runner.temp }}/${{ matrix.slug }}-tests.xcresult
           if-no-files-found: error
           retention-days: '14'
 
@@ -241,7 +224,7 @@ jobs:
         if: always()
         uses: ./.github/actions/upload-artifact
         with:
-          name: swiftfoundationhelpers-${{ matrix.artifact }}-coverage
-          path: ${{ runner.temp }}/${{ matrix.artifact }}-coverage.json
+          name: ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-coverage
+          path: ${{ runner.temp }}/${{ matrix.slug }}-coverage.json
           if-no-files-found: error
           retention-days: '14'
