@@ -22,6 +22,8 @@
 # References
 # - DocC documentation:
 #   https://www.swift.org/documentation/docc/
+# - Swift-DocC package plugin:
+#   https://github.com/swiftlang/swift-docc-plugin
 # - GitHub Actions workflow syntax reference:
 #   https://docs.github.com/en/actions/reference/workflows-and-actions/
 #   workflow-syntax
@@ -45,6 +47,7 @@ name: CD
     paths:
       - 'Sources/**'
       - 'Package.swift'
+      - 'Package.resolved'
       - '.github/workflows/cd.yml'
   workflow_dispatch:
 
@@ -55,7 +58,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SCHEME: SwiftFoundationHelpers
+  TARGET: SwiftFoundationHelpers
   OUTPUT_PATH: ${{ github.workspace }}/docs
 
 jobs:
@@ -82,22 +85,14 @@ jobs:
         # Pinned v5
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
 
-      - name: Build DocC archive
+      - name: Build static DocC website
         run: |
-          xcodebuild docbuild \
-            -scheme "$SCHEME" \
-            -destination 'generic/platform=iOS' \
-            -derivedDataPath "$RUNNER_TEMP/DocCDerivedData" \
-            CODE_SIGNING_ALLOWED=NO
-
-      - name: Convert DocC archive to a static website
-        run: |
-          archive="$RUNNER_TEMP/DocCDerivedData/Build/Products/Debug-iphoneos"
-          archive+="/$SCHEME.doccarchive"
-          "$(xcrun --find docc)" process-archive \
-            transform-for-static-hosting "$archive" \
+          swift package --allow-writing-to-directory "$OUTPUT_PATH" \
+            generate-documentation \
+            --target "$TARGET" \
             --output-path "$OUTPUT_PATH" \
-            --hosting-base-path "$SCHEME"
+            --transform-for-static-hosting \
+            --hosting-base-path "$TARGET"
 
           redirect='<script>window.location.href += '
           redirect+='"/documentation/swiftfoundationhelpers"</script>'
