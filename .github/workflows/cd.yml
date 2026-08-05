@@ -8,13 +8,16 @@
 # Responsibilities
 # - Build DocC from the protected production branch.
 # - Publish the static documentation site to GitHub Pages.
+# - Validate semantic-version release tags against the main branch.
+# - Publish a GitHub Release with generated release notes for each valid tag.
 #
 # Maintainer Notes
 # - Global permissions are intentionally set to none; each job declares the
 #   minimum permissions it needs.
 # - External GitHub Actions are pinned to full commit SHAs to reduce supply-
 #   chain risk.
-# - Keep release publication in the separate release and publish workflows.
+# - Job conditions keep documentation deployment and tag publication isolated.
+# - GitFlow release orchestration remains in release.yml for now.
 #
 # References
 # - DocC documentation:
@@ -25,6 +28,9 @@
 # - Custom GitHub Pages workflows:
 #   https://docs.github.com/en/pages/getting-started-with-github-pages/
 #   using-custom-workflows-with-github-pages
+# - GitHub release management:
+#   https://docs.github.com/en/repositories/releasing-projects-on-github/
+#   managing-releases-in-a-repository
 
 ---
 
@@ -34,6 +40,8 @@ name: CD
   push:
     branches:
       - main
+    tags:
+      - 'v*.*.*'
     paths:
       - 'Sources/**'
       - 'Package.swift'
@@ -43,7 +51,7 @@ name: CD
 permissions: {}
 
 concurrency:
-  group: pages
+  group: cd-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -53,6 +61,9 @@ env:
 jobs:
   documentation:
     name: Deploy DocC
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: macos-26
     timeout-minutes: 30
     permissions:
@@ -103,3 +114,59 @@ jobs:
         id: deployment
         # Pinned v4
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+
+  validate-release-tag:
+    name: Validate Release Tag
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        # Pinned v6.0.3
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag format and ancestry
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Expected a stable semantic-version tag such as v1.2.3."
+            exit 1
+          fi
+
+          git fetch origin main:refs/remotes/origin/main --no-tags
+          release_commit=$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")
+
+          if ! git merge-base --is-ancestor "$release_commit" origin/main; then
+            echo "The release tag must identify a commit reachable from main."
+            exit 1
+          fi
+
+  publish-release:
+    name: Publish GitHub Release
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: validate-release-tag
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Create GitHub release
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists."
+            exit 0
+          fi
+
+          gh release create "$RELEASE_TAG" \
+            --verify-tag \
+            --generate-notes \
+            --title "Release $RELEASE_TAG"
