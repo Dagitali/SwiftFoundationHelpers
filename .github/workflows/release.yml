@@ -56,11 +56,11 @@
 name: Release
 
 run-name: >-
-  ${{
-    github.event_name == 'workflow_dispatch' &&
-    format('Release: prepare {0}', inputs.version) ||
+  ${{ case(
+    github.event_name == 'workflow_dispatch',
+    format('Release: prepare {0}', inputs.version),
     format('Release: finish {0}', github.head_ref)
-  }}
+  ) }}
 
 "on":
   workflow_dispatch:
