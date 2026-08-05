@@ -33,7 +33,7 @@
 
 ---
 
-name: Upload Artifact
+name: Upload workflow artifact
 description: Upload a workflow artifact with the repository's pinned action.
 
 inputs:

@@ -7,7 +7,7 @@
 #
 # Responsibilities
 # - Inventory and hash selected tracked repository files.
-# - Generate and validate an SPDX 2.3 JSON document.
+# - Generate an SPDX 2.3 JSON document and validate its JSON syntax.
 # - Keep artifact upload policy in the calling workflow.
 #
 # Maintainer Notes
@@ -28,7 +28,7 @@
 
 ---
 
-name: Generate Source SBOM
+name: Generate source SBOM
 description: Generate an SPDX source-inventory SBOM from tracked files.
 
 inputs:
@@ -38,11 +38,11 @@ inputs:
   document-name:
     description: Human-readable SPDX document name.
     required: false
-    default: SwiftFoundationHelpers package source inventory
+    default: Swift package source inventory
   namespace-slug:
     description: URL-safe name used in the SPDX document namespace.
     required: false
-    default: swiftfoundationhelpers-sbom
+    default: swift-package-sbom
   file-patterns:
     description: Newline-delimited git pathspecs to inventory.
     required: false
@@ -94,11 +94,13 @@ runs:
         for file_path in tracked_files:
             path = pathlib.Path(file_path)
             checksum = hashlib.sha256(path.read_bytes()).hexdigest()
-            spdx_id = "".join(
+            normalized_path = "".join(
                 character if character.isalnum() or character == "."
                 else "-"
                 for character in file_path
             )
+            path_digest = hashlib.sha256(file_path.encode()).hexdigest()[:12]
+            spdx_id = f"{normalized_path}-{path_digest}"
             files.append(
                 {
                     "fileName": file_path,

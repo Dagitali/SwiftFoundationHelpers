@@ -6,12 +6,15 @@
 # A composite action that prepares Swift for host builds and tests.
 #
 # Responsibilities
-# - Install the configured Swift toolchain on Linux and Windows runners.
+# - Install the configured Swift toolchain on Linux runners.
+# - Install Swift from its official Windows Package Manager distribution.
 # - Use the Xcode-provided Swift toolchain on macOS runners.
 # - Verify that Swift is available to subsequent workflow steps.
 #
 # Maintainer Notes
-# - Keep the requested Swift version compatible with `Package.swift`.
+# - Keep the requested Linux Swift version compatible with `Package.swift`.
+# - Windows Package Manager installs the current stable Swift toolchain; use a
+#   dedicated setup action if an exact Windows toolchain becomes necessary.
 # - Keep Windows installation aligned with Swift's official instructions.
 # - Pin third-party actions to reviewed full commit SHAs.
 #
@@ -29,6 +32,12 @@
 name: Set up Swift host
 description: Prepare Swift on Linux, macOS, or Windows runners.
 
+inputs:
+  swift-version:
+    description: Swift version to install on Linux runners.
+    required: false
+    default: '6.0'
+
 runs:
   using: composite
   steps:
@@ -36,7 +45,7 @@ runs:
       if: runner.os == 'Linux'
       uses: swift-actions/setup-swift@7591e4f04c00624cb043783da51a7fd6ee0a6bf6
       with:
-        swift-version: "6.0"
+        swift-version: ${{ inputs.swift-version }}
 
     - name: Install Swift on Windows
       if: runner.os == 'Windows'

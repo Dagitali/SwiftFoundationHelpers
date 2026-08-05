@@ -28,7 +28,7 @@
 
 ---
 
-name: Xcode Package Test With Coverage
+name: Test Swift package with Xcode coverage
 description: Test a Swift package on an Apple destination and export coverage.
 
 inputs:
@@ -43,6 +43,10 @@ inputs:
     description: Apple Simulator platform to resolve when destination is empty.
     required: false
     default: ''
+  simulator-selector:
+    description: Script that prints a Simulator identifier for a platform.
+    required: false
+    default: Scripts/select_simulator.py
   derived-data-path:
     description: DerivedData path.
     required: true
@@ -65,15 +69,18 @@ runs:
       shell: bash
       env:
         DESTINATION: ${{ inputs.destination }}
+        SIMULATOR_SELECTOR: ${{ inputs.simulator-selector }}
         SIMULATOR_PLATFORM: ${{ inputs.simulator-platform }}
       run: |
         if [[ -n "$DESTINATION" ]]; then
           printf 'value=%s\n' "$DESTINATION" >> "$GITHUB_OUTPUT"
         elif [[ -n "$SIMULATOR_PLATFORM" ]]; then
-          simulator_id=$(Scripts/select_simulator.py "$SIMULATOR_PLATFORM")
+          simulator_id=$(
+            "$SIMULATOR_SELECTOR" "$SIMULATOR_PLATFORM"
+          )
           printf 'value=id=%s\n' "$simulator_id" >> "$GITHUB_OUTPUT"
         else
-          echo "Provide destination or simulator-platform."
+          echo 'Provide either destination or simulator-platform.' >&2
           exit 1
         fi
 
@@ -107,6 +114,6 @@ runs:
           xcrun xccov view --report --json "$RESULT_BUNDLE_PATH" \
             > "$COVERAGE_REPORT_PATH"
         else
-          echo "No test result bundle found at $RESULT_BUNDLE_PATH"
+          echo "No test result bundle found at $RESULT_BUNDLE_PATH" >&2
           exit 1
         fi

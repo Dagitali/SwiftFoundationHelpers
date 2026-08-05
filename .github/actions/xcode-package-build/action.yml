@@ -24,7 +24,7 @@
 
 ---
 
-name: Xcode Package Build
+name: Build Swift package with Xcode
 description: Build a Swift package scheme against an Apple SDK.
 
 inputs:
