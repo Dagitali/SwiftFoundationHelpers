@@ -95,6 +95,7 @@ def validate_release_config(
         title = category.get("title")
         if not isinstance(title, str) or not title.strip():
             failures.append(error(path, f"{location}.title must be a nonempty string"))
+            title = None
         else:
             titles.append(title)
 
@@ -106,6 +107,8 @@ def validate_release_config(
         failures.extend(label_failures)
 
         for label in labels:
+            if title is None:
+                continue
             previous_title = categorized_labels.get(label)
             if previous_title is not None:
                 failures.append(
