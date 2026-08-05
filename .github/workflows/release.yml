@@ -14,7 +14,7 @@
 # * Short-lived branches in between with enforced prefix conventions:
 #   1. `bugfix/`:
 #      * Created from the `develop` branch.
-#      * Used to add/enhance/refactor features.
+#      * Used to correct unreleased behavior.
 #      * Removed after merging to the `develop` branch.
 #   2. `feature/`:
 #      * Created from the `develop` branch.
@@ -38,6 +38,8 @@
 # - Keep branch behavior aligned with `RELEASE-POLICY.md` and branch rules.
 # - Review third-party action behavior and pin it to a full commit SHA.
 # - Avoid automatic branch mutation when protected-branch rules require PRs.
+# - Closed pull requests must be merged release or hotfix pull requests that
+#   target `main`; unrelated and unmerged pull requests are ignored.
 #
 # References
 # - GitFlow workflow guidance:
@@ -53,27 +55,58 @@
 
 name: Release
 
+run-name: >-
+  ${{
+    github.event_name == 'workflow_dispatch' &&
+    format('Release: prepare {0}', inputs.version) ||
+    format('Release: finish {0}', github.head_ref)
+  }}
+
 "on":
   workflow_dispatch:
     inputs:
       version:
         type: string
         required: true
-        description: "SemVer version to release"
+        description: SemVer version to release
   pull_request:
+    branches:
+      - main
     types:
       - closed
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   release:
-    runs-on: ubuntu-latest
+    name: Coordinate GitFlow release
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.pull_request.merged == true &&
+        (
+          startsWith(github.head_ref, 'release/') ||
+          startsWith(github.head_ref, 'hotfix/')
+        )
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Release
-        uses: hoangvvo/gitflow-workflow-action@0.3.7
+      - name: Coordinate release branches
+        # Pinned 0.3.7
+        # yamllint disable-line rule:line-length
+        uses: hoangvvo/gitflow-workflow-action@6f190b60eedc913790eeeee8077426c297ea9c0e
         with:
           develop_branch: develop
           main_branch: main
           merge_back_from_main: false
           version: ${{ inputs.version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
