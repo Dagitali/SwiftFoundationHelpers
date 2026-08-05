@@ -1,0 +1,105 @@
+# cd.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub Actions workflow for continuous deployment (CD).
+#
+# Responsibilities
+# - Build DocC from the protected production branch.
+# - Publish the static documentation site to GitHub Pages.
+#
+# Maintainer Notes
+# - Global permissions are intentionally set to none; each job declares the
+#   minimum permissions it needs.
+# - External GitHub Actions are pinned to full commit SHAs to reduce supply-
+#   chain risk.
+# - Keep release publication in the separate release and publish workflows.
+#
+# References
+# - DocC documentation:
+#   https://www.swift.org/documentation/docc/
+# - GitHub Actions workflow syntax reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   workflow-syntax
+# - Custom GitHub Pages workflows:
+#   https://docs.github.com/en/pages/getting-started-with-github-pages/
+#   using-custom-workflows-with-github-pages
+
+---
+
+name: CD
+
+"on":
+  push:
+    branches:
+      - main
+    paths:
+      - 'Sources/**'
+      - 'Package.swift'
+      - '.github/workflows/cd.yml'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  SCHEME: SwiftFoundationHelpers
+  OUTPUT_PATH: ${{ github.workspace }}/docs
+
+jobs:
+  documentation:
+    name: Deploy DocC
+    runs-on: macos-26
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repository
+        # Pinned v6.0.3
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+
+      - name: Configure GitHub Pages
+        # Pinned v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+
+      - name: Build DocC archive
+        run: |
+          xcodebuild docbuild \
+            -scheme "$SCHEME" \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/DocCDerivedData" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Convert DocC archive to a static website
+        run: |
+          archive="$RUNNER_TEMP/DocCDerivedData/Build/Products/Debug-iphoneos"
+          archive+="/$SCHEME.doccarchive"
+          "$(xcrun --find docc)" process-archive \
+            transform-for-static-hosting "$archive" \
+            --output-path "$OUTPUT_PATH" \
+            --hosting-base-path "$SCHEME"
+
+          redirect='<script>window.location.href += '
+          redirect+='"/documentation/swiftfoundationhelpers"</script>'
+          printf '%s\n' "$redirect" > "$OUTPUT_PATH/index.html"
+
+      - name: Upload GitHub Pages artifact
+        # Pinned v4
+        # yamllint disable-line rule:line-length
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+        with:
+          path: ${{ env.OUTPUT_PATH }}
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        # Pinned v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
