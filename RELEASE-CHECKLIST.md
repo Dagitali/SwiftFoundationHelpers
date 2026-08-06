@@ -72,8 +72,10 @@ tagged source through Swift Package Manager.
 - [ ] Run `swift test` from a clean package checkout.
 - [ ] Run the active pre-commit hooks or the equivalent lint workflow over all tracked files.
 - [ ] Confirm all required GitHub Actions checks pass for the immutable candidate commit.
-- [ ] Run the supported-platform test matrix represented by `.github/workflows/test.yml` when the
-  release changes source, availability, the package manifest, or platform-sensitive behavior.
+- [ ] Run the host-test and Apple-platform build-and-test matrices represented by
+  `.github/workflows/pr.yml` and `.github/workflows/ci.yml` when the release changes source,
+  availability, the package manifest, or platform-sensitive behavior.
+- [ ] Confirm every host and Apple-platform test destination publishes a nonempty coverage report.
 - [ ] Confirm tests cover normal behavior, boundaries, empty input, malformed input, thrown errors,
   and deterministic ordering where applicable.
 - [ ] Confirm date and formatting tests use explicit calendars, locales, and time zones.
@@ -101,8 +103,8 @@ tagged source through Swift Package Manager.
 - [ ] Confirm new file, URL, bundle, codec, regular-expression, or `UserDefaults` behavior validates
   untrusted input and does not log sensitive values.
 - [ ] Confirm license and copyright notices remain accurate.
-- [ ] Draft complete release notes using the categories configured in `.github/release.yml`; the
-  generic body currently emitted by `.github/workflows/publish.yml` is not sufficient evidence.
+- [ ] Draft complete release notes using the categories configured in `.github/release.yml`, and
+  review the generated notes before treating the GitHub Release as complete.
 
 ## GitFlow Release Branch
 
@@ -141,12 +143,13 @@ tagged source through Swift Package Manager.
 - [ ] Create or verify the annotated `v<MAJOR>.<MINOR>.<PATCH>` tag on the released commit using the
   repository's release workflow.
 - [ ] Push the tag once and confirm it resolves to the intended commit.
-- [ ] Confirm the tag-triggered publish workflow completes successfully.
+- [ ] Confirm the tag-triggered publication jobs in `.github/workflows/cd.yml` complete
+  successfully.
 - [ ] Confirm the GitHub Release uses the correct tag, title, complete release notes, and prerelease
-  status; replace any generic automated body before declaring the release complete.
+  status; revise incomplete generated notes before declaring the release complete.
 - [ ] Confirm the tagged source contains the intended `Package.swift`, sources, tests,
   documentation, and license.
-- [ ] Confirm the documentation workflow completes successfully for `main`.
+- [ ] Confirm the DocC deployment in `.github/workflows/cd.yml` completes successfully for `main`.
 
 ## Post-Release
 
@@ -167,8 +170,7 @@ tagged source through Swift Package Manager.
 - [ ] Review deprecated API before every minor or major release and retain it for the documented
   compatibility period.
 - [ ] Reassess minimum platforms and Swift tools versions only as intentional release decisions.
-- [ ] Keep SwiftPM, lint, test, DocC, release, and publish workflows current and mutually
-  consistent.
+- [ ] Keep PR, CI, CD, release, and SBOM workflows current and mutually consistent.
 - [ ] Monitor dependency and GitHub Actions advisories even while the runtime library remains
   dependency-free.
 - [ ] Triage security reports according to [SECURITY.md].

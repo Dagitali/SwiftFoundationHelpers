@@ -1,0 +1,193 @@
+# cd.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# GitHub Actions workflow for continuous deployment (CD).
+#
+# Responsibilities
+# - Build DocC from the protected production branch.
+# - Publish the static documentation site to GitHub Pages.
+# - Validate semantic-version release tags against the main branch.
+# - Publish a GitHub Release with generated release notes for each valid tag.
+#
+# Maintainer Notes
+# - Global permissions are intentionally set to none; each job declares the
+#   minimum permissions it needs.
+# - External GitHub Actions are pinned to full commit SHAs to reduce supply-
+#   chain risk.
+# - Documentation deployment is restricted to `main`; tag publication remains
+#   isolated behind its own validation job.
+# - GitFlow release orchestration remains in release.yml for now.
+#
+# References
+# - DocC documentation:
+#   https://www.swift.org/documentation/docc/
+# - Swift-DocC package plugin:
+#   https://github.com/swiftlang/swift-docc-plugin
+# - GitHub Actions workflow syntax reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   workflow-syntax
+# - Custom GitHub Pages workflows:
+#   https://docs.github.com/en/pages/getting-started-with-github-pages/
+#   using-custom-workflows-with-github-pages
+# - GitHub release management:
+#   https://docs.github.com/en/repositories/releasing-projects-on-github/
+#   managing-releases-in-a-repository
+
+---
+
+name: CD
+
+run-name: >-
+  ${{ case(
+    github.ref_type == 'tag',
+    format('CD: publish {0}', github.ref_name),
+    github.event_name == 'push',
+    format('CD: deploy documentation from {0}', github.ref_name),
+    'CD: manually deploy documentation'
+  ) }}
+
+"on":
+  push:
+    branches:
+      # Default protected/long-lived GitFlow branch
+      - main
+    tags:
+      - 'v*.*.*'
+    paths:
+      - 'Sources/**'
+      - 'Package.swift'
+      - 'Package.resolved'
+      - '.github/workflows/cd.yml'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+env:
+  DOCC_HOSTING_BASE_PATH: ${{ github.event.repository.name }}
+  DOCC_TARGET: SwiftFoundationHelpers
+  OUTPUT_PATH: ${{ github.workspace }}/docs
+
+jobs:
+  documentation:
+    name: Deploy DocC
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      contains(fromJSON('["push", "workflow_dispatch"]'), github.event_name)
+    runs-on: macos-26
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out repository
+        # Pinned v6.0.3
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+
+      - name: Configure GitHub Pages
+        # Pinned v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+
+      - name: Build static DocC website
+        run: |
+          docc_module_path=$(
+            printf '%s' "$DOCC_TARGET" | tr '[:upper:]' '[:lower:]'
+          )
+
+          swift package --allow-writing-to-directory "$OUTPUT_PATH" \
+            generate-documentation \
+            --target "$DOCC_TARGET" \
+            --output-path "$OUTPUT_PATH" \
+            --transform-for-static-hosting \
+            --hosting-base-path "$DOCC_HOSTING_BASE_PATH"
+
+          printf \
+            '<meta http-equiv="refresh" content="0;url=documentation/%s">\n' \
+            "$docc_module_path" \
+            > "$OUTPUT_PATH/index.html"
+
+      - name: Upload GitHub Pages artifact
+        # Pinned v4
+        # yamllint disable-line rule:line-length
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+        with:
+          path: ${{ env.OUTPUT_PATH }}
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        # Pinned v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+
+  validate-release-tag:
+    name: Validate Release Tag
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        # Pinned v6.0.3
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          fetch-depth: 0
+
+      - name: Validate tag format and ancestry
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          number='(0|[1-9][0-9]*)'
+          prerelease='(0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)'
+          semver_pattern="^v${number}\.${number}\.${number}"
+          semver_pattern+="(-${prerelease}(\.${prerelease})*)?"
+          semver_pattern+='(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
+
+          if [[ ! "$RELEASE_TAG" =~ $semver_pattern ]]; then
+            echo 'Expected a semantic-version tag such as v1.2.3 or'
+            echo 'v1.2.3-beta.1.'
+            exit 1
+          fi
+
+          git fetch origin main:refs/remotes/origin/main --no-tags
+          release_commit=$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")
+
+          if ! git merge-base --is-ancestor "$release_commit" origin/main; then
+            echo "The release tag must identify a commit reachable from main."
+            exit 1
+          fi
+
+  publish-release:
+    name: Publish GitHub Release
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: validate-release-tag
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Create GitHub release
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists."
+            exit 0
+          fi
+
+          gh release create "$RELEASE_TAG" \
+            --verify-tag \
+            --generate-notes \
+            --title "Release $RELEASE_TAG"

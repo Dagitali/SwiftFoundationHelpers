@@ -156,8 +156,8 @@ overloads adjacent to their replacements when that makes the migration path clea
   organization.
 - Test-only fixtures and resources belong in the test target; do not expose them through the library
   product.
-- Keep the package dependency-free unless an external dependency provides substantial, durable
-  value that cannot be achieved cleanly with Swift or Foundation.
+- Keep the production library free of third-party runtime dependencies. Build and documentation
+  tooling dependencies require substantial, durable value and must not leak into the library API.
 - Prefer a direct implementation over service layers, protocols, factories, or generic abstractions
   that have only one use and no meaningful substitution requirement.
 - Add a new source folder or abstraction only when responsibility and reuse justify it.
@@ -196,8 +196,8 @@ overloads adjacent to their replacements when that makes the migration path clea
   deliberately platform-specific API.
 - Avoid assumptions about simulator device names, host paths, path separators, locale, time zone,
   or filesystem ordering.
-- When availability or Foundation behavior may vary, run the relevant destinations represented by
-  `.github/workflows/test.yml`.
+- When availability or Foundation behavior may vary, run the relevant host and Xcode destinations
+  represented by `.github/workflows/pr.yml` and `.github/workflows/ci.yml`.
 - Do not weaken supported-platform coverage merely to make one hosted runner pass.
 
 ### Test Isolation And Determinism

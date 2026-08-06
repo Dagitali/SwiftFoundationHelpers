@@ -67,7 +67,8 @@ Before opening an issue:
    `SwiftFoundationHelpers` directly.
 6. Determine whether the same behavior occurs when using the corresponding Foundation API without
    the package helper.
-7. Run `swift test` or the relevant Xcode test destination and retain the complete failure output.
+7. Run `swift test` and retain the complete failure output. For platform-sensitive failures, also
+   run the relevant generic Apple SDK build represented in CI.
 
 Do not delete a consumer's lockfile or caches without first preserving any dependency state needed
 to reproduce the problem.

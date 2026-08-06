@@ -1,11 +1,10 @@
 # SwiftFoundationHelpers
 
 ![Latest release](https://img.shields.io/github/v/release/Dagitali/SwiftFoundationHelpers?sort=semver)
-![Lint](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/lint.yml/badge.svg)
-![Tests](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/test.yml/badge.svg)
+![PR](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/pr.yml/badge.svg)
+![CI](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/ci.yml/badge.svg)
 ![Release](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/release.yml/badge.svg)
-![Documentation](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/document.yml/badge.svg)
-![Publish](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/publish.yml/badge.svg)
+![CD](https://github.com/Dagitali/SwiftFoundationHelpers/actions/workflows/cd.yml/badge.svg)
 ![Codecov](https://codecov.io/gh/Dagitali/SwiftFoundationHelpers/branch/main/graph/badge.svg)
 ![MIT license](https://img.shields.io/github/license/Dagitali/SwiftFoundationHelpers)
 
@@ -48,6 +47,10 @@ The current package manifest requires Swift tools 6.0 or newer and declares thes
 | watchOS | 11 |
 
 `Package.swift` is the source of truth if these requirements change.
+
+GitHub Actions validates SwiftPM host tests on Linux, macOS, and Windows. Xcode builds and tests
+every declared Apple platform, using dynamically selected Simulators for non-host runtimes. Each
+host and Apple-platform test publishes its own coverage report.
 
 ## Features
 

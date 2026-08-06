@@ -149,8 +149,9 @@ pre-commit run --all-files
 Review and restage any safe formatting corrections made by autofix-capable hooks.
 
 When a change affects availability or platform-sensitive Foundation behavior, also run the relevant
-Xcode destinations represented by `.github/workflows/test.yml`. Build DocC for public API or
-documentation changes and resolve documentation warnings before requesting review.
+host and Xcode destinations represented by `.github/workflows/pr.yml` and
+`.github/workflows/ci.yml`. Build DocC for public API or documentation changes and resolve
+documentation warnings before requesting review.
 
 [AGENTS.md]: AGENTS.md
 [Code of Conduct]: CODE_OF_CONDUCT.md

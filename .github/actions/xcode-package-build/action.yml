@@ -1,0 +1,60 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for unsigned Swift package SDK builds with Xcode.
+#
+# Responsibilities
+# - Compile a Swift package scheme against a selected Apple SDK.
+# - Keep simulator execution and test responsibilities out of SDK builds.
+#
+# Maintainer Notes
+# - Keep code signing disabled because this action validates package sources.
+# - Require callers to select the scheme, destination, and DerivedData path.
+# - Keep host test execution in SwiftPM-based workflow jobs.
+#
+# References
+# - Xcode command-line tool reference:
+#   https://developer.apple.com/documentation/xcode/
+#   xcode-command-line-tool-reference
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+
+---
+
+name: Build Swift package with Xcode
+description: Build a Swift package scheme against an Apple SDK.
+
+inputs:
+  scheme:
+    description: Swift package scheme to build.
+    required: true
+  destination:
+    description: Generic or host xcodebuild destination.
+    required: true
+  derived-data-path:
+    description: DerivedData path.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Show Xcode version
+      shell: bash
+      run: xcodebuild -version
+
+    - name: Build Swift package
+      shell: bash
+      env:
+        DERIVED_DATA_PATH: ${{ inputs.derived-data-path }}
+        DESTINATION: ${{ inputs.destination }}
+        SCHEME: ${{ inputs.scheme }}
+      run: |
+        mkdir -p "$(dirname "$DERIVED_DATA_PATH")"
+        xcodebuild build \
+          -scheme "$SCHEME" \
+          -destination "$DESTINATION" \
+          -derivedDataPath "$DERIVED_DATA_PATH" \
+          CODE_SIGNING_ALLOWED=NO

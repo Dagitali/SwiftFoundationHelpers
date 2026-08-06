@@ -1,0 +1,225 @@
+# ci.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Responsibilities
+# - Run broader platform validation for protected/long-lived GitFlow
+#   integration branches.
+# - Test with coverage on Linux, macOS, and Windows hosts through SwiftPM.
+# - Compile against every declared Apple platform SDK with Xcode.
+# - Test with coverage on every declared Apple platform destination.
+# - Validate integration branches after changes merge.
+# - Upload per-host and per-Apple-destination coverage and test results.
+#
+# Maintainer Notes
+# - Global permissions are intentionally set to none; each job declares the
+#   minimum permissions it needs.
+# - External GitHub Actions are pinned to full commit SHAs to reduce supply-
+#   chain risk.
+# - Keep required pull-request and merge-queue gates in `pr.yml`.
+# - CI intentionally follows the Xcode version selected by the hosted image
+#   so compatibility changes surface before release. Release workflows pin
+#   their validated Xcode toolchain for reproducibility.
+# - This workflow intentionally complements, rather than replaces, the lighter
+#   integration checks that run earlier in the development loop.
+# - The dynamic run name is part of the workflow contract: it should identify
+#   the integration branch or manual trigger for review clarity.
+#
+# References
+# - Building and testing Swift with GitHub Actions:
+#   https://docs.github.com/en/actions/tutorials/build-and-test-code/swift
+# - Xcode command-line tool reference:
+#   https://developer.apple.com/documentation/xcode/
+#   xcode-command-line-tool-reference
+# - GitHub Actions expressions reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   expressions
+# - GitHub Actions security hardening guide:
+#   https://docs.github.com/en/actions/reference/security/secure-use
+# - GitHub Actions workflow syntax reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   workflow-syntax
+
+---
+
+name: CI
+
+run-name: >-
+  ${{ case(
+    github.event_name == 'push',
+    format('CI: push on {0}', github.ref_name),
+    'CI: manual dispatch'
+  ) }}
+
+"on":
+  push:
+    branches:
+      # Protected/long-lived GitFlow branches
+      - develop
+      - main
+
+      # Release-oriented GitFlow branches
+      - 'release/**'
+      - 'hotfix/**'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ARTIFACT_PREFIX: ${{ github.event.repository.name }}
+  PACKAGE_SCHEME: SwiftFoundationHelpers
+
+jobs:
+  host-test:
+    name: Host Test (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux
+            runner: ubuntu-24.04
+            slug: linux
+          - name: macOS
+            runner: macos-26
+            slug: macos
+          - name: Windows
+            runner: windows-2022
+            slug: windows
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - &checkout
+        name: Check out repository
+        # Pinned v6.0.3
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
+
+      - name: Set up Swift host
+        uses: ./.github/actions/setup-swift-host
+
+      - name: Test package with coverage
+        run: swift test --parallel --enable-code-coverage
+
+      - name: Locate coverage report
+        id: coverage
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          coverage_path=$(swift test --show-coverage-path | tail -n 1)
+          coverage_path=${coverage_path%$'\r'}
+          printf 'path=%s\n' "$coverage_path" >> "$GITHUB_OUTPUT"
+
+      - name: Upload coverage report
+        if: ${{ !cancelled() }}
+        uses: ./.github/actions/upload-artifact
+        with:
+          name: >-
+            ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-host-coverage
+          path: ${{ steps.coverage.outputs.path }}
+
+  apple-platform-build:
+    name: Apple Platform Build (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS
+            destination: generic/platform=iOS
+            slug: ios
+          - name: Mac Catalyst
+            destination: generic/platform=macOS,variant=Mac Catalyst
+            slug: mac-catalyst
+          - name: macOS
+            destination: platform=macOS
+            slug: macos
+          - name: tvOS
+            destination: generic/platform=tvOS
+            slug: tvos
+          - name: visionOS
+            destination: generic/platform=visionOS
+            slug: visionos
+          - name: watchOS
+            destination: generic/platform=watchOS
+            slug: watchos
+    runs-on: macos-26
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - *checkout
+
+      - name: Build for ${{ matrix.name }}
+        uses: ./.github/actions/xcode-package-build
+        with:
+          scheme: ${{ env.PACKAGE_SCHEME }}
+          destination: ${{ matrix.destination }}
+          derived-data-path: >-
+            ${{ runner.temp }}/DerivedData/Build-${{ matrix.slug }}
+
+  apple-platform-test:
+    name: Apple Platform Test (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS
+            simulator_platform: iOS
+            slug: ios
+          - name: Mac Catalyst
+            destination: platform=macOS,variant=Mac Catalyst
+            slug: mac-catalyst
+          - name: macOS
+            destination: platform=macOS
+            slug: macos
+          - name: tvOS
+            simulator_platform: tvOS
+            slug: tvos
+          - name: visionOS
+            simulator_platform: visionOS
+            slug: visionos
+          - name: watchOS
+            simulator_platform: watchOS
+            slug: watchos
+    runs-on: macos-26
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - *checkout
+
+      - name: Test on ${{ matrix.name }}
+        uses: ./.github/actions/xcode-package-test-with-coverage
+        with:
+          scheme: ${{ env.PACKAGE_SCHEME }}
+          destination: ${{ matrix.destination }}
+          simulator-platform: ${{ matrix.simulator_platform }}
+          derived-data-path: >-
+            ${{ runner.temp }}/DerivedData/Test-${{ matrix.slug }}
+          result-bundle-path: >-
+            ${{ runner.temp }}/${{ matrix.slug }}-tests.xcresult
+          coverage-report-path: >-
+            ${{ runner.temp }}/${{ matrix.slug }}-coverage.json
+
+      - name: Upload test result
+        if: ${{ !cancelled() }}
+        uses: ./.github/actions/upload-artifact
+        with:
+          name: >-
+            ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-test-result
+          path: ${{ runner.temp }}/${{ matrix.slug }}-tests.xcresult
+          compression-level: '0'
+
+      - name: Upload coverage report
+        if: ${{ !cancelled() }}
+        uses: ./.github/actions/upload-artifact
+        with:
+          name: ${{ env.ARTIFACT_PREFIX }}-${{ matrix.slug }}-coverage
+          path: ${{ runner.temp }}/${{ matrix.slug }}-coverage.json

@@ -133,8 +133,8 @@ repos:
   - repo: local
     hooks:
       - id: swift-format
-        name: swift-format
-        entry: xcrun swift-format
+        name: Format Swift
+        entry: swift format
         args:
           - lint
           - --strict

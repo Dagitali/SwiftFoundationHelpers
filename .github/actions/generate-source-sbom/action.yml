@@ -1,0 +1,68 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for generating an SPDX source-inventory SBOM.
+#
+# Responsibilities
+# - Inventory committed package files without following working-tree symlinks.
+# - Describe the package-to-file relationships and verification code.
+# - Keep artifact upload policy in the calling workflow.
+#
+# Maintainer Notes
+# - This is a source inventory, not a full dependency SBOM.
+# - Hash the committed Git blobs so the SBOM describes the triggering revision.
+# - Keep default pathspecs aligned with the package, tests, and license files.
+# - Keep generation logic in `Scripts/generate_source_sbom.py` so it remains
+#   locally runnable and independently testable.
+# - Keep artifact naming, retention, and release gating in the caller.
+#
+# References
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+# - GitHub Actions metadata reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   metadata-syntax
+# - SPDX specifications:
+#   https://spdx.dev/use/specifications/
+
+---
+
+name: Generate source SBOM
+description: Generate an SPDX source-inventory SBOM from tracked files.
+
+inputs:
+  output-path:
+    description: Destination path for the SPDX JSON document.
+    required: true
+  document-name:
+    description: SPDX document name; defaults to the GitHub repository name.
+    required: false
+    default: ''
+  namespace-slug:
+    description: Namespace slug; defaults to a generic Swift package value.
+    required: false
+    default: ''
+  file-patterns:
+    description: Pathspecs; defaults to package sources, tests, and licenses.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Generate SBOM
+      shell: bash
+      env:
+        DOCUMENT_NAME: ${{ inputs.document-name }}
+        FILE_PATTERNS: ${{ inputs.file-patterns }}
+        NAMESPACE_SLUG: ${{ inputs.namespace-slug }}
+        OUTPUT_PATH: ${{ inputs.output-path }}
+      run: |
+        Scripts/generate_source_sbom.py \
+          --output-path "$OUTPUT_PATH" \
+          --document-name "$DOCUMENT_NAME" \
+          --namespace-slug "$NAMESPACE_SLUG" \
+          --file-patterns "$FILE_PATTERNS"

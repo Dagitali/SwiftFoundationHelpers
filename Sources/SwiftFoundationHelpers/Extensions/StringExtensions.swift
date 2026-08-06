@@ -183,7 +183,9 @@ public extension String {
             "Use matchClosest(in:maximumDistance:) to supply the accepted edit distance explicitly."
     )
     func matchClosest(in list: [String]) -> String? {
-        matchClosest(in: list, maximumDistance: 2)  // Adjust based on tolerance for spelling errors
+        // Preserve the legacy edit-distance tolerance for source compatibility.
+        // Adjust based on tolerance for spelling errors.
+        matchClosest(in: list, maximumDistance: 2)
     }
 
     /// Finds the closest match in an array of strings using an explicit
