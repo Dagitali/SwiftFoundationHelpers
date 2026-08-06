@@ -99,6 +99,8 @@ jobs:
         name: Check out repository
         # Pinned v6.0.3
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
 
       - name: Set up Swift host
         uses: ./.github/actions/setup-swift-host
@@ -111,12 +113,12 @@ jobs:
         if: ${{ !cancelled() }}
         shell: bash
         run: |
-          coverage_path=$(swift test --show-codecov-path | tail -n 1)
+          coverage_path=$(swift test --show-coverage-path | tail -n 1)
           coverage_path=${coverage_path%$'\r'}
           printf 'path=%s\n' "$coverage_path" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage report
-        if: ${{ !cancelled() && steps.coverage.outputs.path != '' }}
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/upload-artifact
         with:
           name: >-
