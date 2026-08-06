@@ -71,8 +71,8 @@ run-name: >-
       - 'Sources/**'
       - 'Tests/**'
       - 'LICENSE*'
-      - 'Scripts/generate_source_sbom.py'
       - '.github/actions/generate-source-sbom/action.yml'
+      - '.github/actions/generate-source-sbom/generate_source_sbom.py'
       - '.github/actions/upload-artifact/action.yml'
       - '.github/workflows/sbom.yml'
   pull_request:
@@ -111,6 +111,14 @@ jobs:
         uses: ./.github/actions/generate-source-sbom
         with:
           output-path: ${{ runner.temp }}/${{ env.SBOM_FILENAME }}
+          document-name: SwiftFoundationHelpers
+          namespace-slug: swift-package-sbom
+          file-patterns: |
+            Package.swift
+            Package.resolved
+            Sources/**
+            Tests/**
+            LICENSE*
 
       - name: Upload SBOM artifact
         uses: ./.github/actions/upload-artifact
