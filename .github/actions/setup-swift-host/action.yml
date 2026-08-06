@@ -17,6 +17,7 @@
 #   dedicated setup action if an exact Windows toolchain becomes necessary.
 # - Skip Windows installation when the runner already exposes Swift in `PATH`.
 # - Keep Windows installation aligned with Swift's official instructions.
+# - Replace the pinned v3 prerelease after a stable v3 release is reviewed.
 # - Pin third-party actions to reviewed full commit SHAs.
 #
 # References
@@ -44,7 +45,8 @@ runs:
   steps:
     - name: Set up Swift on macOS and Linux
       if: runner.os != 'Windows'
-      uses: swift-actions/setup-swift@7591e4f04c00624cb043783da51a7fd6ee0a6bf6
+      # Pinned v3.0.0-beta.1
+      uses: swift-actions/setup-swift@364295d9c23900ce04d4e5cc708387921b4e50f9
       with:
         swift-version: ${{ inputs.swift-version }}
 
