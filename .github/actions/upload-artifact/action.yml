@@ -12,6 +12,7 @@
 #   reports, and SBOMs.
 # - Preserve caller control over artifact names, paths, retention, and missing
 #   file and compression behavior.
+# - Fail on missing workflow evidence unless the caller explicitly opts out.
 #
 # Maintainer Notes
 # - Update the pinned upload-artifact SHA deliberately and in one reviewable
@@ -46,7 +47,7 @@ inputs:
   if-no-files-found:
     description: Behavior when no files match, such as warn or error.
     required: false
-    default: warn
+    default: error
   compression-level:
     description: Zlib compression level from 0 through 9.
     required: false

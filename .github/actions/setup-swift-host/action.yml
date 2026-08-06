@@ -126,7 +126,9 @@ runs:
     - name: Verify Swift toolchain on macOS and Linux
       if: runner.os != 'Windows'
       shell: bash
-      run: swift --version
+      run: |
+        swift --version
+        swift package dump-package > /dev/null
 
     - name: Verify Swift toolchain on Windows
       if: runner.os == 'Windows'
