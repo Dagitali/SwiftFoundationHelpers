@@ -7,17 +7,15 @@
 #
 # Responsibilities
 # - Install the configured Swift toolchain on Linux and macOS runners.
-# - Install Swift from its official Windows Package Manager distribution.
+# - Install Swift from its official versioned Windows release installer.
 # - Propagate the Windows Swift SDK environment to subsequent workflow steps.
 # - Verify that Swift can compile the package manifest.
 #
 # Maintainer Notes
 # - Keep the default Swift version aligned with the repository's formatter and
 #   current stable Swift release while preserving `Package.swift` compatibility.
-# - Windows Package Manager installs the current stable Swift toolchain; use a
-#   dedicated setup action if an exact Windows toolchain becomes necessary.
 # - Skip Windows installation when the runner already exposes Swift in `PATH`.
-# - Keep Windows installation aligned with Swift's official instructions.
+# - Keep the Windows download URL aligned with Swift's official release layout.
 # - Keep Windows runners on an image containing Swift's required Visual Studio
 #   2022 C++ toolchain and Windows SDK components.
 # - Replace the pinned v3 prerelease after a stable v3 release is reviewed.
@@ -26,6 +24,8 @@
 # References
 # - Swift installation documentation:
 #   https://www.swift.org/install/
+# - Swift installation documentation for Windows:
+#   https://www.swift.org/install/windows/
 # - Swift setup action:
 #   https://github.com/swift-actions/setup-swift
 # - GitHub composite action guide:
@@ -39,7 +39,7 @@ description: Prepare Swift on Linux, macOS, or Windows runners.
 
 inputs:
   swift-version:
-    description: Swift version to install on Linux and macOS runners.
+    description: Stable Swift version to install on each host runner.
     required: false
     default: '6.3.3'
 
@@ -58,10 +58,32 @@ runs:
       shell: pwsh
       run: |
         if (-not (Get-Command swift -ErrorAction SilentlyContinue)) {
-          winget install --id Swift.Toolchain -e --source winget `
-            --accept-package-agreements `
-            --accept-source-agreements `
-            --disable-interactivity
+          $version = '${{ inputs.swift-version }}'
+          $release = "swift-$version-RELEASE"
+          $baseUrl = @(
+            "https://download.swift.org"
+            "swift-$version-release"
+            "windows10"
+          ) -join "/"
+          $installerUrl = "$baseUrl/$release/$release-windows10.exe"
+          $installerPath = Join-Path `
+            $env:RUNNER_TEMP `
+            "$release-windows10.exe"
+
+          Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath
+          try {
+            $installer = Start-Process `
+              -FilePath $installerPath `
+              -ArgumentList "/quiet", "/norestart" `
+              -Wait `
+              -PassThru
+            if ($installer.ExitCode -notin @(0, 3010)) {
+              $exitCode = $installer.ExitCode
+              throw "Swift installer failed with exit code $exitCode."
+            }
+          } finally {
+            Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
+          }
         }
 
         $machinePath = [Environment]::GetEnvironmentVariable(
