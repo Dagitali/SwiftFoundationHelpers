@@ -70,6 +70,12 @@ runs:
           Where-Object { $_ } |
           ForEach-Object { $_ >> $env:GITHUB_PATH }
 
-    - name: Verify Swift toolchain
+    - name: Verify Swift toolchain on macOS and Linux
+      if: runner.os != 'Windows'
       shell: bash
+      run: swift --version
+
+    - name: Verify Swift toolchain on Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
       run: swift --version
