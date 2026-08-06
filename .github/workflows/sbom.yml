@@ -86,7 +86,7 @@ run-name: >-
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 env:
@@ -104,6 +104,8 @@ jobs:
       - name: Check out repository
         # Pinned v6.0.3
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
 
       - name: Generate SBOM (SPDX package source inventory)
         uses: ./.github/actions/generate-source-sbom
@@ -115,5 +117,4 @@ jobs:
         with:
           name: source-sbom
           path: ${{ runner.temp }}/${{ env.SBOM_FILENAME }}
-          if-no-files-found: error
           retention-days: 30
