@@ -20,7 +20,13 @@ let package = Package(
         .library(
             name: "SwiftFoundationHelpers",
             targets: ["SwiftFoundationHelpers"]
-        ),
+        )
+    ],
+    dependencies: [
+        .package(
+            url: "https://github.com/swiftlang/swift-docc-plugin",
+            exact: "1.5.0"
+        )
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a
@@ -39,7 +45,7 @@ let package = Package(
             resources: [
                 .process("Resources")  // Includes `Resources` folder for use in tests.
             ]
-        ),
+        )
 
         // Integration tests
         /*

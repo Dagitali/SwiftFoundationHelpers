@@ -52,9 +52,11 @@ governance, and release practices. Prefer primary documentation when adding or u
 
 ### DocC
 
-1. <https://www.swift.org/documentation/docc/>: Swift-DocC documentation.
-2. <https://developer.apple.com/documentation/xcode/documenting-apps-frameworks-and-packages>:
+1. <https://developer.apple.com/documentation/xcode/documenting-apps-frameworks-and-packages>:
    Documenting Swift packages in Xcode.
+2. <https://github.com/swiftlang/swift-docc-plugin>: Official Swift Package Manager command plugin
+   used to generate the package's static documentation site.
+3. <https://www.swift.org/documentation/docc/>: Swift-DocC documentation.
 
 ## File Formats
 

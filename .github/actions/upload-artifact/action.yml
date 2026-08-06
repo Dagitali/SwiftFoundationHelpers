@@ -1,0 +1,71 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for pinned workflow-artifact uploads.
+#
+# Responsibilities
+# - Centralize the pinned `actions/upload-artifact` version used by package
+#   workflows.
+# - Upload workflow evidence such as build logs, test results, coverage
+#   reports, and SBOMs.
+# - Preserve caller control over artifact names, paths, retention, and missing
+#   file and compression behavior.
+# - Fail on missing workflow evidence unless the caller explicitly opts out.
+#
+# Maintainer Notes
+# - Update the pinned upload-artifact SHA deliberately and in one reviewable
+#   change.
+# - Keep upload conditions such as `if: always()` or `if: failure()` in the
+#   calling workflow.
+# - Keep this wrapper narrow; artifact production belongs in purpose-specific
+#   build, test, and SBOM actions.
+#
+# References
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+# - GitHub Actions metadata reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   metadata-syntax
+# - Artifact upload action:
+#   https://github.com/actions/upload-artifact
+
+---
+
+name: Upload workflow artifact
+description: Upload a workflow artifact with the repository's pinned action.
+
+inputs:
+  name:
+    description: Artifact name.
+    required: true
+  path:
+    description: File, directory, or multiline path list to upload.
+    required: true
+  if-no-files-found:
+    description: Behavior when no files match, such as warn or error.
+    required: false
+    default: error
+  compression-level:
+    description: Zlib compression level from 0 through 9.
+    required: false
+    default: '6'
+  retention-days:
+    description: Artifact retention period in days.
+    required: false
+    default: '14'
+
+runs:
+  using: composite
+  steps:
+    - name: Upload artifact
+      # Pinned v7.0.1
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      with:
+        name: ${{ inputs.name }}
+        path: ${{ inputs.path }}
+        if-no-files-found: ${{ inputs.if-no-files-found }}
+        compression-level: ${{ inputs.compression-level }}
+        retention-days: ${{ inputs.retention-days }}

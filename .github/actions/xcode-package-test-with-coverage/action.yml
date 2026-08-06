@@ -1,0 +1,119 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for Apple-platform package tests and coverage export.
+#
+# Responsibilities
+# - Resolve either a host destination or an available latest Simulator.
+# - Run Swift package tests through `xcodebuild test` with code coverage.
+# - Export a compact `xccov` JSON report for the tested destination.
+#
+# Maintainer Notes
+# - Keep destination discovery independent of hard-coded simulator names.
+# - Keep result and coverage artifact upload in the calling workflow.
+# - Preserve coverage export after failures when a result bundle exists.
+#
+# References
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+# - GitHub Actions metadata reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   metadata-syntax
+# - Xcode command-line tool reference:
+#   https://developer.apple.com/documentation/xcode/
+#   xcode-command-line-tool-reference
+
+---
+
+name: Test Swift package with Xcode coverage
+description: Test a Swift package on an Apple destination and export coverage.
+
+inputs:
+  scheme:
+    description: Swift package scheme to test.
+    required: true
+  destination:
+    description: Explicit xcodebuild test destination.
+    required: false
+    default: ''
+  simulator-platform:
+    description: Apple Simulator platform to resolve when destination is empty.
+    required: false
+    default: ''
+  simulator-selector:
+    description: Script that prints a Simulator identifier for a platform.
+    required: false
+    default: Scripts/select_simulator.py
+  derived-data-path:
+    description: DerivedData path.
+    required: true
+  result-bundle-path:
+    description: xcresult bundle output path.
+    required: true
+  coverage-report-path:
+    description: xccov JSON report output path.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Show Xcode version
+      shell: bash
+      run: xcodebuild -version
+
+    - name: Resolve test destination
+      id: destination
+      shell: bash
+      env:
+        DESTINATION: ${{ inputs.destination }}
+        SIMULATOR_SELECTOR: ${{ inputs.simulator-selector }}
+        SIMULATOR_PLATFORM: ${{ inputs.simulator-platform }}
+      run: |
+        if [[ -n "$DESTINATION" ]]; then
+          printf 'value=%s\n' "$DESTINATION" >> "$GITHUB_OUTPUT"
+        elif [[ -n "$SIMULATOR_PLATFORM" ]]; then
+          simulator_id=$(
+            "$SIMULATOR_SELECTOR" "$SIMULATOR_PLATFORM"
+          )
+          printf 'value=id=%s\n' "$simulator_id" >> "$GITHUB_OUTPUT"
+        else
+          echo 'Provide either destination or simulator-platform.' >&2
+          exit 1
+        fi
+
+    - name: Run Swift package tests
+      shell: bash
+      env:
+        DERIVED_DATA_PATH: ${{ inputs.derived-data-path }}
+        DESTINATION: ${{ steps.destination.outputs.value }}
+        RESULT_BUNDLE_PATH: ${{ inputs.result-bundle-path }}
+        SCHEME: ${{ inputs.scheme }}
+      run: |
+        mkdir -p "$(dirname "$DERIVED_DATA_PATH")"
+        mkdir -p "$(dirname "$RESULT_BUNDLE_PATH")"
+        xcodebuild test \
+          -scheme "$SCHEME" \
+          -destination "$DESTINATION" \
+          -derivedDataPath "$DERIVED_DATA_PATH" \
+          -resultBundlePath "$RESULT_BUNDLE_PATH" \
+          -enableCodeCoverage YES \
+          CODE_SIGNING_ALLOWED=NO
+
+    - name: Export coverage report
+      if: ${{ !cancelled() }}
+      shell: bash
+      env:
+        COVERAGE_REPORT_PATH: ${{ inputs.coverage-report-path }}
+        RESULT_BUNDLE_PATH: ${{ inputs.result-bundle-path }}
+      run: |
+        if [[ -d "$RESULT_BUNDLE_PATH" ]]; then
+          mkdir -p "$(dirname "$COVERAGE_REPORT_PATH")"
+          xcrun xccov view --report --json "$RESULT_BUNDLE_PATH" \
+            > "$COVERAGE_REPORT_PATH"
+        else
+          message="No result bundle found at $RESULT_BUNDLE_PATH"
+          echo "::warning title=Coverage unavailable::$message"
+        fi

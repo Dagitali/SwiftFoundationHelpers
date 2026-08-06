@@ -63,7 +63,9 @@ The current workflow model is staged:
 
 - `.github/workflows/pr.yml` provides the required pull-request baseline and `merge_group` coverage
   used by merge queue.
-- `.github/workflows/ci.yml` provides broader macOS and iOS Simulator build validation.
+- `.github/workflows/ci.yml` provides post-merge host testing plus Apple-platform builds, runtime
+  tests, and per-destination coverage.
+- `.github/workflows/cd.yml` deploys DocC from `main` to GitHub Pages.
 - `.github/workflows/sbom.yml` provides release-review source and asset inventory artifacts.
 
 That means branch protection should distinguish between the minimum merge gate that always runs and
@@ -78,10 +80,8 @@ pull request validation.
 
 - GitFlow target-branch enforcement for pull requests
 - Repository hygiene checks through pre-commit
-- Swift formatting checks for changed Swift files
-- Static analysis through `xcodebuild analyze`
-- Unsigned macOS and iOS Simulator source builds and tests through `xcodebuild`
-- Test result and coverage artifact upload
+- Swift formatting checks
+- SwiftPM host builds and tests on Linux, macOS, and Windows
 
 These categories define the minimum merge gate for protected branches.
 
@@ -96,13 +96,9 @@ job names as the minimum required checks:
   hygiene checks through pre-commit.
 - `Swift Format`: The GitHub Actions job in `.github/workflows/pr.yml` that runs `swift-format`
   against changed Swift files with the repository's `.swift-format` configuration.
-- `Platform Build And Test (macOS)`: The GitHub Actions matrix job in
-  `.github/workflows/pr.yml` that builds and tests the macOS destination without code signing.
-- `Platform Build And Test (iOS Simulator)`: The GitHub Actions matrix job in
-  `.github/workflows/pr.yml` that builds and tests the iOS Simulator destination without code
-  signing.
-- `Static Analysis`: The GitHub Actions job in `.github/workflows/pr.yml` that runs `xcodebuild
-  analyze` on a macOS runner.
+- `Host Build And Test (Linux)`: The Linux SwiftPM matrix job in `.github/workflows/pr.yml`.
+- `Host Build And Test (macOS)`: The macOS SwiftPM matrix job in `.github/workflows/pr.yml`.
+- `Host Build And Test (Windows)`: The Windows SwiftPM matrix job in `.github/workflows/pr.yml`.
 
 Recommended local evidence for pull request descriptions:
 
@@ -111,9 +107,8 @@ Recommended local evidence for pull request descriptions:
   - `pre-commit run --all-files` when workflow, YAML, Markdown, repository metadata, or hook-covered
   files change.
 - Tests for changed behavior
-  - Relevant `xcodebuild build` or `xcodebuild test` command output.
-  - Manual validation notes for release-readiness checks that cannot run in CI, such as App Store
-  Connect, CloudKit production, or real-device privacy flows.
+  - Relevant `swift test` output and, for platform-sensitive changes, generic Apple SDK build
+    output.
 - Documentation checks when documentation is part of the supported surface
 
 ### Advisory Categories
@@ -125,7 +120,7 @@ Common advisory categories include:
 
 - Full-tree Swift formatting checks, until existing source-formatting drift is cleaned up enough to
   make them protected-branch gates.
-- Additional platform build destinations beyond macOS and iOS Simulator
+- Apple-platform Xcode SDK build destinations
 - Release-review source and asset inventory artifacts
 - Additional runtime or platform test jobs
 - Expanded documentation validation
@@ -136,8 +131,21 @@ Common advisory categories include:
 
 The current advisory checks include:
 
-- `Build macOS`
-- `Build iOS Simulator`
+- `Host Test (Linux)`
+- `Host Test (macOS)`
+- `Host Test (Windows)`
+- `Apple Platform Build (iOS)`
+- `Apple Platform Build (Mac Catalyst)`
+- `Apple Platform Build (macOS)`
+- `Apple Platform Build (tvOS)`
+- `Apple Platform Build (visionOS)`
+- `Apple Platform Build (watchOS)`
+- `Apple Platform Test (iOS)`
+- `Apple Platform Test (Mac Catalyst)`
+- `Apple Platform Test (macOS)`
+- `Apple Platform Test (tvOS)`
+- `Apple Platform Test (visionOS)`
+- `Apple Platform Test (watchOS)`
 - `Generate source inventory SBOM`
 
 The `CI` and `SBOM` workflow jobs can be made required later if the team wants broader build and
@@ -178,8 +186,7 @@ Required protections:
 - Require pull requests; release and hotfix changes should come from `release/*` or `hotfix/*`
   branches.
 - Require at least one approval before merge.
-- Require Code Owners review for governance, workflow, security, release, and App Store metadata
-  paths when practical.
+- Require Code Owners review for governance, workflow, security, and release paths when practical.
 - Require the current Pull Request (PR) Gates baseline checks.
 - Require branch to be up to date before merge.
 - Require conversation resolution before merge.
@@ -222,8 +229,7 @@ Recommended review expectations:
 
 - Feature and bugfix pull requests should stay small enough to review.
 - Pull requests should include test evidence and note intentional gaps.
-- UI changes should include screenshots when practical.
-- Documentation, workflow, privacy, licensing, and release-readiness changes should update the
+- Documentation, workflow, security, licensing, and release-readiness changes should update the
   relevant repository docs in the same pull request.
 
 Recommended additions:
@@ -264,12 +270,25 @@ In GitHub:
    - `Guard PR target branch`
    - `Repository Hygiene`
    - `Swift Format`
-   - `Platform Build And Test (macOS)`
-   - `Platform Build And Test (iOS Simulator)`
-   - `Static Analysis`
+   - `Host Build And Test (Linux)`
+   - `Host Build And Test (macOS)`
+   - `Host Build And Test (Windows)`
 6. Optionally add advisory checks if they should block protected-branch merges:
-   - `Build macOS`
-   - `Build iOS Simulator`
+   - `Host Test (Linux)`
+   - `Host Test (macOS)`
+   - `Host Test (Windows)`
+   - `Apple Platform Build (iOS)`
+   - `Apple Platform Build (Mac Catalyst)`
+   - `Apple Platform Build (macOS)`
+   - `Apple Platform Build (tvOS)`
+   - `Apple Platform Build (visionOS)`
+   - `Apple Platform Build (watchOS)`
+   - `Apple Platform Test (iOS)`
+   - `Apple Platform Test (Mac Catalyst)`
+   - `Apple Platform Test (macOS)`
+   - `Apple Platform Test (tvOS)`
+   - `Apple Platform Test (visionOS)`
+   - `Apple Platform Test (watchOS)`
    - `Generate source inventory SBOM`
 7. Save the branch protection rule.
 8. Repeat the same status-check set for other protected branches unless they intentionally use a

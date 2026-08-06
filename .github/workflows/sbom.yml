@@ -17,26 +17,28 @@
 #   chain risk.
 # - The dynamic run name is part of the workflow contract: it should identify
 #   the event trigger for clarity.
-# - SwiftFoundationHelpers currently has no third-party package dependencies,
-#   so this workflow inventories tracked package files rather than a resolved
-#   dependency graph.
-# - Add dependency components from `Package.resolved`, or adopt a SwiftPM-aware
-#   generator, if third-party package dependencies are introduced.
+# - This source inventory represents tracked manifests and lockfiles; it does
+#   not construct an SPDX dependency-component graph.
+# - Keep inventory generation in `.github/actions/generate-source-sbom` and
+#   artifact policy in this workflow.
+# - Path filters mirror the source-inventory inputs and their automation.
+# - Adopt a SwiftPM-aware generator if third-party runtime dependencies are
+#   introduced and dependency components become part of the SBOM contract.
 #
 # References
 # - SBOM documentation:
-#   https://www.cisa.gov/sbom
-# - GitHub Actions expressions reference:
-#   https://docs.github.com/en/actions/learn-github-actions/expressions
+#   https://www.cisa.gov/topics/information-communications-technology-
+#   supply-chain-security/sbom
 # - GitHub Actions security hardening guide:
-#   https://docs.github.com/en/actions/security-guides/
-#   security-hardening-for-github-actions
+#   https://docs.github.com/en/actions/reference/security/secure-use
+# - GitHub Actions expressions reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   expressions
 # - GitHub Actions workflow syntax reference:
-#   https://docs.github.com/en/actions/using-workflows/
-#   workflow-syntax-for-github-actions
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   workflow-syntax
 # - GitHub Actions artifact upload guide:
-#   https://docs.github.com/en/actions/using-workflows/
-#   storing-workflow-data-as-artifacts
+#   https://docs.github.com/en/actions/tutorials/store-and-share-data
 # - SPDX SBOM documentation:
 #   https://spdx.dev/use/specifications/
 
@@ -45,35 +47,55 @@
 name: SBOM
 
 run-name: >-
-  ${{
-    github.event_name == 'pull_request' &&
-    format('SBOM: {0} -> {1}', github.head_ref, github.base_ref) ||
-    github.event_name == 'push' &&
-    format('SBOM: push on {0}', github.ref_name) ||
+  ${{ case(
+    github.event_name == 'pull_request',
+    format('SBOM: {0} -> {1}', github.head_ref, github.base_ref),
+    github.event_name == 'push',
+    format('SBOM: push on {0}', github.ref_name),
     'SBOM: manual dispatch'
-  }}
+  ) }}
 
 "on":
   push:
     branches:
-      # Protected/long-lived and release-oriented GitFlow branches
+      # Protected/long-lived GitFlow branches
       - main
       - develop
+
+      # Release-oriented GitFlow branches
       - 'release/**'
       - 'hotfix/**'
+    paths: &sbom-paths
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'Sources/**'
+      - 'Tests/**'
+      - 'LICENSE*'
+      - 'Scripts/generate_source_sbom.py'
+      - '.github/actions/generate-source-sbom/action.yml'
+      - '.github/actions/upload-artifact/action.yml'
+      - '.github/workflows/sbom.yml'
   pull_request:
     branches:
       # Protected/long-lived GitFlow branches
       - main
       - develop
+    paths: *sbom-paths
   workflow_dispatch:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  SBOM_FILENAME: ${{ github.event.repository.name }}-source.spdx.json
+
 jobs:
   generate-sbom:
     name: Generate package source inventory SBOM
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -82,95 +104,17 @@ jobs:
       - name: Check out repository
         # Pinned v6.0.3
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+        with:
+          persist-credentials: false
 
       - name: Generate SBOM (SPDX package source inventory)
-        env:
-          OUTPUT_PATH: ${{ runner.temp }}/swiftfoundationhelpers-sbom.spdx.json
-        run: |
-          python3 - <<'PY'
-          import datetime
-          import hashlib
-          import json
-          import os
-          import pathlib
-          import subprocess
-
-          output_path = pathlib.Path(os.environ["OUTPUT_PATH"])
-          revision = subprocess.check_output(
-              ["git", "rev-parse", "HEAD"],
-              text=True,
-          ).strip()
-          tracked_files = subprocess.check_output(
-              [
-                  "git",
-                  "ls-files",
-                  "Package.swift",
-                  "Package.resolved",
-                  "Sources/**",
-                  "Tests/**",
-                  "LICENSE*",
-              ],
-              text=True,
-          ).splitlines()
-
-          files = []
-          for file_path in tracked_files:
-              path = pathlib.Path(file_path)
-              checksum = hashlib.sha256(path.read_bytes()).hexdigest()
-              spdx_id = "".join(
-                  character if character.isalnum() or character == "."
-                  else "-"
-                  for character in file_path
-              )
-              files.append(
-                  {
-                      "fileName": file_path,
-                      "SPDXID": f"SPDXRef-File-{spdx_id}",
-                      "checksums": [
-                          {
-                              "algorithm": "SHA256",
-                              "checksumValue": checksum,
-                          }
-                      ],
-                      "licenseConcluded": "NOASSERTION",
-                      "licenseInfoInFiles": ["NOASSERTION"],
-                      "copyrightText": "NOASSERTION",
-                  }
-              )
-
-          document = {
-              "spdxVersion": "SPDX-2.3",
-              "dataLicense": "CC0-1.0",
-              "SPDXID": "SPDXRef-DOCUMENT",
-              "name": "SwiftFoundationHelpers package source inventory",
-              "documentNamespace": (
-                  f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/"
-                  f"swiftfoundationhelpers-sbom-{revision}"
-              ),
-              "creationInfo": {
-                  "created": datetime.datetime.now(
-                      datetime.timezone.utc
-                  ).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
-                  "creators": [
-                      "Tool: GitHub Actions package source inventory"
-                  ],
-              },
-              "files": files,
-          }
-
-          output_path.write_text(
-              json.dumps(document, indent=2, sort_keys=True) + "\n",
-              encoding="utf-8",
-          )
-          PY
-
-          python3 -m json.tool "$OUTPUT_PATH" > /dev/null
+        uses: ./.github/actions/generate-source-sbom
+        with:
+          output-path: ${{ runner.temp }}/${{ env.SBOM_FILENAME }}
 
       - name: Upload SBOM artifact
-        # Pinned v7.0.1
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        uses: ./.github/actions/upload-artifact
         with:
-          name: sbom
-          path: ${{ runner.temp }}/swiftfoundationhelpers-sbom.spdx.json
-          if-no-files-found: error
+          name: source-sbom
+          path: ${{ runner.temp }}/${{ env.SBOM_FILENAME }}
           retention-days: 30
