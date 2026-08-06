@@ -88,7 +88,7 @@ jobs:
             runner: macos-26
             slug: macos
           - name: Windows
-            runner: windows-2025
+            runner: windows-2022
             slug: windows
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
