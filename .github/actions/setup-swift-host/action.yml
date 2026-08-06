@@ -8,7 +8,8 @@
 # Responsibilities
 # - Install the configured Swift toolchain on Linux and macOS runners.
 # - Install Swift from its official Windows Package Manager distribution.
-# - Verify that Swift is available to subsequent workflow steps.
+# - Propagate the Windows Swift SDK environment to subsequent workflow steps.
+# - Verify that Swift can compile the package manifest.
 #
 # Maintainer Notes
 # - Keep the default Swift version aligned with the repository's formatter and
@@ -17,6 +18,8 @@
 #   dedicated setup action if an exact Windows toolchain becomes necessary.
 # - Skip Windows installation when the runner already exposes Swift in `PATH`.
 # - Keep Windows installation aligned with Swift's official instructions.
+# - Keep Windows runners on an image containing Swift's required Visual Studio
+#   2022 C++ toolchain and Windows SDK components.
 # - Replace the pinned v3 prerelease after a stable v3 release is reviewed.
 # - Pin third-party actions to reviewed full commit SHAs.
 #
@@ -66,9 +69,37 @@ runs:
           "Machine"
         )
         $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-        "$machinePath;$userPath" -split ";" |
+        $pathEntries = "$machinePath;$userPath" -split ";" |
           Where-Object { $_ } |
-          ForEach-Object { $_ >> $env:GITHUB_PATH }
+          Select-Object -Unique
+        $env:Path = $pathEntries -join ";"
+        $pathEntries | ForEach-Object { $_ >> $env:GITHUB_PATH }
+
+        $sdkRoot = @(
+          [Environment]::GetEnvironmentVariable("SDKROOT", "User")
+          [Environment]::GetEnvironmentVariable("SDKROOT", "Machine")
+        ) | Where-Object { $_ -and (Test-Path $_) } |
+          Select-Object -First 1
+
+        if (-not $sdkRoot) {
+          $swiftHome = (Get-Command swift -ErrorAction Stop).Source
+          foreach ($level in 1..5) {
+            $swiftHome = Split-Path $swiftHome -Parent
+          }
+          $sdkRoot = Get-ChildItem `
+            -Path (Join-Path $swiftHome "Platforms") `
+            -Filter Windows.sdk `
+            -Directory `
+            -Recurse |
+            Select-Object -ExpandProperty FullName -First 1
+        }
+
+        if (-not $sdkRoot -or -not (Test-Path $sdkRoot)) {
+          throw "The Swift Windows SDK could not be located."
+        }
+
+        $env:SDKROOT = $sdkRoot
+        "SDKROOT=$sdkRoot" >> $env:GITHUB_ENV
 
     - name: Verify Swift toolchain on macOS and Linux
       if: runner.os != 'Windows'
@@ -78,4 +109,6 @@ runs:
     - name: Verify Swift toolchain on Windows
       if: runner.os == 'Windows'
       shell: pwsh
-      run: swift --version
+      run: |
+        swift --version
+        swift package dump-package | Out-Null
