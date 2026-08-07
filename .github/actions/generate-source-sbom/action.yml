@@ -6,16 +6,21 @@
 # Composite action for generating an SPDX source-inventory SBOM.
 #
 # Responsibilities
-# - Inventory committed package files without following working-tree symlinks.
-# - Describe the package-to-file relationships and verification code.
+# - Inventory committed repository files without following working-tree
+#   symlinks.
+# - Describe the software-to-file relationships and package verification code.
 # - Keep artifact upload policy in the calling workflow.
 #
 # Maintainer Notes
 # - This is a source inventory, not a full dependency SBOM.
-# - Hash the committed Git blobs so the SBOM describes the triggering revision.
-# - Keep default pathspecs aligned with the package, tests, and license files.
-# - Keep generation logic in `Scripts/generate_source_sbom.py` so it remains
-#   locally runnable and independently testable.
+# - Hash committed Git blobs so the SBOM describes the triggering revision.
+# - An empty `file-patterns` input inventories every tracked file; callers may
+#   supply newline-separated Git pathspecs to narrow that scope.
+# - Keep generation logic beside this metadata and resolve it through
+#   `github.action_path` so the action remains self-contained when used from a
+#   different repository.
+# - The generator requires Python 3.9 or later and only uses its standard
+#   library plus Git.
 # - Keep artifact naming, retention, and release gating in the caller.
 #
 # References
@@ -31,24 +36,28 @@
 ---
 
 name: Generate source SBOM
-description: Generate an SPDX source-inventory SBOM from tracked files.
+description: Generate an SPDX source-inventory SBOM from committed files.
 
 inputs:
   output-path:
     description: Destination path for the SPDX JSON document.
     required: true
   document-name:
-    description: SPDX document name; defaults to the GitHub repository name.
+    description: SPDX document name; defaults to the repository name.
     required: false
     default: ''
   namespace-slug:
-    description: Namespace slug; defaults to a generic Swift package value.
+    description: Namespace slug; defaults to source-inventory-sbom.
     required: false
     default: ''
   file-patterns:
-    description: Pathspecs; defaults to package sources, tests, and licenses.
+    description: Newline-separated Git pathspecs; empty includes all files.
     required: false
     default: ''
+  repository-root:
+    description: Git worktree to inventory; defaults to the current directory.
+    required: false
+    default: '.'
 
 runs:
   using: composite
@@ -56,13 +65,16 @@ runs:
     - name: Generate SBOM
       shell: bash
       env:
+        ACTION_PATH: ${{ github.action_path }}
         DOCUMENT_NAME: ${{ inputs.document-name }}
         FILE_PATTERNS: ${{ inputs.file-patterns }}
         NAMESPACE_SLUG: ${{ inputs.namespace-slug }}
         OUTPUT_PATH: ${{ inputs.output-path }}
+        REPOSITORY_ROOT: ${{ inputs.repository-root }}
       run: |
-        Scripts/generate_source_sbom.py \
+        python3 "$ACTION_PATH/generate_source_sbom.py" \
           --output-path "$OUTPUT_PATH" \
           --document-name "$DOCUMENT_NAME" \
           --namespace-slug "$NAMESPACE_SLUG" \
-          --file-patterns "$FILE_PATTERNS"
+          --file-patterns "$FILE_PATTERNS" \
+          --repository-root "$REPOSITORY_ROOT"

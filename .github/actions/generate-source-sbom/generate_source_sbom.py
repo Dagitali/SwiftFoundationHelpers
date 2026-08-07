@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Generate an SPDX 2.3 inventory of committed Swift package sources."""
+"""Generate an SPDX 2.3 inventory of committed repository files."""
 
 from __future__ import annotations
 
@@ -10,35 +9,61 @@ import json
 import os
 import pathlib
 import subprocess
+import urllib.parse
 
 # SECTION: CONSTANTS ======================================================== #
 
 
-DEFAULT_FILE_PATTERNS = """\
-Package.swift
-Package.resolved
-Sources/**
-Tests/**
-LICENSE*
-"""
-DEFAULT_NAMESPACE_SLUG = "swift-package-sbom"
+DEFAULT_NAMESPACE_SLUG = "source-inventory-sbom"
 PACKAGE_ID = "SPDXRef-Package"
 
 
 # SECTION: FUNCTIONS ======================================================== #
 
+# -- Git Operations -- #
 
-def git_bytes(*arguments: str) -> bytes:
+
+def git_bytes(
+    repository_root: pathlib.Path,
+    *arguments: str,
+) -> bytes:
     """Return byte output from a read-only Git command."""
-    return subprocess.check_output(["git", *arguments])
+    return subprocess.check_output(
+        ["git", "-C", os.fspath(repository_root), *arguments]
+    )
 
 
-def git_text(*arguments: str) -> str:
+def git_text(
+    repository_root: pathlib.Path,
+    *arguments: str,
+) -> str:
     """Return text output from a read-only Git command."""
-    return subprocess.check_output(["git", *arguments], text=True)
+    return subprocess.check_output(
+        ["git", "-C", os.fspath(repository_root), *arguments],
+        text=True,
+    )
 
 
-def digest(algorithm: str, contents: bytes) -> str:
+def tracked_files(
+    repository_root: pathlib.Path,
+    patterns: list[str],
+) -> list[str]:
+    """Return tracked files matching the supplied Git pathspecs."""
+    arguments = ["ls-files", "-z", "--", *patterns]
+    output = git_bytes(repository_root, *arguments)
+    files = [os.fsdecode(path) for path in output.split(b"\0") if path]
+    if not files:
+        raise ValueError("No tracked files matched the SBOM pathspecs.")
+    return files
+
+
+# -- SPDX Content -- #
+
+
+def digest(
+    algorithm: str,
+    contents: bytes,
+) -> str:
     """Return a content digest, allowing SPDX-required SHA-1 on FIPS hosts."""
     return hashlib.new(
         algorithm,
@@ -47,27 +72,25 @@ def digest(algorithm: str, contents: bytes) -> str:
     ).hexdigest()
 
 
-def file_identifier(file_path: str) -> str:
-    """Return a collision-resistant SPDX identifier for a repository path."""
+def file_identifier(
+    file_path: str,
+) -> str:
+    """Return a valid SPDX file identifier for the given path."""
     normalized_path = "".join(
         character if character.isalnum() or character == "." else "-"
         for character in file_path
     )
-    path_digest = digest("sha256", file_path.encode("utf-8"))[:12]
+    path_digest = digest("sha256", os.fsencode(file_path))[:12]
     return f"SPDXRef-File-{normalized_path}-{path_digest}"
 
 
-def tracked_files(patterns: list[str]) -> list[str]:
-    """Return tracked files matching the supplied Git pathspecs."""
-    files = git_text("ls-files", "--", *patterns).splitlines()
-    if not files:
-        raise ValueError("No tracked files matched the SBOM pathspecs.")
-    return files
-
-
-def source_file(file_path: str) -> tuple[dict[str, object], str]:
+def source_file(
+    repository_root: pathlib.Path,
+    revision: str,
+    file_path: str,
+) -> tuple[dict[str, object], str]:
     """Return an SPDX file entry and its SHA-1 verification digest."""
-    contents = git_bytes("show", f"HEAD:{file_path}")
+    contents = git_bytes(repository_root, "show", f"{revision}:{file_path}")
     return (
         {
             "fileName": f"./{file_path}",
@@ -86,14 +109,23 @@ def source_file(file_path: str) -> tuple[dict[str, object], str]:
     )
 
 
-def document(arguments: argparse.Namespace) -> dict[str, object]:
-    """Build an SPDX document for the current committed revision."""
-    repository = os.environ.get("GITHUB_REPOSITORY", "local/swift-package")
+def document(
+    arguments: argparse.Namespace,
+) -> dict[str, object]:
+    """Build an SPDX document for the configured committed revision."""
+    repository_root = arguments.repository_root.resolve()
+    repository = os.environ.get("GITHUB_REPOSITORY", "local/repository")
+    server_url = os.environ.get(
+        "GITHUB_SERVER_URL",
+        "https://github.com",
+    ).rstrip("/")
     document_name = arguments.document_name or repository.rsplit("/", 1)[-1]
-    namespace_slug = arguments.namespace_slug or DEFAULT_NAMESPACE_SLUG
-    revision = git_text("rev-parse", "HEAD").strip()
+    namespace_slug = urllib.parse.quote(
+        arguments.namespace_slug or DEFAULT_NAMESPACE_SLUG,
+        safe=".-_~",
+    )
+    revision = git_text(repository_root, "rev-parse", "HEAD").strip()
     created = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
-    created_text = created.isoformat().replace("+00:00", "Z")
     run_id = os.environ.get(
         "GITHUB_RUN_ID",
         created.strftime("local-%Y%m%d%H%M%S"),
@@ -101,12 +133,13 @@ def document(arguments: argparse.Namespace) -> dict[str, object]:
     run_attempt = os.environ.get("GITHUB_RUN_ATTEMPT", "1")
     patterns = [
         pattern.strip()
-        for pattern in (
-            arguments.file_patterns or DEFAULT_FILE_PATTERNS
-        ).splitlines()
+        for pattern in arguments.file_patterns.splitlines()
         if pattern.strip()
     ]
-    entries = [source_file(path) for path in tracked_files(patterns)]
+    entries = [
+        source_file(repository_root, revision, path)
+        for path in tracked_files(repository_root, patterns)
+    ]
     files = [entry for entry, _ in entries]
     verification_hashes = sorted(checksum for _, checksum in entries)
     verification_code = digest(
@@ -120,12 +153,12 @@ def document(arguments: argparse.Namespace) -> dict[str, object]:
         "SPDXID": "SPDXRef-DOCUMENT",
         "name": document_name,
         "documentNamespace": (
-            f"https://github.com/{repository}/"
+            f"{server_url}/{repository}/"
             f"{namespace_slug}-{revision}-{run_id}-{run_attempt}"
         ),
         "creationInfo": {
-            "created": created_text,
-            "creators": ["Tool: Swift package source inventory"],
+            "created": created.isoformat().replace("+00:00", "Z"),
+            "creators": ["Tool: Source inventory SBOM generator"],
         },
         "files": files,
         "packages": [
@@ -161,6 +194,35 @@ def document(arguments: argparse.Namespace) -> dict[str, object]:
     }
 
 
+def validate(
+    document_contents: dict[str, object],
+) -> None:
+    """Validate identifiers and references required by this SPDX profile."""
+    files = document_contents["files"]
+    packages = document_contents["packages"]
+    relationships = document_contents["relationships"]
+    if not all(isinstance(value, list) for value in (files, packages, relationships)):
+        raise ValueError("SPDX files, packages, and relationships must be lists.")
+
+    identifiers = {
+        str(document_contents["SPDXID"]),
+        *(str(entry["SPDXID"]) for entry in files),
+        *(str(entry["SPDXID"]) for entry in packages),
+    }
+    expected_identifier_count = 1 + len(files) + len(packages)
+    if len(identifiers) != expected_identifier_count:
+        raise ValueError("SPDX identifiers must be unique.")
+
+    for relationship in relationships:
+        source = str(relationship["spdxElementId"])
+        destination = str(relationship["relatedSpdxElement"])
+        if source not in identifiers or destination not in identifiers:
+            raise ValueError("SPDX relationships must reference known elements.")
+
+
+# -- Command Line -- #
+
+
 def parse_arguments() -> argparse.Namespace:
     """Parse command-line configuration."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -168,15 +230,22 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--document-name", default="")
     parser.add_argument("--namespace-slug", default="")
     parser.add_argument("--file-patterns", default="")
+    parser.add_argument(
+        "--repository-root",
+        default=pathlib.Path.cwd(),
+        type=pathlib.Path,
+    )
     return parser.parse_args()
 
 
 def main() -> int:
-    """Generate and write the configured source-inventory document."""
+    """Generate, validate, and write the configured source inventory."""
     arguments = parse_arguments()
+    document_contents = document(arguments)
+    validate(document_contents)
     arguments.output_path.parent.mkdir(parents=True, exist_ok=True)
     arguments.output_path.write_text(
-        json.dumps(document(arguments), indent=2, sort_keys=True) + "\n",
+        json.dumps(document_contents, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     return 0
