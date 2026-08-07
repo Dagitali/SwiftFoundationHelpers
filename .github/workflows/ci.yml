@@ -157,8 +157,9 @@ jobs:
       - *checkout
 
       - name: Build for ${{ matrix.name }}
-        uses: ./.github/actions/xcode-package-build
+        uses: ./.github/actions/xcode-command
         with:
+          action: build
           scheme: ${{ env.PACKAGE_SCHEME }}
           destination: ${{ matrix.destination }}
           derived-data-path: >-

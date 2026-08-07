@@ -6,10 +6,10 @@
 # Composite action for pinned workflow-artifact uploads.
 #
 # Responsibilities
-# - Centralize the pinned `actions/upload-artifact` version used by package
+# - Centralize the pinned `actions/upload-artifact` version used by repository
 #   workflows.
 # - Upload workflow evidence such as build logs, test results, coverage
-#   reports, and SBOMs.
+#   reports, SBOMs, and build outputs.
 # - Preserve caller control over artifact names, paths, retention, and missing
 #   file and compression behavior.
 # - Fail on missing workflow evidence unless the caller explicitly opts out.
@@ -57,10 +57,22 @@ inputs:
     required: false
     default: '14'
 
+outputs:
+  artifact-id:
+    description: GitHub identifier for the uploaded artifact.
+    value: ${{ steps.upload.outputs.artifact-id }}
+  artifact-url:
+    description: URL for downloading the uploaded artifact while it exists.
+    value: ${{ steps.upload.outputs.artifact-url }}
+  artifact-digest:
+    description: SHA-256 digest of the uploaded artifact.
+    value: ${{ steps.upload.outputs.artifact-digest }}
+
 runs:
   using: composite
   steps:
     - name: Upload artifact
+      id: upload
       # Pinned v7.0.1
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
