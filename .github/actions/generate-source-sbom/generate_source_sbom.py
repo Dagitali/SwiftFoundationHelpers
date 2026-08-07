@@ -20,6 +20,7 @@ PACKAGE_ID = "SPDXRef-Package"
 
 # SECTION: FUNCTIONS ======================================================== #
 
+
 # -- Git Operations -- #
 
 
@@ -75,7 +76,7 @@ def digest(
 def file_identifier(
     file_path: str,
 ) -> str:
-    """Return a valid SPDX file identifier for the given path."""
+    """Return a collision-resistant SPDX identifier for a repository path."""
     normalized_path = "".join(
         character if character.isalnum() or character == "." else "-"
         for character in file_path
