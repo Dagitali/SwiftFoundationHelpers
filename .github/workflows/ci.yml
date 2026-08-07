@@ -196,7 +196,7 @@ jobs:
       - *checkout
 
       - name: Test on ${{ matrix.name }}
-        uses: ./.github/actions/xcode-package-test-with-coverage
+        uses: ./.github/actions/xcode-test-with-coverage
         with:
           scheme: ${{ env.PACKAGE_SCHEME }}
           destination: ${{ matrix.destination }}

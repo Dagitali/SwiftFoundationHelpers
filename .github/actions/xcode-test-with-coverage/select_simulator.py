@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Print an available simulator UDID for the latest requested runtime."""
 
 from __future__ import annotations
@@ -28,6 +27,9 @@ PREFERRED_DEVICE_PREFIXES = {
 
 
 # SECTION: FUNCTIONS ======================================================== #
+
+
+# -- Simulator Selection -- #
 
 
 def runtime_version(identifier: str) -> tuple[int, ...]:
@@ -61,6 +63,9 @@ def select_device(platform: str, document: dict[str, Any]) -> str:
         ),
     )
     return str(selected["udid"])
+
+
+# -- Command Line -- #
 
 
 def main() -> int:

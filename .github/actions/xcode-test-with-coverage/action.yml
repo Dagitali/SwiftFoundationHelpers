@@ -3,17 +3,21 @@
 #
 # Copyright © 2026 Dagitali LLC. All rights reserved.
 #
-# Composite action for Apple-platform package tests and coverage export.
+# Composite action for Xcode test execution and coverage export.
 #
 # Responsibilities
-# - Resolve either a host destination or an available latest Simulator.
-# - Run Swift package tests through `xcodebuild test` with code coverage.
-# - Export a compact `xccov` JSON report for the tested destination.
+# - Resolve either an explicit destination or an available latest Simulator.
+# - Test a project, workspace, or Swift package scheme with code coverage.
+# - Export a compact `xccov` JSON report from the result bundle.
 #
 # Maintainer Notes
-# - Keep destination discovery independent of hard-coded simulator names.
-# - Keep result and coverage artifact upload in the calling workflow.
+# - Keep project, workspace, and scheme selection in callers so this action is
+#   reusable across Apple-platform apps and Swift packages.
+# - Keep destination discovery independent of hard-coded device names.
+# - Keep result and coverage artifact upload policy in the calling workflow.
 # - Preserve coverage export after failures when a result bundle exists.
+# - Keep code signing disabled because this action validates source and tests,
+#   not distribution archives.
 #
 # References
 # - GitHub composite action guide:
@@ -28,13 +32,21 @@
 
 ---
 
-name: Test Swift package with Xcode coverage
-description: Test a Swift package on an Apple destination and export coverage.
+name: Test with Xcode coverage
+description: Test an Apple-platform scheme and export an xccov JSON report.
 
 inputs:
   scheme:
-    description: Swift package scheme to test.
+    description: Xcode scheme to test.
     required: true
+  project-path:
+    description: Optional Xcode project path; omit for Swift packages.
+    required: false
+    default: ''
+  workspace-path:
+    description: Optional Xcode workspace path; mutually exclusive with project.
+    required: false
+    default: ''
   destination:
     description: Explicit xcodebuild test destination.
     required: false
@@ -43,10 +55,10 @@ inputs:
     description: Apple Simulator platform to resolve when destination is empty.
     required: false
     default: ''
-  simulator-selector:
-    description: Script that prints a Simulator identifier for a platform.
+  working-directory:
+    description: Repository-relative directory containing the Xcode container.
     required: false
-    default: Scripts/select_simulator.py
+    default: '.'
   derived-data-path:
     description: DerivedData path.
     required: true
@@ -68,15 +80,15 @@ runs:
       id: destination
       shell: bash
       env:
+        ACTION_PATH: ${{ github.action_path }}
         DESTINATION: ${{ inputs.destination }}
-        SIMULATOR_SELECTOR: ${{ inputs.simulator-selector }}
         SIMULATOR_PLATFORM: ${{ inputs.simulator-platform }}
       run: |
         if [[ -n "$DESTINATION" ]]; then
           printf 'value=%s\n' "$DESTINATION" >> "$GITHUB_OUTPUT"
         elif [[ -n "$SIMULATOR_PLATFORM" ]]; then
           simulator_id=$(
-            "$SIMULATOR_SELECTOR" "$SIMULATOR_PLATFORM"
+            python3 "$ACTION_PATH/select_simulator.py" "$SIMULATOR_PLATFORM"
           )
           printf 'value=id=%s\n' "$simulator_id" >> "$GITHUB_OUTPUT"
         else
@@ -84,17 +96,34 @@ runs:
           exit 1
         fi
 
-    - name: Run Swift package tests
+    - name: Run tests
       shell: bash
       env:
         DERIVED_DATA_PATH: ${{ inputs.derived-data-path }}
         DESTINATION: ${{ steps.destination.outputs.value }}
+        PROJECT_PATH: ${{ inputs.project-path }}
         RESULT_BUNDLE_PATH: ${{ inputs.result-bundle-path }}
         SCHEME: ${{ inputs.scheme }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        WORKSPACE_PATH: ${{ inputs.workspace-path }}
       run: |
+        if [[ -n "$PROJECT_PATH" && -n "$WORKSPACE_PATH" ]]; then
+          echo 'project-path and workspace-path are mutually exclusive.' >&2
+          exit 1
+        fi
+
+        container_arguments=()
+        if [[ -n "$PROJECT_PATH" ]]; then
+          container_arguments=(-project "$PROJECT_PATH")
+        elif [[ -n "$WORKSPACE_PATH" ]]; then
+          container_arguments=(-workspace "$WORKSPACE_PATH")
+        fi
+
+        cd "$WORKING_DIRECTORY"
         mkdir -p "$(dirname "$DERIVED_DATA_PATH")"
         mkdir -p "$(dirname "$RESULT_BUNDLE_PATH")"
         xcodebuild test \
+          "${container_arguments[@]}" \
           -scheme "$SCHEME" \
           -destination "$DESTINATION" \
           -derivedDataPath "$DERIVED_DATA_PATH" \
@@ -108,7 +137,9 @@ runs:
       env:
         COVERAGE_REPORT_PATH: ${{ inputs.coverage-report-path }}
         RESULT_BUNDLE_PATH: ${{ inputs.result-bundle-path }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
       run: |
+        cd "$WORKING_DIRECTORY"
         if [[ -d "$RESULT_BUNDLE_PATH" ]]; then
           mkdir -p "$(dirname "$COVERAGE_REPORT_PATH")"
           xcrun xccov view --report --json "$RESULT_BUNDLE_PATH" \
