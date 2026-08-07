@@ -32,7 +32,9 @@ PREFERRED_DEVICE_PREFIXES = {
 # -- Simulator Selection -- #
 
 
-def runtime_version(identifier: str) -> tuple[int, ...]:
+def runtime_version(
+    identifier: str,
+) -> tuple[int, ...]:
     """Return the numeric version encoded in a simulator runtime identifier."""
     match = re.search(r"-(\d+(?:-\d+)*)$", identifier)
     if match is None:
@@ -40,7 +42,10 @@ def runtime_version(identifier: str) -> tuple[int, ...]:
     return tuple(int(component) for component in match.group(1).split("-"))
 
 
-def select_device(platform: str, document: dict[str, Any]) -> str:
+def select_device(
+    platform: str,
+    document: dict[str, Any],
+) -> str:
     """Return a deterministic device UDID from the latest available runtime."""
     runtime_name = RUNTIME_NAMES[platform]
     runtime_marker = f".SimRuntime.{runtime_name}-"
