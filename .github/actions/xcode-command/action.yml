@@ -1,0 +1,107 @@
+# action.yml
+# SwiftFoundationHelpers
+#
+# Copyright © 2026 Dagitali LLC. All rights reserved.
+#
+# Composite action for common unsigned Xcode commands.
+#
+# Responsibilities
+# - Run allow-listed `xcodebuild build` and `xcodebuild analyze` commands.
+# - Build or analyze an Xcode project, workspace, or Swift package scheme.
+#
+# Maintainer Notes
+# - Keep supported commands explicit so this action does not become a shell
+#   escape hatch.
+# - Keep code signing disabled because these jobs validate source builds, not
+#   App Store distribution archives.
+# - Keep project, workspace, and scheme selection in calling workflows.
+#
+# References
+# - GitHub composite action guide:
+#   https://docs.github.com/en/actions/tutorials/create-actions/
+#   create-a-composite-action
+# - GitHub Actions metadata reference:
+#   https://docs.github.com/en/actions/reference/workflows-and-actions/
+#   metadata-syntax
+# - Xcode command-line tool reference:
+#   https://developer.apple.com/documentation/xcode/
+#   xcode-command-line-tool-reference
+
+---
+
+name: Run Xcode command
+description: Build or analyze an Apple-platform project, workspace, or package.
+
+inputs:
+  action:
+    description: xcodebuild action to run, either build or analyze.
+    required: true
+  scheme:
+    description: Xcode scheme to build or analyze.
+    required: true
+  project-path:
+    description: Optional Xcode project path; omit for Swift packages.
+    required: false
+    default: ''
+  workspace-path:
+    description: Optional Xcode workspace path; mutually exclusive with project.
+    required: false
+    default: ''
+  destination:
+    description: xcodebuild destination.
+    required: true
+  working-directory:
+    description: Repository-relative directory containing the Xcode container.
+    required: false
+    default: '.'
+  derived-data-path:
+    description: DerivedData path.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Show Xcode version
+      shell: bash
+      run: xcodebuild -version
+
+    - name: Run xcodebuild
+      shell: bash
+      env:
+        DERIVED_DATA_PATH: ${{ inputs.derived-data-path }}
+        DESTINATION: ${{ inputs.destination }}
+        PROJECT_PATH: ${{ inputs.project-path }}
+        SCHEME: ${{ inputs.scheme }}
+        WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        WORKSPACE_PATH: ${{ inputs.workspace-path }}
+        XCODE_ACTION: ${{ inputs.action }}
+      run: |
+        case "$XCODE_ACTION" in
+          analyze | build)
+            ;;
+          *)
+            echo "Unsupported xcodebuild action: $XCODE_ACTION"
+            exit 1
+            ;;
+        esac
+
+        if [[ -n "$PROJECT_PATH" && -n "$WORKSPACE_PATH" ]]; then
+          echo 'project-path and workspace-path are mutually exclusive.' >&2
+          exit 1
+        fi
+
+        container_arguments=()
+        if [[ -n "$PROJECT_PATH" ]]; then
+          container_arguments=(-project "$PROJECT_PATH")
+        elif [[ -n "$WORKSPACE_PATH" ]]; then
+          container_arguments=(-workspace "$WORKSPACE_PATH")
+        fi
+
+        cd "$WORKING_DIRECTORY"
+        mkdir -p "$(dirname "$DERIVED_DATA_PATH")"
+        xcodebuild "$XCODE_ACTION" \
+          "${container_arguments[@]}" \
+          -scheme "$SCHEME" \
+          -destination "$DESTINATION" \
+          -derivedDataPath "$DERIVED_DATA_PATH" \
+          CODE_SIGNING_ALLOWED=NO
