@@ -64,7 +64,7 @@ repos:
 
   # Conventional commits / branch naming
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.17.0
+    rev: v4.19.0
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -123,7 +123,7 @@ repos:
 
   # Markdown: Table of Contents updates
   - repo: https://github.com/frnmst/md-toc
-    rev: 9.0.0
+    rev: 9.1.0
     hooks:
       - id: md-toc
 
